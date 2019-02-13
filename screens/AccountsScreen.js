@@ -3,6 +3,12 @@ import { Text, View, StyleSheet } from 'react-native';
 import { Constants, MapView, Location, Permissions } from 'expo';
 
 export default class SettingScreen extends Component {
+
+  static navigationOptions = {
+      title: 'AccountScreen',
+    }
+
+
   state = {
     mapRegion: { latitude: 51481583, longitude: -3.179090, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
     locationResult: null,
@@ -43,12 +49,17 @@ export default class SettingScreen extends Component {
       title="My Marker"
       description="Some description"
     />
+
+        <Button title="Contact Page"
+          onPress={()=>this.props.navigation.navigate("Contact")}
+        </Button
+
         </MapView>
-      
+
         <Text>
           Location: {this.state.locationResult}
         </Text>
-      
+
       </View>
     );
   }
