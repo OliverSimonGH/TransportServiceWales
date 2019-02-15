@@ -3,8 +3,7 @@ import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOp
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import apiKey from '../google_api_key';
-import API_KEY from '../google_api_key';
+// import API_KEY from '../google_api_key';
 import _ from 'lodash';
 import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
 import getTheme from '../native-base-theme/components';

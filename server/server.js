@@ -17,7 +17,7 @@ app.use(expressValidator());
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: '',
     database: 'transport'
 })
 
