@@ -17,10 +17,10 @@ export default class Contact extends Component {
   }
 
   compomentDidMount() {
-    fetch("////////////////////////////")
+    fetch("https://gitlab.cs.cf.ac.uk/c1633899/transport-service-wales/blob/contact_page/contacts.json")
     .then((result)=>result.json())
     .then((res)=>{
-      console.warn("data from api" ,res)
+      console.warn("data from api" ,res.contacts)
         this.setState({
           data:res
         })
@@ -32,16 +32,18 @@ export default class Contact extends Component {
     return (
       <View>
         <Text>
-        "contacts"
+        style={{fontSize:20}}>
+        Contacts
         </Text>
-        <Flatlist>
+        <FlatList>
         data={this.state.data}
-        renderItem={ ({item}) =>
+        renderItem={({item}) =>
         <View>
-        <Text>{item.name}</Text>
-        <Text>{item.surname}</Text>
-        <Text>{item.number}</Text>
-        <Text>{item.email}</Text>
+        <Text>style={{fontSize:20}}>
+        {"Name:"+item.name}
+        {"surname:"+item.surname}
+        {"Email:"+item.email}
+        </Text>
           </View>
         }
         </Flatlist>
