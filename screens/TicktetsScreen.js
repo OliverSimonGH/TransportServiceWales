@@ -30,8 +30,17 @@ import GlobalHeader from '../components/GlobalHeader';
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView>
+				
 					<GlobalHeader type={1} />
 					<Container style={styles.contentContainer}>
+						<Content>
+							{/* Favourite recent journeys button */}
+							<View style={styles.secondaryButtonContainer}>
+								<Button bordered danger style={styles.secondaryButton}>
+									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
+								</Button>
+							</View>
+							</Content>
 						
 					</Container>
 				</ScrollView>
