@@ -61,3 +61,19 @@ export default class TicketExpand extends Component{
     
     }
 
+    const styles = StyleSheet.create({
+        container:{
+            ...StyleSheet.absoluteFillObject,
+            justifyContent: 'flex-end',
+            backgroundColor: 'transparent',
+        },
+        backdrop:{
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor:'black',
+            opacity: 0.5,
+        },
+        modal:{
+            height: height/2,
+            backgroundColor:'white',
+        },
+    });
