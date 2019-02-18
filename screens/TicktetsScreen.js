@@ -16,6 +16,7 @@ import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAn
       header: null,
     };
     state = {
+			expansionIsOpen: false,
       isLoadingComplete: false,
       data:[]
     };
@@ -28,7 +29,20 @@ import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAn
   
     componentDidMount(){
       this.fetchData();
-    }
+		}
+		
+		openTicket = (ticket) => {
+			this.setState({
+				expansionIsOpen: true,
+				ticket,
+			});
+		}
+
+		closeTicket = () => {
+			this.setState({
+				expansionIsOpen:false,
+			});
+		}
 
     render() {
 		return (
