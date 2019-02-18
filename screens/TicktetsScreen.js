@@ -6,6 +6,10 @@ import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'na
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
+import { tickets } from './data';
+import TicketLayout from './TicketLayout';
+import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
+
 
   export default class LinksScreen extends React.Component {
     static navigationOptions = {
@@ -34,12 +38,25 @@ import GlobalHeader from '../components/GlobalHeader';
 					<GlobalHeader type={1} />
 					<Container style={styles.contentContainer}>
 						<Content>
-							{/* Favourite recent journeys button */}
 							<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
 								</Button>
+								</View>
+									<View style={styles.Container}>
+										<ScrollView
+										showsHorizontalScrollIndicator={false}
+										showsVerticalScrollIndicator={false}
+										>
+									{tickets.map((ticket, index) => <TicketLayout
+										ticket={ticket}
+										onOpen={this.openTicket}
+										key={index}
+										/>)}
+								</ScrollView>
 							</View>
+
+
 							</Content>
 						
 					</Container>
@@ -109,5 +126,9 @@ const styles = StyleSheet.create({
 	},
 	secondaryButtontext: {
 		color: '#ff0000'
-	}
+	},
+	Container:{
+		paddingTop:20,
+	},
+
 });
