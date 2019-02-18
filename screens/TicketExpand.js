@@ -44,7 +44,9 @@ export default class TicketExpand extends Component{
 
             return(
                 <View style = {StyleSheet.container}>
+                <TouchableWithoutFeedback onPress={this.props.onClose}>
                 <Animated.View style={StyleSheet.backdrop}/>
+                </TouchableWithoutFeedback>
                 <Animated.View
                 style={[styles.modal, {
                     transform:[{translateY:this.state.position}, {translateX:0}]
