@@ -61,6 +61,9 @@ import TicketExpand from './TicketExpand';
 					<GlobalHeader type={1} />
 					<Container style={styles.contentContainer}>
 						<Content>
+						<View style={styles.titleContainer}>
+                            <Text style={styles.title}>My Tickets</Text>
+                        </View>
 							<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
@@ -158,6 +161,13 @@ const styles = StyleSheet.create({
 	},
 	Container:{
 		paddingTop:20,
+	},
+	title: {
+		textAlign: 'center',
+		fontSize: 30,
+		fontWeight: 'bold',
+		color: 'gray',
+		paddingTop: 10,
 	},
 
 });
