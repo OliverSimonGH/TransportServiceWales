@@ -41,3 +41,8 @@ INSERT INTO accessibility VALUES (11, 1);
 
 INSERT INTO coordinate_type VALUES (1, "Start");
 INSERT INTO coordinate_type VALUES (2, "End");
+
+INSERT INTO ticket VALUES(1, 1, 1, 1, now());
+INSERT INTO ticket VALUES(2, 1, 1, 1, now());
+INSERT INTO ticket VALUES(3, 1, 1, 1, now());
+INSERT INTO ticket VALUES(4, 1, 1, 1, now());
