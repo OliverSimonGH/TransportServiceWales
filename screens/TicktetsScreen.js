@@ -54,8 +54,10 @@ import TicketExpand from './TicketExpand';
     render() {
 		return (
 			<StyleProvider style={getTheme(platform)}>
-				<ScrollView>
-				
+				<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				>
 					<GlobalHeader type={1} />
 					<Container style={styles.contentContainer}>
 						<Content>
@@ -65,10 +67,8 @@ import TicketExpand from './TicketExpand';
 								</Button>
 								</View>
 									<View style={styles.Container}>
-										<ScrollView
-										showsHorizontalScrollIndicator={false}
-										showsVerticalScrollIndicator={false}
-										>
+										
+										
 									{this.state.ticketData.map((tickets, index) => <TicketLayout
 										tickets={tickets}
 										onOpen={this.openTicket}
@@ -76,7 +76,6 @@ import TicketExpand from './TicketExpand';
 										/>)
 										
 										}
-								</ScrollView>
 										<TicketExpand
 										tickets={this.state.ticketData}
 										isOpen={this.state.expansionIsOpen}
