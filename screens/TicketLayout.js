@@ -7,23 +7,21 @@ import{
     TouchableOpacity,
     View
 } from 'react-native';
+import tickets from './data'
 
 const {width, height} = Dimensions.get('window');
 const cols = 3, rows = 3;
 
 export default class TicketLayout extends Component{
-
-
     
     render(){
-        const {ticket:{To, From, qr, date, time}, onOpen}= this.props;
         return(
-            <TouchableOpacity style={styles.container} onPress={() => onOpen(ticket)}>
+            <TouchableOpacity style={styles.container} onPress = {this.props.onOpen}>
             <View style = {styles.imageContainer}>
-            <Image source={{uri: qr}}style={styles.Image}/>
+            <Image source={require('../assets/images/qrcode.jpg')}style={styles.Image}/>
             </View>
-            <Text style={styles.To} numberOfLines={1}>{To}</Text>
-            <Text style={styles.From} numberOfLines={1}>{From}</Text>
+            <Text style={styles.To} numberOfLines={1}></Text>
+            <Text style={styles.From} numberOfLines={1}></Text>
             </TouchableOpacity>
 
         );
