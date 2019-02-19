@@ -6,39 +6,46 @@ import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'na
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
-import { tickets } from './data';
+import tickets from './data';
 import TicketLayout from './TicketLayout';
 import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
+import TicketExpand from './TicketExpand';
 
 
   export default class LinksScreen extends React.Component {
     static navigationOptions = {
       header: null,
-    };
+		};
+		
     state = {
 			expansionIsOpen: false,
       isLoadingComplete: false,
-      data:[]
+			data:[],
+			ticketData: []
     };
-  
-    fetchData= async() =>{
-      const response = await fetch('http://10.22.199:3000/users');
-      const users = await response.json();
-      this.setState({data: users});
-    }
-  
+	
+	
     componentDidMount(){
-      this.fetchData();
+			fetch("http://10.22.199.206:3000/tickets")
+			.then(response => response.json())
+			.then(response => {
+				console.log(response)
+				this.setState({
+			
+					ticketData: response.ticket
+	
+				})
+			})
 		}
 		
-		openTicket = (ticket) => {
+		openTicket = () => {
 			this.setState({
-				expansionIsOpen: true,
-				ticket,
+				expansionIsOpen: true
 			});
 		}
 
 		closeTicket = () => {
+			console.log("hello")
 			this.setState({
 				expansionIsOpen:false,
 			});
@@ -62,12 +69,21 @@ import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAn
 										showsHorizontalScrollIndicator={false}
 										showsVerticalScrollIndicator={false}
 										>
-									{tickets.map((ticket, index) => <TicketLayout
-										ticket={ticket}
+									{this.state.ticketData.map((tickets, index) => <TicketLayout
+										tickets={tickets}
 										onOpen={this.openTicket}
 										key={index}
-										/>)}
+										/>)
+										
+										}
 								</ScrollView>
+										<TicketExpand
+										tickets={this.state.ticketData}
+										isOpen={this.state.expansionIsOpen}
+										onClose={this.closeTicket}
+										/>
+										
+
 							</View>
 
 
