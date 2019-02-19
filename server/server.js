@@ -94,6 +94,14 @@ app.post('/login', (req, res) => {
         })
 })
 
+app.get('/tickets', function (req, res){
+    connection.query('select * from ticket', function (error, rows, fields){
+        if (error) throw error
+
+        res.send({ticket: rows})
+    })
+})
+
 
 app.get('/users', function (req, res) {
     connection.query('select * from students', function (error, rows, fields) {
