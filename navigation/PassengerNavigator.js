@@ -7,6 +7,7 @@ import JourneyScreen from '../screens/JourneyScreen';
 import TicktetsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/AccountsScreen';
 import WalletScreen from '../screens/WalletScreen';
+import TicketDetail from '../screens/TicketDetail'
 
 
 
@@ -30,6 +31,10 @@ JourneyStack.navigationOptions = {
 
 const TicketsStack = createStackNavigator({
   Ticket: TicktetsScreen,
+  TicketDetail: TicketDetail
+},
+{
+  initialRouteName: 'Ticket'
 });
 
 TicketsStack.navigationOptions = {
@@ -73,8 +78,8 @@ AccountStack.navigationOptions = {
 
 export default createBottomTabNavigator({
   
-  TicketsStack,
   JourneyStack,
+  TicketsStack,
   WalletStack,
   AccountStack
 
