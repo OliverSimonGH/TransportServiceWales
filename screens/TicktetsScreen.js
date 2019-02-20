@@ -9,88 +9,104 @@ import GlobalHeader from '../components/GlobalHeader';
 import tickets from './data';
 import TicketLayout from './TicketLayout';
 import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
-import TicketExpand from './TicketExpand';
+
+export default class LinksScreen extends React.Component {
+	static navigationOptions = {
+		header: null,
+	};
+
+	state = {
+		expansionIsOpen: false,
+		isLoadingComplete: false,
+		data: [],
+		ticketData: []
+	};
 
 
-  export default class LinksScreen extends React.Component {
-    static navigationOptions = {
-      header: null,
-		};
-		
-    state = {
-			expansionIsOpen: false,
-      isLoadingComplete: false,
-			data:[],
-			ticketData: []
-    };
-	
-	
-    componentDidMount(){
-			fetch("http://10.22.199.206:3000/tickets")
+	componentDidMount() {
+		fetch("http://10.22.199.206:3000/tickets")
 			.then(response => response.json())
 			.then(response => {
-				console.log(response)
 				this.setState({
-			
+
 					ticketData: response.ticket
-	
+
 				})
 			})
-		}
-		
-		openTicket = () => {
-			this.setState({
-				expansionIsOpen: true
-			});
+	}
+
+	openTicket = (data) => {
+		this.props.navigation.navigate('TicketDetail', {id: data})
+	}
+
+	closeTicket = () => {
+		console.log("hello")
+		this.setState({
+			expansionIsOpen: false,
+		});
+	}
+
+	render() {
+		// const data = {
+		// 	to: null,
+		// 	from: null
+		// }
+
+		var ticket = []
+		var count = 0;
+
+		for (let i = 0; i < this.state.ticketData.length; i++) {
+			count++;
+			var currentTicket = this.state.ticketData[i];
+
+			if (count === 1) {
+				// data.to = currentTicket;
+				continue;
+			}
+
+			if (count === 2) {
+				// data.from = currentTicket;
+				var ticketId = currentTicket.ticket_id;
+				// new Promise((resolve, reject) => {
+					ticket.push(
+						<TicketLayout
+							onOpen={() => this.openTicket(ticketId)}
+							key={i}
+						/>
+					)
+					count = 0;
+				// 	resolve();
+				// })
+				// .then(() => {
+				// 	data.to = null;
+				// 	data.from = null;
+				// 	count = 0;
+				// })
+			}
+			console.log(ticket.length)
 		}
 
-		closeTicket = () => {
-			console.log("hello")
-			this.setState({
-				expansionIsOpen:false,
-			});
-		}
-
-    render() {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView
-				showsHorizontalScrollIndicator={false}
-				showsVerticalScrollIndicator={false}
+					showsHorizontalScrollIndicator={false}
+					showsVerticalScrollIndicator={false}
 				>
 					<GlobalHeader type={1} />
 					<Container style={styles.contentContainer}>
 						<Content>
-						<View style={styles.titleContainer}>
-                            <Text style={styles.title}>My Tickets</Text>
-                        </View>
+							<View style={styles.titleContainer}>
+								<Text style={styles.title}>My Tickets</Text>
+							</View>
 							<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
 								</Button>
-								</View>
-									<View style={styles.Container}>
-										
-										
-									{this.state.ticketData.map((tickets, index) => <TicketLayout
-										tickets={tickets}
-										onOpen={this.openTicket}
-										key={index}
-										/>)
-										
-										}
-										<TicketExpand
-										tickets={this.state.ticketData}
-										isOpen={this.state.expansionIsOpen}
-										onClose={this.closeTicket}
-										/>
-										
-
 							</View>
-
-
-							</Content>
-						
+							<View style={styles.Container}>
+								{ticket}
+							</View>
+						</Content>
 					</Container>
 				</ScrollView>
 			</StyleProvider>
@@ -159,8 +175,8 @@ const styles = StyleSheet.create({
 	secondaryButtontext: {
 		color: '#ff0000'
 	},
-	Container:{
-		paddingTop:20,
+	Container: {
+		paddingTop: 20,
 	},
 	title: {
 		textAlign: 'center',
