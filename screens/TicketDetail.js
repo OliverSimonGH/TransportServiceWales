@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOpacity , Image} from 'react-native';
 // import API_KEY from '../google_api_key';
 import _ from 'lodash';
 import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
@@ -60,47 +60,39 @@ export default class LinksScreen extends React.Component {
                             <View style={styles.titleContainer}>
                                 <Text style={styles.title}>Ticket Details</Text>
                             </View>
-                            
-                                   
+
+
 
                             {this.state.ticketData.length >= 1 &&
-                                <React.Fragment>
-                                    <Text>
-                                        {this.state.ticketData[0].accessibility_required}
-                                    </Text>
-                                    <Text>
-                                        {this.state.ticketData[0].paid}
-                                    </Text>
-                                    <Text>
-                                        {this.state.ticketData[0].used}
-                                    </Text>
-                                    <Text>
-                                        {this.state.ticketData[0].expired}
-                                    </Text>
-                                    <Text>
-                                        {this.state.ticketData[0].end_time}
-                                    </Text>
-                                    <Text>
-                                        {this.state.ticketData[0].start_time}
-                                    </Text>
-                                    <Text>
+                            <View style={styles.container}>
+                                <React.Fragment >
+                                    <Text>City From:
                                         {this.state.ticketData[0].city}
                                     </Text>
-                                    <Text>
+                                    <Text> Street From:
                                         {this.state.ticketData[0].street}
                                     </Text>
-
-                                    <Text>
+                                    <Text> Start Date and Time: 
+                                        {this.state.ticketData[0].start_time}
+                                    </Text>
+                                    <View style={styles.imageContainer}>
+                                        <Image source={require('../assets/images/qrcode.jpg')} style={{ width: 150, height: 150, borderRadius: 10, alignSelf:"center" }} />
+                                    </View>
+                                    <Text>To City:
                                         {this.state.ticketData[1].city}
                                     </Text>
-                                    <Text>
+                                    <Text> To Street:
                                         {this.state.ticketData[1].street}
                                     </Text>
+                                    <Text> Start Date and Time: 
+                                        {this.state.ticketData[1].end_time}
+                                    </Text>
                                 </React.Fragment>
+                                </View>
                             }
 
-                                    
-                             
+
+
 
 
 
@@ -114,21 +106,26 @@ export default class LinksScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    dateTimeContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#d3d3d3',
-        height: 50
-    },
-    dateTime: {
-        marginLeft: 6,
-        color: '#bcbcbc',
-        fontSize: 17
+    container: {
+        marginLeft: 10,
+        marginBottom: 10,
+        height: 300,
+        width: 300,
+        borderRadius: 0.5,
+        borderWidth: 1,
+        borderColor: '#d6d7da',
     },
     iconWithInput: {
         marginTop: 10
+    },
+    imageContainer: {
+        flex: 1,
+    },
+    image: {
+        borderRadius: 10,
+        ...StyleSheet.absoluteFillObject,
+        width: 10,
+        height: 10,
     },
     locationSuggestion: {
         backgroundColor: 'white',
