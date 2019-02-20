@@ -6,6 +6,8 @@ truncate user_type;
 truncate vehicle_type;
 truncate address;
 truncate accessibility;
+truncate coordinate_type;
+truncate ticket;
 SET foreign_key_checks = 1;
 
 INSERT INTO user_type VALUES (1, "Passenger");
@@ -46,3 +48,14 @@ INSERT INTO ticket VALUES(1, 1, 1, 1, now());
 INSERT INTO ticket VALUES(2, 1, 1, 1, now());
 INSERT INTO ticket VALUES(3, 1, 1, 1, now());
 INSERT INTO ticket VALUES(4, 1, 1, 1, now());
+
+INSERT INTO journey VALUES(1, now(), now());
+INSERT INTO journey VALUES(2, now(), now());
+INSERT INTO journey VALUES(3, now(), now());
+INSERT INTO journey VALUES(4, now(), now());
+
+INSERT INTO user_journey VALUES(1, 1, 1, 1);
+INSERT INTO user_journey VALUES(1, 2, 2, 1);
+INSERT INTO user_journey VALUES(1, 3, 3, 1);
+INSERT INTO user_journey VALUES(1, 4, 4, 1);
+
