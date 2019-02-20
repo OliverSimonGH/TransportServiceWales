@@ -17,11 +17,11 @@ export default class TicketLayout extends Component {
     render() {
         return (
             <TouchableOpacity style={styles.container} onPress={this.props.onOpen}>
-                <Text style={styles.To} numberOfLines={1}></Text>
+                <Text style={styles.To} numberOfLines={1}>From: Cardiff</Text>
                 <View style={styles.imageContainer}>
-                    <Image source={require('../assets/images/qrcode.jpg')} style={{ width: 150, height: 150, borderRadius: 10 }} />
+                    <Image source={require('../assets/images/transport.jpg')} style={{ width: 150, height: 150, borderRadius: 10 }} />
                 </View>
-                <Text style={styles.From} numberOfLines={1}></Text>
+                <Text style={styles.From} numberOfLines={1}>To: The Valleys</Text>
             </TouchableOpacity>
 
         );
@@ -50,11 +50,11 @@ const styles = StyleSheet.create({
         height: 10,
     },
     To: {
-        fontSize: 14,
+        fontSize: 20,
         marginTop: 4,
     },
     From: {
-        fontSize: 12,
+        fontSize: 15,
         lineHeight: 14,
     },
 });
