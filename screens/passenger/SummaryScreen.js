@@ -32,6 +32,39 @@ export default class SummaryScreen extends React.Component {
 		this.setState({ endData: JSONresponse });
 	};
 
+	onSubmit = () => {
+		//Send data to the server
+		const data = {
+			startData: this.state.startData,
+			endData: this.state.endData,
+		};
+
+		fetch(`http://${ip}:3000/book`, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then((response) => response.json())
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						this.props.navigation.navigate('JourneyScreen');
+						break;
+					//User Exists
+					case 1:
+						this.setState({
+							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
+						});
+						break;
+				}
+			})
+			.catch((error) => console.log(error));
+	};
+
 	componentDidMount() {
 		this.fetchStartData();
 		this.fetchEndData();
@@ -92,8 +125,8 @@ export default class SummaryScreen extends React.Component {
 															{endCoordinate.no_of_passengers > 1 ? (
 																' Passengers'
 															) : (
-																' Passenger'
-															)}
+																	' Passenger'
+																)}
 														</Text>
 													</View>
 													<View style={styles.icon}>
@@ -103,8 +136,8 @@ export default class SummaryScreen extends React.Component {
 															{endCoordinate.no_of_wheelchairs > 1 ? (
 																' Wheelchairs'
 															) : (
-																' Wheelchair'
-															)}
+																	' Wheelchair'
+																)}
 														</Text>
 													</View>
 												</View>
@@ -135,7 +168,10 @@ export default class SummaryScreen extends React.Component {
 									<Text style={styles.balance}>£12.00</Text>
 									<Text style={styles.body}>Wallet Balance</Text>
 									<View style={styles.buttonContainer}>
-										<Button danger style={[ styles.button, { backgroundColor: '#ff0000' } ]}>
+										<Button
+											danger
+											style={[styles.button, { backgroundColor: '#ff0000' }]}
+											onPress={this.onSubmit}>
 											<Text style={styles.buttonText}>Pay</Text>
 										</Button>
 										<Button
