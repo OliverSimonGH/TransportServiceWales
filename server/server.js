@@ -240,7 +240,7 @@ app.post('/booking/temp', (req, res) => {
 	);
 });
 
-app.post('/add/vehicle', (req, res) => {
+app.post('/add/addvehicle', (req, res) => {
 	console.log(req.body);
 
 	const registration = req.body.place_id;
