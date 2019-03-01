@@ -5,7 +5,7 @@ import { Dimensions, Picker, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 
-class AddVehicleScreen extends Component {
+class AddVehicle extends Component {
 	state = {
 		registration: '',
 		make: '',
