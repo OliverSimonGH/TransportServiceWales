@@ -196,7 +196,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `transport`.`vehicle`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `transport`.`vehicle` (
-  `vehicle_id` INT(11) NOT NULL,
+  `vehicle_id` INT(11) NOT NULL AUTO_INCREMENT,
   `registration` VARCHAR(45) NOT NULL,
   `make` VARCHAR(45) NOT NULL,
   `model` VARCHAR(45) NOT NULL,
@@ -204,12 +204,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`vehicle` (
   `passanger_seats` INT(11) NOT NULL,
   `wheelchair_access` TINYINT(4) NOT NULL DEFAULT '0',
   `currently_driven` TINYINT(4) NOT NULL DEFAULT '0',
-  `fk_vehicle_type_id` INT(11) NOT NULL,
-  PRIMARY KEY (`vehicle_id`, `fk_vehicle_type_id`),
-  INDEX `fk_vehicle_vehicle_type1_idx` (`fk_vehicle_type_id` ASC) ,
-  CONSTRAINT `fk_vehicle_vehicle_type1`
-    FOREIGN KEY (`fk_vehicle_type_id`)
-    REFERENCES `transport`.`vehicle_type` (`vehicle_type_id`))
+  PRIMARY KEY (`vehicle_id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 

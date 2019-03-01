@@ -28,13 +28,14 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: ''
+	password: 'comsc'
 });
 
 connection.connect((error) => {
 	if (error) throw error;
 	else console.log('Connected to MySQL Database');
 });
+
 
 paypal.configure({
 	mode: 'sandbox', //sandbox or live
@@ -237,6 +238,27 @@ app.post('/booking/temp', (req, res) => {
 			);
 		}
 	);
+});
+
+app.post('/add/vehicle', (req, res) => {
+	console.log(req.body);
+
+	const registration = req.body.place_id;
+	const make = req.body.street;
+	const model = req.body.city;
+	const year = req.body.country;
+	const passenger_seats = req.body.lat;
+	const wheelchair_access = req.body.lng;
+	const currently_driven = req.body.startType;
+
+					connection.query(
+						'INSERT INTO vehicle (registration, make, model, year, passenger_seats, wheelchair_access, wheelchair_access, currently_driven) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+						[ registration, make, model, year, passenger_seats, wheelchair_access, wheelchair_access, currently_driven ],
+						(error, row, fields) => {
+							if (error) throw error;
+						}
+					);
+	
 });
 
 app.get('/paypal-button', (req, res) => {
