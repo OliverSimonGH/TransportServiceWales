@@ -117,8 +117,20 @@ app.post('/login', (req, res) => {
 app.post('/book', (req, res) => {
 
 	//Get form fields
-	const startData = req.body.startData;
-	const endData = req.body.endData;
+	const data = req.body.data;
+	const date = req.body.date;
+
+	const output = `
+		<h1> Your confirmed booking</h1>
+		<p> Thank you for your recent booking with us. Here is a reminder of your journey details:</p>
+		<ul>
+			<li>Date: ${date}</li>
+			<li>From: ${data[0].street}, ${data[0].city}</li>
+			<li>To: ${data[1].street}, ${data[1].city}</li>
+			<li>Number of passengers: ${data[0].no_of_passengers}</li>
+			<li>Number of wheelchairs: ${data[0].no_of_wheelchairs}</li>
+		</ul>
+	`
 
 	"use strict";
 	const nodemailer = require("nodemailer");
@@ -135,21 +147,19 @@ app.post('/book', (req, res) => {
 			}
 		});
 
-		// setup email data with unicode symbols
+		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
 			to: "laura.vuilleumier@gmail.com", // list of receivers
-			subject: "Hello ✔", // Subject line
+			subject: "Your booking details", // Subject line
 			text: "Hello world?", // plain text body
-			html: "<b>Hello world?</b>" // html body
+			html: output // html body
 		};
 
 		// send mail with defined transport object
 		let info = await transporter.sendMail(mailOptions)
 
 		console.log("Message sent: %s", info.messageId);
-		// Preview only available when sending through an Ethereal account
-		console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 	}
 
 	main().catch(console.error);
@@ -165,34 +175,14 @@ app.get('/driver/schedule', function (req, res) {
 	});
 });
 
-app.get('/journey/start', function (req, res) {
+app.get('/journey', function (req, res) {
 	connection.query(
-		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey
+		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
 		FROM ticket t
 		JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id 
 		JOIN journey j ON uj.fk_journey_id = j.journey_id 
 		JOIN coordinate c ON j.journey_id = c.fk_journey_id
-		WHERE c.fk_coordinate_type_id = 1
-		ORDER BY j.journey_id DESC LIMIT 1`,
-		function (error, rows, fields) {
-			if (error) console.log(error);
-			else {
-				console.log(rows);
-				res.send(rows);
-			}
-		}
-	);
-});
-
-app.get('/journey/end', function (req, res) {
-	connection.query(
-		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.no_of_passengers, t.no_of_wheelchairs
-		FROM ticket t
-		JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id 
-		JOIN journey j ON uj.fk_journey_id = j.journey_id 
-		JOIN coordinate c ON j.journey_id = c.fk_journey_id
-		WHERE c.fk_coordinate_type_id = 2
-		ORDER BY j.journey_id DESC LIMIT 1`,
+		ORDER BY j.journey_id DESC LIMIT 2`,
 		function (error, rows, fields) {
 			if (error) console.log(error);
 			else {

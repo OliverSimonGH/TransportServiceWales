@@ -14,29 +14,22 @@ export default class SummaryScreen extends React.Component {
 	};
 	state = {
 		isLoadingComplete: false,
-		startData: [],
-		endData: [],
+		data: [],
 		date: new Date(),
 		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }
 	};
 
-	fetchStartData = async () => {
-		const response = await fetch(`http://${ip}:3000/journey/start`);
+	fetchData = async () => {
+		const response = await fetch(`http://${ip}:3000/journey`);
 		const JSONresponse = await response.json();
-		this.setState({ startData: JSONresponse });
-	};
-
-	fetchEndData = async () => {
-		const response = await fetch(`http://${ip}:3000/journey/end`);
-		const JSONresponse = await response.json();
-		this.setState({ endData: JSONresponse });
+		this.setState({ data: JSONresponse });
 	};
 
 	onSubmit = () => {
 		//Send data to the server
 		const data = {
-			startData: this.state.startData,
-			endData: this.state.endData,
+			data: this.state.data,
+			date: moment(this.state.data[0].date_of_journey).format('MMMM Do YYYY'),
 		};
 
 		fetch(`http://${ip}:3000/book`, {
@@ -66,8 +59,7 @@ export default class SummaryScreen extends React.Component {
 	};
 
 	componentDidMount() {
-		this.fetchStartData();
-		this.fetchEndData();
+		this.fetchData();
 	}
 	render() {
 		return (
@@ -89,60 +81,57 @@ export default class SummaryScreen extends React.Component {
 							<View style={styles.summaryCard}>
 								<View style={styles.cardContent}>
 									<View style={styles.details}>
-										{this.state.startData.map((startCoordinate) => {
-											return startCoordinate.fk_coordinate_type_id === 1 ? (
-												<View key={startCoordinate.fk_coordinate_type_id}>
-													<View style={styles.icon}>
-														<Icon name="date-range" size={20} color="#bcbcbc" />
-														<Text style={styles.cardBody}>
-															{moment(startCoordinate.date_of_journey).format(
-																'MMMM Do YYYY'
-															)}
-														</Text>
-													</View>
-													<View style={styles.icon}>
-														<Icon name="my-location" size={20} color="#bcbcbc" />
-														<Text style={styles.cardBody}>
-															{startCoordinate.street}, {startCoordinate.city}
-														</Text>
-													</View>
-												</View>
-											) : null;
-										})}
-										{this.state.endData.map((endCoordinate) => {
-											return endCoordinate.fk_coordinate_type_id === 2 ? (
-												<View key={endCoordinate.fk_coordinate_type_id}>
-													<View style={styles.icon}>
-														<Icon name="location-on" size={20} color="#bcbcbc" />
-														<Text style={styles.cardBody}>
-															{endCoordinate.street}, {endCoordinate.city}
-														</Text>
-													</View>
-													<View style={styles.icon}>
-														<Icon name="people" size={20} color="#bcbcbc" />
-														<Text style={styles.cardBody}>
-															{endCoordinate.no_of_passengers}
-															{endCoordinate.no_of_passengers > 1 ? (
-																' Passengers'
-															) : (
-																	' Passenger'
+										{this.state.data.map((coordinate) => {
+											return (
+												coordinate.fk_coordinate_type_id === 1 ?
+													<View key={coordinate.type}>
+														<View style={styles.icon}>
+															<Icon name="date-range" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{moment(this.state.data[0].date_of_journey).format(
+																	'MMMM Do YYYY'
 																)}
-														</Text>
+															</Text>
+														</View>
+														<View style={styles.icon}>
+															<Icon name="my-location" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{this.state.data[0].street}, {this.state.data[0].city}
+															</Text>
+														</View>
+														<View style={styles.icon}>
+															<Icon name="location-on" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{this.state.data[1].street}, {this.state.data[1].city}
+															</Text>
+														</View>
+														<View style={styles.icon}>
+															<Icon name="people" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{this.state.data[1].no_of_passengers}
+																{this.state.data[1].no_of_passengers > 1 ? (
+																	' Passengers'
+																) : (
+																		' Passenger'
+																	)}
+															</Text>
+														</View>
+														<View style={styles.icon}>
+															<Icon name="people" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{this.state.data[1].no_of_wheelchairs}
+																{this.state.data[1].no_of_wheelchairs > 1 ? (
+																	' Wheelchairs'
+																) : (
+																		' Wheelchair'
+																	)}
+															</Text>
+														</View>
 													</View>
-													<View style={styles.icon}>
-														<Icon name="people" size={20} color="#bcbcbc" />
-														<Text style={styles.cardBody}>
-															{endCoordinate.no_of_wheelchairs}
-															{endCoordinate.no_of_wheelchairs > 1 ? (
-																' Wheelchairs'
-															) : (
-																	' Wheelchair'
-																)}
-														</Text>
-													</View>
-												</View>
-											) : null;
+													: null
+											);
 										})}
+
 									</View>
 									<View style={styles.journeyInfo}>
 										<Text style={styles.cardBody}>£6.00</Text>
@@ -195,110 +184,110 @@ export default class SummaryScreen extends React.Component {
 	}
 }
 
-const styles = StyleSheet.create({
-	introduction: {
-		marginTop: 15,
-		width: '80%',
-		flex: 1,
-		flexDirection: 'column',
-		alignSelf: 'center'
-	},
-	header1: {
-		width: '80%',
-		fontSize: 28,
-		color: 'gray',
-		marginBottom: 5
-	},
-	header2: {
-		fontSize: 16,
-		color: '#bcbcbc',
-		marginTop: 15,
-		marginBottom: 10
-	},
-	body: {
-		color: '#bcbcbc',
-		fontSize: 16
-	},
-	summaryCard: {
-		flex: 1,
-		alignItems: 'center',
-		marginTop: 15,
-		width: '100%',
-		borderTopWidth: 0.5,
-		borderTopColor: '#d3d3d3',
-		borderBottomWidth: 0.5,
-		borderBottomColor: '#d3d3d3'
-	},
-	cardContent: {
-		flex: 1,
-		flexDirection: 'row',
-		marginTop: 10,
-		width: '80%',
-		justifyContent: 'space-between'
-	},
-	details: {
-		width: '70%'
-	},
-	journeyInfo: {
-		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		width: '30%'
-	},
-	cardBody: {
-		fontSize: 18,
-		color: 'gray',
-		marginLeft: 6
-	},
-	cardVehicle: {
-		fontSize: 13,
-		color: 'gray',
-		marginLeft: 6
-	},
-	icon: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 15
-	},
-	paymentInfo: {
-		width: '80%',
-		alignSelf: 'center'
-	},
-	paymentText: {
-		fontSize: 18,
-		fontWeight: 'bold',
-		color: 'gray'
-	},
-	paymentSummary: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginTop: 15,
-		paddingBottom: 15,
-		borderBottomColor: '#d3d3d3',
-		borderBottomWidth: 0.5
-	},
-	walletBlance: {
-		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		marginTop: 20
-	},
-	balance: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		marginBottom: 8
-	},
-	buttonContainer: {
-		flex: 1,
-		flexDirection: 'row',
-		width: '100%',
-		marginTop: 15,
-		justifyContent: 'space-evenly',
-		marginBottom: 15
-	},
-	button: {
-		width: '45%',
-		justifyContent: 'center'
-	}
-});
+	const styles = StyleSheet.create({
+		introduction: {
+			marginTop: 15,
+			width: '80%',
+			flex: 1,
+			flexDirection: 'column',
+			alignSelf: 'center'
+		},
+		header1: {
+			width: '80%',
+			fontSize: 28,
+			color: 'gray',
+			marginBottom: 5
+		},
+		header2: {
+			fontSize: 16,
+			color: '#bcbcbc',
+			marginTop: 15,
+			marginBottom: 10
+		},
+		body: {
+			color: '#bcbcbc',
+			fontSize: 16
+		},
+		summaryCard: {
+			flex: 1,
+			alignItems: 'center',
+			marginTop: 15,
+			width: '100%',
+			borderTopWidth: 0.5,
+			borderTopColor: '#d3d3d3',
+			borderBottomWidth: 0.5,
+			borderBottomColor: '#d3d3d3'
+		},
+		cardContent: {
+			flex: 1,
+			flexDirection: 'row',
+			marginTop: 10,
+			width: '80%',
+			justifyContent: 'space-between'
+		},
+		details: {
+			width: '70%'
+		},
+		journeyInfo: {
+			flex: 1,
+			flexDirection: 'column',
+			alignItems: 'center',
+			width: '30%'
+		},
+		cardBody: {
+			fontSize: 18,
+			color: 'gray',
+			marginLeft: 6
+		},
+		cardVehicle: {
+			fontSize: 13,
+			color: 'gray',
+			marginLeft: 6
+		},
+		icon: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			marginBottom: 15
+		},
+		paymentInfo: {
+			width: '80%',
+			alignSelf: 'center'
+		},
+		paymentText: {
+			fontSize: 18,
+			fontWeight: 'bold',
+			color: 'gray'
+		},
+		paymentSummary: {
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			marginTop: 15,
+			paddingBottom: 15,
+			borderBottomColor: '#d3d3d3',
+			borderBottomWidth: 0.5
+		},
+		walletBlance: {
+			flex: 1,
+			flexDirection: 'column',
+			alignItems: 'center',
+			marginTop: 20
+		},
+		balance: {
+			fontSize: 20,
+			fontWeight: 'bold',
+			marginBottom: 8
+		},
+		buttonContainer: {
+			flex: 1,
+			flexDirection: 'row',
+			width: '100%',
+			marginTop: 15,
+			justifyContent: 'space-evenly',
+			marginBottom: 15
+		},
+		button: {
+			width: '45%',
+			justifyContent: 'center'
+		}
+	});
