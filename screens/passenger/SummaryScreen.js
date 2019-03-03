@@ -7,6 +7,7 @@ import GlobalHeader from '../../components/GlobalHeader';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ip from '../../ipstore';
+import console = require('console');
 
 export default class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -17,7 +18,8 @@ export default class SummaryScreen extends React.Component {
 		startData: [],
 		endData: [],
 		date: new Date(),
-		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }
+		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
+		coord: null
 	};
 
 	fetchStartData = async () => {
@@ -35,6 +37,11 @@ export default class SummaryScreen extends React.Component {
 	componentDidMount() {
 		this.fetchStartData();
 		this.fetchEndData();
+
+		console.log(this.props.navigation.state.params)
+		this.setState({
+			coord: this.props.navigation.state.params
+		})
 	}
 	render() {
 		return (
@@ -54,6 +61,67 @@ export default class SummaryScreen extends React.Component {
 
 							{/* The summary card showing booking information */}
 							<View style={styles.summaryCard}>
+								<View style={styles.cardContent}>
+									<View style={styles.details}>
+										
+										<View>
+											<View style={styles.icon}>
+												<Icon name="date-range" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{moment(this.state.coord.date).format(
+														'MMMM Do YYYY'
+													)}
+												</Text>
+											</View>
+											<View style={styles.icon}>
+												<Icon name="my-location" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{this.state.coord.street}, {this.state.coord.city}
+												</Text>
+											</View>
+										</View>
+
+
+										<View>
+											<View style={styles.icon}>
+												<Icon name="location-on" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{this.state.coord.endStreet}, {this.state.coord.endCity}
+												</Text>
+											</View>
+											<View style={styles.icon}>
+												<Icon name="people" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{this.state.coord.numPassenger}
+													{this.state.coord.numPassenger> 1 ? (
+														' Passengers'
+													) : (
+															' Passenger'
+														)}
+												</Text>
+											</View>
+											<View style={styles.icon}>
+												<Icon name="people" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{this.state.coord.numWheelchair}
+													{this.state.coord.numWheelchair > 1 ? (
+														' Wheelchairs'
+													) : (
+															' Wheelchair'
+														)}
+												</Text>
+											</View>
+										</View>
+											
+									</View>
+									<View style={styles.journeyInfo}>
+										<Text style={styles.cardBody}>£6.00</Text>
+										<Icon name="directions-bus" size={65} color="#bcbcbc" />
+										<Text style={styles.cardVehicle}>Minibus</Text>
+									</View>
+								</View>
+							</View>
+							{/* <View style={styles.summaryCard}>
 								<View style={styles.cardContent}>
 									<View style={styles.details}>
 										{this.state.startData.map((startCoordinate) => {
@@ -117,7 +185,7 @@ export default class SummaryScreen extends React.Component {
 										<Text style={styles.cardVehicle}>Minibus</Text>
 									</View>
 								</View>
-							</View>
+							</View> */}
 
 							{/* Payment summary and options */}
 							<View style={styles.paymentInfo}>

@@ -4,6 +4,8 @@ import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
+import store from './redux/store/ReduxStore';
+import { Provider } from 'react-redux';
 import { Permissions } from 'expo';
 
 export default class App extends React.Component {
@@ -30,6 +32,7 @@ export default class App extends React.Component {
 	render() {
 		if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
 			return (
+				//<Provider store={store}>
 				<AppLoading
 					startAsync={this._loadResourcesAsync}
 					onError={this._handleLoadingError}

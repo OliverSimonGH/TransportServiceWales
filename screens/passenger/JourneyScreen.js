@@ -271,6 +271,7 @@ export default class JourneyScreen extends Component {
 			},
 			body: JSON.stringify(data)
 		});
+		this.props.navigation.navigate('Summary', data);
 	};
 
 	render() {
@@ -438,7 +439,6 @@ export default class JourneyScreen extends Component {
 									style={styles.button}
 									onPress={() => {
 										this.onSubmit();
-										this.props.navigation.navigate('Summary');
 									}}
 								>
 									<Text>Search</Text>
