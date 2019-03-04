@@ -5,14 +5,16 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 import MySchedule from '../screens/driver/MySchedule';
 import RouteScreen from '../screens/driver/RouteScreen';
+import DriverSchedule from '../screens/driver/DriverSchedule';
 
 const MyScheduleStack = createStackNavigator(
 	{
-		Home: MySchedule,
+		Home: DriverSchedule,
+		SelectedJourney: MySchedule,
 		Route: RouteScreen
 	},
 	{
-		initialRouteName: 'Route'
+		initialRouteName: 'Home'
 	}
 );
 

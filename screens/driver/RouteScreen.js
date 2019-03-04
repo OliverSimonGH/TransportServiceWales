@@ -325,7 +325,7 @@ class RouteScreen extends Component {
 							destination={this.state.coordinates[this.state.coordinates.length - 1]}
 							apikey={API_KEY}
 							strokeWidth={4}
-							strokeColor="rgba(253, 113, 103, 0.6)"
+							strokeColor="rgba(253, 113, 103, 1)"
 							optimizeWaypoints={true}
 							onStart={(params) => {
 								console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
