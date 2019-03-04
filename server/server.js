@@ -17,7 +17,7 @@ app.engine('ejs', engines.ejs);
 app.set('views', '../views');
 app.set('view engine', 'ejs');
 
-app.use(session({ secret: '1234' }));
+app.use(session({ secret: 'b.4qyg$Q./B;5G6G`>pc,}Cm$', resave: true, saveUninitialized: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
@@ -136,7 +136,6 @@ app.get('/journey/start', function(req, res) {
 		function(error, rows, fields) {
 			if (error) console.log(error);
 			else {
-				console.log(rows);
 				res.send(rows);
 			}
 		}
@@ -155,7 +154,6 @@ app.get('/journey/end', function(req, res) {
 		function(error, rows, fields) {
 			if (error) console.log(error);
 			else {
-				console.log(rows);
 				res.send(rows);
 			}
 		}
@@ -163,8 +161,6 @@ app.get('/journey/end', function(req, res) {
 });
 
 app.post('/booking/temp', (req, res) => {
-	console.log(req.body);
-
 	const startPlaceId = req.body.place_id;
 	const startStreet = req.body.street;
 	const startCity = req.body.city;
@@ -295,7 +291,6 @@ app.get('/driver/stops', function(req, res) {
 		function(error, rows, fields) {
 			if (error) throw error;
 			else {
-				console.log(rows);
 				res.send(rows);
 			}
 		}
