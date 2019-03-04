@@ -1,9 +1,9 @@
 import { Button, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View, TextInput } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
@@ -275,12 +275,12 @@ class RouteScreen extends Component {
 					<Button style={styles.journeyInfoContainer}>
 						<View>
 							<Text style={styles.journeyInfo}>
-								<Icon name="schedule" size={15} /> {this.state.duration.toString().slice(0, -15)} Min
+								<Icon name="schedule" size={15} /> {this.state.duration.toString().slice(0, -1)} Min
 							</Text>
 						</View>
 						<View>
 							<Text style={styles.journeyInfo}>
-								<Icon name="directions-bus" size={15} /> {this.state.distance.toString().slice(0, -4)}{' '}
+								<Icon name="directions-bus" size={15} /> {this.state.distance.toString().slice(0, -1)}{' '}
 								Miles
 							</Text>
 						</View>
@@ -317,6 +317,7 @@ class RouteScreen extends Component {
 							description={`Passengers: ${marker.no_of_passengers.toString()}`}
 						/>
 					))}
+
 					{this.state.data.length >= 1 && (
 						<MapViewDirections
 							origin={this.state.coordinates[0]}
@@ -351,6 +352,22 @@ class RouteScreen extends Component {
 						/>
 					)}
 				</MapView>
+				<Callout>
+					<View style={styles.calloutView}>
+						<Button
+							style={styles.journeyInfoContainer}
+							onPress={() => {
+								this.props.navigation.navigate('SelectedJourney');
+							}}
+						>
+							<View>
+								<Text style={styles.journeyInfo}>
+									<Icon name="arrow-back" size={15} /> Back
+								</Text>
+							</View>
+						</Button>
+					</View>
+				</Callout>
 			</View>
 		);
 	}
@@ -374,6 +391,21 @@ const styles = StyleSheet.create({
 		borderColor: 'rgba(46, 49, 50, 0.5)',
 
 		borderWidth: 1
+	},
+	calloutView: {
+		flexDirection: 'row',
+		// backgroundColor: 'rgba(255, 255, 255, 0.9)',
+		// borderRadius: 10,
+		// width: '40%',
+		marginLeft: '5%',
+		// marginRight: '30%',
+		marginTop: 30
+	},
+	calloutSearch: {
+		borderColor: 'transparent',
+		textAlign: 'center',
+		height: 40,
+		width: '90%'
 	}
 });
 
