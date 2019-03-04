@@ -6,15 +6,17 @@ import TabBarIcon from '../components/TabBarIcon';
 import MySchedule from '../screens/driver/MySchedule';
 import RouteScreen from '../screens/driver/RouteScreen';
 import DriverSchedule from '../screens/driver/DriverSchedule';
+import LoginScreen from '../screens/LoginScreen';
 
 const MyScheduleStack = createStackNavigator(
 	{
-		Home: DriverSchedule,
+		DailySchedule: DriverSchedule,
 		SelectedJourney: MySchedule,
-		Route: RouteScreen
+		Route: RouteScreen,
+		Login: LoginScreen
 	},
 	{
-		initialRouteName: 'Home'
+		initialRouteName: 'DailySchedule'
 	}
 );
 

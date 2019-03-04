@@ -23,10 +23,14 @@ export default class DriverSchedule extends React.Component {
 		console.log(data);
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
+
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} />
+				<GlobalHeader type={3} header="Today's Schedule" navigateTo={this.navigateTo} />
 
 				<Content padder>
 					<View style={styles.cardContainer}>

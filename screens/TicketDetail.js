@@ -43,17 +43,22 @@ export default class TicketDetail extends React.Component {
 		});
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('Ticket');
+	};
+
 	render() {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-					<GlobalHeader type={1} />
+					<GlobalHeader
+						type={3}
+						header="Ticket Details"
+						navigateTo={this.navigateTo}
+						isBackButtonActive={1}
+					/>
 					<Container style={styles.contentContainer}>
 						<Content>
-							<View style={styles.titleContainer}>
-								<Text style={styles.title}>Ticket Details</Text>
-							</View>
-
 							{this.state.ticketData.length >= 1 && (
 								<View style={styles.container}>
 									<React.Fragment>
@@ -111,6 +116,7 @@ const styles = StyleSheet.create({
 	container: {
 		marginLeft: 10,
 		marginBottom: 10,
+		marginTop: 10,
 		height: 300,
 		width: 300,
 		borderRadius: 0.5,

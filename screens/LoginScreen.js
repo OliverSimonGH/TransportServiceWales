@@ -7,7 +7,7 @@ import ip from '../ipstore';
 
 export default class loginScreen extends Component {
 	state = {
-		email: 'Qwertyy@hotmail.com',
+		email: 'Qwerty@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};
@@ -50,11 +50,15 @@ export default class loginScreen extends Component {
 		return this.props.navigation.navigate('Register');
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
+
 	render() {
 		return (
 			<Container>
 				<Content>
-					<GlobalHeader type={2} />
+					<GlobalHeader type={2} navigateTo={this.navigateTo} />
 					{this.state.errors &&
 					!!this.state.errors.length && (
 						<Accordion

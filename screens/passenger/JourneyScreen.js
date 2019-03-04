@@ -228,7 +228,9 @@ export default class JourneyScreen extends Component {
 			this.getRouteDirections();
 		});
 	}
-
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
 	onSubmit = () => {
 		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair } = this.state;
 
@@ -315,7 +317,7 @@ export default class JourneyScreen extends Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView>
-					<GlobalHeader type={1} />
+					<GlobalHeader type={3} header="Journey Planner" navigateTo={this.navigateTo} />
 					<Container style={styles.contentContainer}>
 						<Content>
 							{/* Favourite recent journeys button */}

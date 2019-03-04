@@ -12,14 +12,16 @@ export default class WalletScreen extends React.Component {
 		this.props.navigation.navigate('AddFunds');
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
+
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} />
+				<GlobalHeader type={3} header="My Wallet" navigateTo={this.navigateTo} />
 				<Content>
-					<View style={styles.headerContainer}>
-						<Text>WALLET</Text>
-					</View>
+					<View style={styles.headerContainer} />
 					<View style={styles.balanceContainer}>
 						<Text>Your Balance</Text>
 						<Text style={styles.balanceSpacing}>£0.00</Text>
