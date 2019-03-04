@@ -1,6 +1,5 @@
 var express = require('express');
 var expressValidator = require('express-validator');
-var session = require('express-session');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var app = express();
@@ -14,13 +13,21 @@ var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
 app.engine('ejs', engines.ejs);
-app.set('views', '../views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
-app.use(session({ secret: 'b.4qyg$Q./B;5G6G`>pc,}Cm$', resave: true, saveUninitialized: true }));
+const {
+	PORT = 3000
+} = process.env
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
+
+if (typeof localStorage === "undefined" || localStorage === null) {
+	var LocalStorage = require('node-localstorage').LocalStorage;
+	localStorage = new LocalStorage('./scratch');
+  }
 
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
@@ -106,8 +113,7 @@ app.post('/login', (req, res) => {
 			if (error) throw error;
 			if (!success) return res.send({ status: 0 });
 			else {
-				// req.session.userId = rows[0].user_id;
-				// console.log(rows[0].user_id);
+				localStorage.setItem('userId', rows[0].user_id)
 				return res.send({ content: rows[0], status: 10 });
 			}
 		});
@@ -182,8 +188,8 @@ app.post('/booking/temp', (req, res) => {
 	const numPassenger = req.body.numPassenger;
 	const numWheelchair = req.body.numWheelchair;
 
+	console.log(localStorage.getItem('userId'))
 	// const userID = req.session.userId !== undefined ? req.session.userId : 1;
-
 	connection.query(
 		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
 		[ numPassenger, numWheelchair, 0, 0, date, time, new Date() ],
@@ -240,7 +246,7 @@ app.get('/paypal-button', (req, res) => {
 });
 
 app.get('/paypal', (req, res) => {
-	req.session.amount = parseFloat(req.query.amount).toFixed(2);
+	localStorage.setItem('paypalAmount', parseFloat(req.query.amount).toFixed(2));
 	var create_payment_json = {
 		intent: 'sale',
 		payer: {
@@ -280,6 +286,28 @@ app.get('/paypal', (req, res) => {
 	});
 });
 
+app.get('/user/amount', (req, res) => [
+	connection.query('select funds from user where user_id = ?',
+	[localStorage.getItem('userId')],
+	(error, rows, fields) => {
+		if(error) throw error;
+		else{
+			res.send(rows[0])
+		}
+	})
+])
+
+app.get('/user/transactions', (req, res) => [
+	connection.query('SELECT t.*, tt.type FROM transaction t JOIN transaction_type tt ON tt.transaction_type_id = t.fk_transaction_type_id WHERE fk_user_id = ? ORDER BY date DESC',
+	[localStorage.getItem('userId')],
+	(error, rows, fields) => {
+		if(error) throw error;
+		else{
+			res.send(rows)
+		}
+	})
+])
+
 app.get('/driver/stops', function(req, res) {
 	connection.query(
 		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
@@ -306,7 +334,7 @@ app.get('/success', (req, res) => {
 			{
 				amount: {
 					currency: 'GBP',
-					total: parseFloat(req.session.amount).toFixed(2)
+					total: parseFloat(localStorage.getItem('paypalAmount')).toFixed(2)
 				}
 			}
 		]
@@ -316,8 +344,24 @@ app.get('/success', (req, res) => {
 		if (error) {
 			throw error;
 		} else {
-			//Add money to users account
+			var userId = parseInt(localStorage.getItem('userId'));
+			var paypalAmount = parseFloat(localStorage.getItem('paypalAmount')).toFixed(2);
 
+			connection.query(
+				'UPDATE user SET funds = funds + ? WHERE user_id = ?',
+				[paypalAmount, userId],
+				(error, row, fields) => {
+					if (error) throw error;
+				}
+			);
+
+			connection.query(
+				'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) SELECT user.funds, ?, ?, ?, ? from user WHERE user_id = ?',
+				[paypalAmount, new Date(), 2, userId, userId],
+				(error, row, fields) => {
+					if (error) throw error;
+				}
+			);
 			res.render('success');
 		}
 	});
@@ -351,4 +395,4 @@ app.get('/ticketsQuery', function(req, res) {
 	);
 });
 
-app.listen(3000);
+app.listen(PORT);

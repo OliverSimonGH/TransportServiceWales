@@ -13,8 +13,21 @@ export default class WalletScreen extends React.Component {
 	state = {
 		showModal: false,
 		status: '',
-		amount: 0.0
+		amount: 0.00,
+		funds: 0.00
 	};
+
+	
+
+	componentDidMount(){
+		fetch(`http://${ip}:3000/user/amount`)
+		.then((response) => response.json())
+		.then((response) => {
+			this.setState({
+				funds: parseFloat(response.funds).toFixed(2)
+			});
+		});
+	}
 
 	onPaypalSubmit = () => {
 		if (this.state.amount <= 5) return; //throw error
@@ -26,10 +39,11 @@ export default class WalletScreen extends React.Component {
 
 	handleResponse = (data) => {
 		if (data.title === 'success') {
+			const {amount, funds} = this.state
 			this.setState({
 				showModal: false,
 				status: 'Complete',
-				amount: 0.0
+				funds: parseFloat(funds + amount).toFixed(2),
 			});
 		}
 		if (data.title === 'cancel') {
@@ -68,7 +82,7 @@ export default class WalletScreen extends React.Component {
 					</View>
 					<View style={styles.balanceContainer}>
 						<Text style={styles.balanceText}>Your Balance</Text>
-						<Text style={[ styles.balanceSpacing, styles.balanceText ]}>£0.00</Text>
+						<Text style={[ styles.balanceSpacing, styles.balanceText ]}>{`£${this.state.funds}`}</Text>
 					</View>
 					<View style={styles.amountContainer}>
 						<Icon name="pluscircleo" size={25} style={styles.amountIcon} />

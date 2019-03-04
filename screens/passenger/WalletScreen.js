@@ -1,12 +1,38 @@
 import { Button, Container, Content, Text } from 'native-base';
 import React from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
+import moment from 'moment';
 import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../ipstore';
 
 export default class WalletScreen extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
+
+	state = {
+		funds: 0.00,
+		transactions: []
+	}
+
+	componentDidMount(){
+		fetch(`http://${ip}:3000/user/amount`)
+		.then((response) => response.json())
+		.then((response) => {
+			this.setState({
+				funds: parseFloat(response.funds).toFixed(2)
+			});
+		});
+
+		fetch(`http://${ip}:3000/user/transactions`)
+		.then((response) => response.json())
+		.then((response) => {
+			console.log(response)
+			this.setState({
+				transactions: response
+			});
+		});
+	}
 
 	onSubmit = () => {
 		this.props.navigation.navigate('AddFunds');
@@ -22,7 +48,7 @@ export default class WalletScreen extends React.Component {
 					</View>
 					<View style={styles.balanceContainer}>
 						<Text>Your Balance</Text>
-						<Text style={styles.balanceSpacing}>£0.00</Text>
+						<Text style={styles.balanceSpacing}>{`£${this.state.funds}`}</Text>
 						<View>
 							<Button danger style={styles.button} onPress={this.onSubmit}>
 								<Text>Add Funds</Text>
@@ -31,16 +57,20 @@ export default class WalletScreen extends React.Component {
 					</View>
 					<View>
 						<Text style={styles.transactionHeader}>Recent Transactions</Text>
-						<View style={styles.purchaseContainer}>
-							<View style={styles.purchaseRow}>
-								<Text style={styles.left}>06 Feb 19</Text>
-								<Text style={styles.right}>£12.00</Text>
-							</View>
-							<View style={styles.purchaseRow}>
-								<Text style={styles.purchaseBold}>Ticket Purchased</Text>
-								<Text style={styles.purchaseBold}>- £4.00</Text>
-							</View>
-						</View>
+						{this.state.transactions.length > 0 && this.state.transactions.map((transaction) => {
+							return (
+								<View style={styles.purchaseContainer} key={transaction.transaction_id}>
+									<View style={styles.purchaseRow}>
+										<Text style={styles.left}>{moment(transaction.date).format("Do MMM YY")}</Text>
+										<Text style={styles.right}>{`£${parseFloat(transaction.current_funds).toFixed(2)}`}</Text>
+									</View>
+									<View style={styles.purchaseRow}>
+										<Text style={styles.purchaseBold}>{transaction.type}</Text>
+										<Text style={styles.purchaseBold}>{transaction.fk_transaction_type_id === 2 ? `+ £${parseFloat(transaction.spent_funds).toFixed(2)}` : `- £${parseFloat(transaction.spent_funds).toFixed(2)}`}</Text>
+									</View>
+								</View>
+							)
+						})}
 					</View>
 				</Content>
 			</Container>

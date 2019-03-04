@@ -17,8 +17,19 @@ export default class SummaryScreen extends React.Component {
 		startData: [],
 		endData: [],
 		date: new Date(),
-		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }
+		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
+		funds: 0.00
 	};
+
+	componentDidMount(){
+		fetch(`http://${ip}:3000/user/amount`)
+		.then((response) => response.json())
+		.then((response) => {
+			this.setState({
+				funds: parseFloat(response.funds).toFixed(2)
+			});
+		});
+	}
 
 	render() {
 		const data = this.props.navigation.state.params
@@ -113,7 +124,7 @@ export default class SummaryScreen extends React.Component {
 
 								{/* Wallet information */}
 								<View style={styles.walletBlance}>
-									<Text style={styles.balance}>£12.00</Text>
+									<Text style={styles.balance}>{`£${this.state.funds}`}</Text>
 									<Text style={styles.body}>Wallet Balance</Text>
 									<View style={styles.buttonContainer}>
 										<Button danger style={[ styles.button, { backgroundColor: '#ff0000' } ]}>
