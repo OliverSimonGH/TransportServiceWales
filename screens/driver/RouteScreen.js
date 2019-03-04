@@ -34,7 +34,8 @@ class RouteScreen extends Component {
 			],
 			data: [],
 			distance: '',
-			duration: ''
+			duration: '',
+			test: 'test'
 		};
 
 		this.mapView = null;
@@ -71,15 +72,21 @@ class RouteScreen extends Component {
 					onPress={this.onMapPress}
 				>
 					{this.state.coordinates.map((coordinate, index) => (
-						<MapView.Marker pinColor="white" key={`coordinate_${index}`} coordinate={coordinate} />
+						<MapView.Marker
+							pinColor="yellow"
+							key={`coordinate_${index}`}
+							coordinate={coordinate}
+							title={'Predefined Stop'}
+							description={'start/end destination of the service'}
+						/>
 					))}
 					{this.state.data.map((marker, index) => (
 						<Marker
 							pinColor={'green'}
 							key={index}
 							coordinate={{ longitude: marker.longitude, latitude: marker.latitude }}
-							title="Street Name"
-							description="# Passengers"
+							title={marker.street}
+							description={`Passengers: ${marker.no_of_passengers.toString()}`}
 						/>
 					))}
 					{this.state.data.length >= 1 && (
