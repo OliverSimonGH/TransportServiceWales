@@ -7,6 +7,7 @@ import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ip';
+import moment from 'moment';
 
 export default class TicketDetail extends React.Component {
 	static navigationOptions = {
@@ -69,7 +70,7 @@ export default class TicketDetail extends React.Component {
 										<Text>
 											{' '}
 											Start Date and Time:
-											{this.state.ticketData[0].start_time}
+											{moment(this.state.ticketData[0].start_time).format("dddd Do MMMM YY")}
 										</Text>
 										<View style={styles.imageContainer}>
 											<Image
@@ -94,7 +95,7 @@ export default class TicketDetail extends React.Component {
 										<Text>
 											{' '}
 											Start Date and Time:
-											{this.state.ticketData[1].end_time}
+											{moment(this.state.ticketData[1].end_time).format("dddd Do MMMM YY")}
 										</Text>
 									</React.Fragment>
 								</View>
