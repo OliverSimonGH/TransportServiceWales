@@ -154,8 +154,7 @@ export default class JourneyScreen extends Component {
 	// Get Start Location
 	async startPosition(destination) {
 		this.setState({ destination });
-		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${destination}
-    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
+		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${destination}&types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
 		const result = await fetch(apiUrl);
 		const jsonResult = await result.json();
 		this.setState({
@@ -167,8 +166,7 @@ export default class JourneyScreen extends Component {
 	// Get End Location
 	async endLocation(endDestination) {
 		this.setState({ endDestination });
-		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${endDestination}
-    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
+		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${endDestination}&types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
 		const result = await fetch(apiUrl);
 		const jsonResult = await result.json();
 		this.setState({

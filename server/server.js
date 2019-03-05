@@ -28,7 +28,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: 'comsc'
+	password: ''
 });
 
 connection.connect((error) => {
@@ -69,7 +69,7 @@ app.post('/register', (req, res) => {
 	const type = req.body.type;
 
 	//Check if user exists
-	connection.query('SELECT * FROM user WHERE email = ?', [email], (error, rows, fields) => {
+	connection.query('SELECT * FROM user WHERE email = ?', [ email ], (error, rows, fields) => {
 		//if user exists, return and throw error
 		if (error) throw error;
 		if (rows.length >= 1) return res.send({ status: 1 });
@@ -78,7 +78,7 @@ app.post('/register', (req, res) => {
 			bcrypt.hash(password, saltRounds, (error, hash) => {
 				connection.query(
 					'INSERT INTO user (email, password, forename, surname, phone_number, date_created, fk_user_type_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-					[email, hash, firstName, lastName, phoneNumber, new Date(), type],
+					[ email, hash, firstName, lastName, phoneNumber, new Date(), type ],
 					(error, rows, fields) => {
 						if (error) throw error;
 						return res.send({ status: 10 });
@@ -98,7 +98,7 @@ app.post('/login', (req, res) => {
 		return res.send({ status: 0 });
 	}
 
-	connection.query('SELECT * FROM user WHERE email = ? LIMIT 1', [req.body.email], (error, rows, fields) => {
+	connection.query('SELECT * FROM user WHERE email = ? LIMIT 1', [ req.body.email ], (error, rows, fields) => {
 		if (error) throw error;
 		if (rows.length < 1) return res.send({ status: 0 });
 
@@ -115,7 +115,6 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/book', (req, res) => {
-
 	//Get form fields
 	const data = req.body.data;
 	const date = req.body.date;
@@ -130,15 +129,14 @@ app.post('/book', (req, res) => {
 			<li>Number of passengers: ${data[0].no_of_passengers}</li>
 			<li>Number of wheelchairs: ${data[0].no_of_wheelchairs}</li>
 		</ul>
-	`
+	`;
 
-	"use strict";
-	const nodemailer = require("nodemailer");
+	('use strict');
+	const nodemailer = require('nodemailer');
 
 	async function main() {
-
 		let transporter = nodemailer.createTransport({
-			host: "smtp.gmail.com",
+			host: 'smtp.gmail.com',
 			port: 587,
 			secure: false, // true for 465, false for other ports
 			auth: {
@@ -150,23 +148,23 @@ app.post('/book', (req, res) => {
 		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: "laura.vuilleumier@gmail.com", // list of receivers
-			subject: "Your booking details", // Subject line
-			text: "Hello world?", // plain text body
+			to: 'alsaaba@cardiff.ac.uk', // list of receivers
+			subject: 'Your booking details', // Subject line
+			text: 'Hello world?', // plain text body
 			html: output // html body
 		};
 
 		// send mail with defined transport object
-		let info = await transporter.sendMail(mailOptions)
+		let info = await transporter.sendMail(mailOptions);
 
-		console.log("Message sent: %s", info.messageId);
+		console.log('Message sent: %s', info.messageId);
 	}
 
 	main().catch(console.error);
 });
 
-app.get('/driver/schedule', function (req, res) {
-	connection.query('SELECT * FROM coordinate WHERE fk_coordinate_type_id = 1', function (error, rows, fields) {
+app.get('/driver/schedule', function(req, res) {
+	connection.query('SELECT * FROM coordinate WHERE fk_coordinate_type_id = 1', function(error, rows, fields) {
 		if (error) console.log(error);
 		else {
 			// console.log(rows);
@@ -175,7 +173,7 @@ app.get('/driver/schedule', function (req, res) {
 	});
 });
 
-app.get('/journey', function (req, res) {
+app.get('/journey', function(req, res) {
 	connection.query(
 		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
 		FROM ticket t
@@ -183,7 +181,7 @@ app.get('/journey', function (req, res) {
 		JOIN journey j ON uj.fk_journey_id = j.journey_id 
 		JOIN coordinate c ON j.journey_id = c.fk_journey_id
 		ORDER BY j.journey_id DESC LIMIT 2`,
-		function (error, rows, fields) {
+		function(error, rows, fields) {
 			if (error) console.log(error);
 			else {
 				console.log(rows);
@@ -221,20 +219,20 @@ app.post('/booking/temp', (req, res) => {
 
 	connection.query(
 		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
-		[numPassenger, numWheelchair, 0, 0, date, time, new Date()],
+		[ numPassenger, numWheelchair, 0, 0, date, time, new Date() ],
 		(error, row1, fields) => {
 			if (error) throw error;
 
 			connection.query(
 				'INSERT INTO journey (start_time, end_time) VALUES (?, ?)',
-				[new Date(), new Date()],
+				[ new Date(), new Date() ],
 				(error, row, fields) => {
 					if (error) throw error;
 					// console.log(row.insertId, userID, row1.insertId, 1);
 
 					connection.query(
 						'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
-						[row.insertId, 1, row1.insertId, 1],
+						[ row.insertId, 1, row1.insertId, 1 ],
 						(errors, rows, fields) => {
 							if (errors) throw errors;
 						}
@@ -259,7 +257,7 @@ app.post('/booking/temp', (req, res) => {
 
 					connection.query(
 						'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-						[endPlaceId, endStreet, endCity, endCountry, endLat, endLng, endType, row.insertId],
+						[ endPlaceId, endStreet, endCity, endCountry, endLat, endLng, endType, row.insertId ],
 						(error, row, fields) => {
 							if (error) throw error;
 						}
@@ -307,7 +305,7 @@ app.get('/paypal', (req, res) => {
 		]
 	};
 
-	paypal.payment.create(create_payment_json, function (error, payment) {
+	paypal.payment.create(create_payment_json, function(error, payment) {
 		if (error) throw error;
 		else {
 			res.redirect(payment.links[1].href);
@@ -315,7 +313,7 @@ app.get('/paypal', (req, res) => {
 	});
 });
 
-app.get('/driver/stops', function (req, res) {
+app.get('/driver/stops', function(req, res) {
 	connection.query(
 		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
 		FROM ticket t
@@ -323,7 +321,7 @@ app.get('/driver/stops', function (req, res) {
 		JOIN journey j ON uj.fk_journey_id = j.journey_id 
 		JOIN coordinate c ON j.journey_id = c.fk_journey_id
 		WHERE c.fk_coordinate_type_id = 1`,
-		function (error, rows, fields) {
+		function(error, rows, fields) {
 			if (error) throw error;
 			else {
 				console.log(rows);
@@ -348,7 +346,7 @@ app.get('/success', (req, res) => {
 		]
 	};
 
-	paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+	paypal.payment.execute(paymentId, execute_payment_json, function(error, payment) {
 		if (error) {
 			throw error;
 		} else {
@@ -363,10 +361,10 @@ app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });
 
-app.get('/tickets', function (req, res) {
+app.get('/tickets', function(req, res) {
 	connection.query(
 		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id',
-		function (error, rows, fields) {
+		function(error, rows, fields) {
 			if (error) throw error;
 
 			res.send({ ticket: rows });
@@ -374,12 +372,12 @@ app.get('/tickets', function (req, res) {
 	);
 });
 
-app.get('/ticketsQuery', function (req, res) {
+app.get('/ticketsQuery', function(req, res) {
 	const id = req.query.id;
 	connection.query(
 		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE t.ticket_id = ?',
-		[id],
-		function (error, rows, fields) {
+		[ id ],
+		function(error, rows, fields) {
 			if (error) throw error;
 
 			res.send({ ticket: rows });
