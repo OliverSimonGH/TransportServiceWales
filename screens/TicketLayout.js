@@ -52,6 +52,7 @@ export default class TicketLayout extends Component {
                                     {this.state.ticketData.length >= 1 && (
                                         <View style={styles.container}>
                                             <React.Fragment>
+                                            
                                                 <Text>
                                                     City From:
 											{this.state.ticketData[0].city}
