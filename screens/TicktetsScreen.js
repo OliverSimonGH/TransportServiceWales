@@ -43,6 +43,9 @@ export default class TicketsScreen extends React.Component {
 		});
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
 	render() {
 		// const data = {
 		// 	to: null,
@@ -81,12 +84,9 @@ export default class TicketsScreen extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-					<GlobalHeader type={1} />
+					<GlobalHeader type={3} header="My Tickets" navigateTo={this.navigateTo} />
 					<Container style={styles.contentContainer}>
 						<Content>
-							<View style={styles.titleContainer}>
-								<Text style={styles.title}>My Tickets</Text>
-							</View>
 							<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>

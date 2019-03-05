@@ -226,7 +226,9 @@ export default class JourneyScreen extends Component {
 			this.getRouteDirections();
 		});
 	}
-
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
 	onSubmit = () => {
 		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair } = this.state;
 
@@ -313,7 +315,7 @@ export default class JourneyScreen extends Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView>
-					<GlobalHeader type={1} />
+					<GlobalHeader type={3} header="Journey Planner" navigateTo={this.navigateTo} />
 					<Container style={styles.contentContainer}>
 						<Content>
 							{/* Favourite recent journeys button */}
@@ -422,7 +424,7 @@ export default class JourneyScreen extends Component {
 
 							{/* Advanced search button, toggles advanced fields */}
 							<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton} onPress={this.toggleAdvanced}>
+								<Button danger style={styles.secondaryButton} onPress={this.toggleAdvanced}>
 									<Text style={styles.secondaryButtontext}>
 										{this.state.isCollapsed ? 'Advanced Search' : 'Basic Search'}
 									</Text>
@@ -506,9 +508,10 @@ const styles = StyleSheet.create({
 	},
 	secondaryButton: {
 		width: '100%',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		backgroundColor: '#ff0000'
 	},
 	secondaryButtontext: {
-		color: '#ff0000'
+		color: '#ffffff'
 	}
 });

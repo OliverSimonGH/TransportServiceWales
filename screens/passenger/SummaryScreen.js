@@ -61,12 +61,21 @@ export default class SummaryScreen extends React.Component {
 	componentDidMount() {
 		this.fetchData();
 	}
+
+	navigateTo = () => {
+		this.props.navigation.navigate('Home');
+	};
 	render() {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
 					<Content>
-						<GlobalHeader type={1} />
+						<GlobalHeader
+							type={3}
+							header="Booking Summary"
+							navigateTo={this.navigateTo}
+							isBackButtonActive={1}
+						/>
 						<View>
 							{/* Page header and introductory text */}
 							<View style={styles.introduction}>

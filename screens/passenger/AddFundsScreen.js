@@ -58,14 +58,16 @@ export default class WalletScreen extends React.Component {
 		this.setState({ amount });
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('Wallet');
+	};
+
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} />
+				<GlobalHeader type={3} header="Add Funds" navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content contentContainerStyle={styles.contentContainer}>
-					<View style={styles.headerContainer}>
-						<Text style={styles.headerText}>ADD FUNDS</Text>
-					</View>
+					<View style={styles.headerContainer} />
 					<View style={styles.balanceContainer}>
 						<Text style={styles.balanceText}>Your Balance</Text>
 						<Text style={[ styles.balanceSpacing, styles.balanceText ]}>£0.00</Text>
