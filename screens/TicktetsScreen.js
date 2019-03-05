@@ -87,12 +87,15 @@ export default class TicketsScreen extends React.Component {
 							<View style={styles.titleContainer}>
 								<Text style={styles.title}>My Tickets</Text>
 							</View>
-							<View style={styles.secondaryButtonContainer}>
+							<View style={{flex: 1, flexDirection: 'row', paddingTop: 25, paddingBottom: 25}}>
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
 								</Button>
+								<Button bordered danger style={styles.secondaryButton}>
+									<Text style={styles.secondaryButtontext}>Expired Tickets</Text>
+								</Button>
 							</View>
-							<View style={styles.Container}>{ticket}</View>
+							<View style={{backgroundColor: 'transparent'}}>{ticket}</View>
 						</Content>
 					</Container>
 				</ScrollView>
@@ -132,7 +135,8 @@ const styles = StyleSheet.create({
 		width: '80%',
 		flex: 1,
 		flexDirection: 'column',
-		alignSelf: 'center'
+		alignSelf: 'center',
+		backgroundColor: 'transparent',
 	},
 	map: {
 		...StyleSheet.absoluteFillObject
@@ -144,26 +148,30 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	button: {
-		width: '100%',
-		justifyContent: 'center',
+		width: '50%%',
 		color: '#ff6666'
 	},
 	buttontext: {
 		color: '#000000'
 	},
 	secondaryButtonContainer: {
+		flex:1,
 		flexDirection: 'row',
 		marginTop: 25
-	},
+		
+    },
 	secondaryButton: {
-		width: '100%',
-		justifyContent: 'center'
-	},
+		flex: 1,
+		flexDirection: 'row',
+
+		width: '50%',
+    },
 	secondaryButtontext: {
 		color: '#ff0000'
 	},
 	Container: {
-		paddingTop: 20
+		paddingTop: 20,
+		backgroundColor: 'transparent',
 	},
 	title: {
 		textAlign: 'center',
