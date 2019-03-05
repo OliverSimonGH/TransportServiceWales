@@ -94,7 +94,7 @@ export default class TicketDetail extends React.Component {
 										</Text>
 										<Text>
 											{' '}
-											Start Date and Time:
+											End Date and Time:
 											{moment(this.state.ticketData[1].end_time).format("dddd Do MMMM YY")}
 										</Text>
 									</React.Fragment>

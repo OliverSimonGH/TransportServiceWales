@@ -2,27 +2,88 @@ import React, { Component } from 'react';
 import {
     Dimensions,
     Image,
+    ImageBackground,
     StyleSheet,
     Text,
     TouchableOpacity,
     View
 } from 'react-native';
-import tickets from './data'
+import { Container, Header, Content, Card, CardItem, Thumbnail, Button, Icon, Left, Body, Right } from 'native-base';
+import ip from '../ip';
+import moment from 'moment';
 
 const { width, height } = Dimensions.get('window');
 const cols = 3, rows = 3;
 
 export default class TicketLayout extends Component {
 
+    static navigationOptions = {
+		header: null
+	};
+
+	state = {
+		expansionIsOpen: false,
+		isLoadingComplete: false,
+		ticketData: []
+	};
+
+	componentDidMount() {
+        const id = this.props.ticketId;
+
+		fetch(`http://${ip}:3000/ticketsQuery?id=${id}`).then((response) => response.json()).then((response) => {
+			console.log(response.ticket);
+			this.setState({
+				ticketData: response.ticket
+			});
+		});
+	}
+
     render() {
         return (
-            <TouchableOpacity style={styles.container} onPress={this.props.onOpen}>
-                <Text style={styles.To} numberOfLines={1}>From: Cardiff</Text>
-                <View style={styles.imageContainer}>
-                    <Image source={require('../assets/images/transport.jpg')} style={{ width: 150, height: 150, borderRadius: 10 }} />
-                </View>
-                <Text style={styles.From} numberOfLines={1}>To: The Valleys</Text>
-            </TouchableOpacity>
+            <View style={{backgroundColor: 'transparent'}}> 
+                <Content>
+                <ImageBackground source={require('../assets/images/active-tickets.png')} style={{ width: '100%', height: '100%' }}>
+
+                
+                                <Left>
+                                    <Body>
+                                        <TouchableOpacity style={styles.container} onPress={this.props.onOpen}>
+                                        
+                                        {this.state.ticketData.length >= 1 && (
+								<View style={styles.container}>
+									<React.Fragment>
+										<Text>
+											City From:
+											{this.state.ticketData[0].city}
+										</Text>
+										<Text>
+											{' '}
+											Departure: 
+											{moment(this.state.ticketData[0].start_time).format("dddd Do h:mm a")}
+										</Text>
+								
+										<Text>
+											To City:
+											{this.state.ticketData[1].city}
+										</Text>
+										<Text>
+											{' '}
+											Arrival: 
+											{moment(this.state.ticketData[1].end_time).format("dddd Do h:mm a")}
+										</Text>
+									</React.Fragment>
+								</View>
+							)}
+                                        </TouchableOpacity>
+                                    </Body>
+
+                                </Left>
+                       
+                    </ImageBackground>
+
+                </Content>
+            </View>
+
 
         );
     }
@@ -32,28 +93,30 @@ const styles = StyleSheet.create({
     container: {
         marginLeft: 10,
         marginBottom: 10,
-        height: (height - 20 - 20) / rows - 10,
+        height: (height - 20 - 18) / rows - 9,
         width: 300,
         alignSelf: 'center',
         alignItems: 'center',
-        borderRadius: 0.5,
-        borderWidth: 1,
-        borderColor: '#d6d7da',
+        backgroundColor: 'transparent',
+
     },
     imageContainer: {
         flex: 1,
+
     },
     image: {
-        borderRadius: 10,
         ...StyleSheet.absoluteFillObject,
         width: 10,
         height: 10,
     },
     To: {
+
         fontSize: 20,
         marginTop: 4,
     },
     From: {
+        backgroundColor: 'transparent',
+
         fontSize: 15,
         lineHeight: 14,
     },
