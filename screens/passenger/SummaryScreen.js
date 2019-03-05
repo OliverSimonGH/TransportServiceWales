@@ -7,6 +7,7 @@ import GlobalHeader from '../../components/GlobalHeader';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ip from '../../ipstore';
+import WalletBalance from './WalletBalance';
 
 export default class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -124,8 +125,7 @@ export default class SummaryScreen extends React.Component {
 
 								{/* Wallet information */}
 								<View style={styles.walletBlance}>
-									<Text style={styles.balance}>{`£${this.state.funds}`}</Text>
-									<Text style={styles.body}>Wallet Balance</Text>
+									<WalletBalance type={2} />
 									<View style={styles.buttonContainer}>
 										<Button danger style={[ styles.button, { backgroundColor: '#ff0000' } ]}>
 											<Text style={styles.buttonText}>Pay</Text>

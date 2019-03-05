@@ -3,43 +3,38 @@ import { StyleSheet, Text, View } from 'react-native'
 import ip from '../../ipstore';
 import moment from 'moment';
 
-export default class WalletTransaction extends Component {
+import { connect } from 'react-redux';
+import { fetchTransactions } from '../../actions/transactionAction';
 
-    state = {
-		transactions: []
+class WalletTransaction extends Component {
+
+	componentDidMount() {
+		this.props.fetchTransactions();
 	}
 
-	componentDidMount(){
-		fetch(`http://${ip}:3000/user/transactions`)
-		.then((response) => response.json())
-		.then((response) => {
-			this.setState({
-				transactions: response
-			});
-		});
-    }
-    
-  render() {
-    return (
-        <View>
-        <Text style={styles.transactionHeader}>Recent Transactions</Text>
-        {this.state.transactions.length > 0 && this.state.transactions.map((transaction) => {
-            return (
-                <View style={styles.purchaseContainer} key={transaction.transaction_id}>
-                    <View style={styles.purchaseRow}>
-                        <Text style={styles.left}>{moment(transaction.date).format("Do MMM YY")}</Text>
-                        <Text style={styles.right}>{`£${parseFloat(transaction.current_funds).toFixed(2)}`}</Text>
-                    </View>
-                    <View style={styles.purchaseRow}>
-                        <Text style={styles.purchaseBold}>{transaction.type}</Text>
-                        <Text style={styles.purchaseBold}>{transaction.fk_transaction_type_id === 2 ? `+ £${parseFloat(transaction.spent_funds).toFixed(2)}` : `- £${parseFloat(transaction.spent_funds).toFixed(2)}`}</Text>
-                    </View>
-                </View>
-            )
-        })}
-    </View>
-    )
-  }
+	render() {
+		const transactions = this.props.transactions.map((transaction) => {
+			return (
+				<View style={styles.purchaseContainer} key={transaction.transaction_id}>
+					<View style={styles.purchaseRow}>
+						<Text style={styles.left}>{moment(transaction.date).format("Do MMM YY")}</Text>
+						<Text style={styles.right}>{`£${parseFloat(transaction.current_funds).toFixed(2)}`}</Text>
+					</View>
+					<View style={styles.purchaseRow}>
+						<Text style={styles.purchaseBold}>{transaction.type}</Text>
+						<Text style={styles.purchaseBold}>{transaction.fk_transaction_type_id === 2 ? `+ £${parseFloat(transaction.spent_funds).toFixed(2)}` : `- £${parseFloat(transaction.spent_funds).toFixed(2)}`}</Text>
+					</View>
+				</View>
+			)
+		})
+
+		return (
+			<View>
+				<Text style={styles.transactionHeader}>Recent Transactions</Text>
+				{transactions}
+			</View>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
@@ -71,3 +66,9 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold'
 	}
 });
+
+const mapStateToProps = state => ({
+	transactions: state.transactionReducer.transactions
+})
+
+export default connect(mapStateToProps, { fetchTransactions })(WalletTransaction);

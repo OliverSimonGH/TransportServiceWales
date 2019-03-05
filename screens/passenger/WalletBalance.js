@@ -1,39 +1,36 @@
 import React, { Component } from 'react'
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Dimensions} from 'react-native';
 import { Button, Text } from 'native-base';
-import ip from '../../ipstore';
 
-export default class WalletBalance extends Component {
+import { connect } from 'react-redux'
 
-    state = {
-        funds: 0.00
-    }
-
-    componentDidMount() {
-        fetch(`http://${ip}:3000/user/amount`)
-            .then((response) => response.json())
-            .then((response) => {
-                this.setState({
-                    funds: parseFloat(response.funds).toFixed(2)
-                });
-            });
-    }
+class WalletBalance extends Component {
 
     render() {
-        return (
-            <View style={styles.balanceContainer}>
-                <Text>Your Balance</Text>
-                <Text style={styles.balanceSpacing}>{`£${this.state.funds}`}</Text>
-                <View>
-                    <Button danger style={styles.button} onPress={this.props.onSubmit}>
-                        <Text>Add Funds</Text>
-                    </Button>
+        if(this.props.type == 2){
+            return (
+                <React.Fragment>
+                    <Text style={styles.balance}>{`£${parseFloat(this.props.user.funds).toFixed(2)}`}</Text>
+					<Text style={styles.body}>Wallet Balance</Text>
+                </React.Fragment>
+            )
+        } else {
+            return (
+                <View style={styles.balanceContainer}>
+                    <Text>Your Balance</Text>
+                    <Text style={styles.balanceSpacing}>{`£${parseFloat(this.props.user.funds).toFixed(2)}`}</Text>
+                    <View>
+                        {this.props.type === 1 && <Button danger style={styles.button} onPress={this.props.onSubmit}>
+                            <Text>Add Funds</Text>
+                        </Button>}
+                    </View>
                 </View>
-            </View>
-        )
+            )
+        }
     }
 }
 
+const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
     balanceContainer: {
         flex: 1,
@@ -46,15 +43,33 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         elevation: 10,
         backgroundColor: '#fff',
-        marginBottom: 15
+        marginBottom: 15,
+        width
     },
     balanceSpacing: {
-        margin: 25
+		fontSize: 40,
+		fontWeight: '100'
     },
     button: {
         width: 175,
         justifyContent: 'center',
         backgroundColor: '#ff0000',
-        borderRadius: 5
-    }
+        borderRadius: 5,
+        marginTop: 10
+    },
+    balance: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		marginBottom: 8
+    },
+    body: {
+		color: '#bcbcbc',
+		fontSize: 16
+	}
 });
+
+const mapStateToProps = state => ({
+    user: state.userReducer.user
+})
+
+export default connect(mapStateToProps)(WalletBalance)
