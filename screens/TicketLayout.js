@@ -53,8 +53,10 @@ export default class TicketLayout extends Component {
                                         <View style={styles.container}>
                                             <React.Fragment>
                                             
-                                                <Text>
+                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15}}>
                                                     City From:
+                                                    </Text>
+                                                    <Text>
 											{this.state.ticketData[0].city}
                                                 </Text>
                                                 <Text>
@@ -62,26 +64,27 @@ export default class TicketLayout extends Component {
                                                     Departure:
 											{moment(this.state.ticketData[0].start_time).format("dddd Do h:mm a")}
                                                 </Text>
-                                                <View style={styles.imageContainer}>
-                                                    <Image
-                                                        source={require('../assets/images/qrcode.jpg')}
-                                                        style={{
-                                                            width: 150,
-                                                            height: 150,
-                                                            borderRadius: 10,
-                                                            alignSelf: 'center',
-                                                            backgroundColor: 'transparent',
-                                                        }}
-                                                    />
-                                                </View>
-                                                <Text>
+                                               
+                                            <Text></Text>
+                                            <Text></Text>
+                                            <Text></Text>
+                                       <Text></Text>
+
+                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15}}>
                                                     To City:
-											{this.state.ticketData[1].city}
+                                                </Text>
+                                                <Text>
+                                                {this.state.ticketData[1].city}
+
                                                 </Text>
                                                 <Text>
                                                     {' '}
                                                     Arrival:
 											{moment(this.state.ticketData[1].end_time).format("dddd Do h:mm a")}
+                                                </Text>
+
+                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15}}>
+                                                    Your seat has been reserved!
                                                 </Text>
                                             </React.Fragment>
                                         </View>
@@ -108,7 +111,8 @@ const styles = StyleSheet.create({
         height: (height - 20 - 18) / rows - 9,
         width: 300,
         alignSelf: 'center',
-        alignItems: 'center',
+        paddingLeft: 34,
+        paddingTop: 20,
         backgroundColor: 'transparent',
 
     },
