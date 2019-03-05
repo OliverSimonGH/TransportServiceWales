@@ -69,8 +69,13 @@ export default class TicketDetail extends React.Component {
 										</Text>
 										<Text>
 											{' '}
-											Start Date and Time:
-											{moment(this.state.ticketData[0].start_time).format("dddd Do MMMM YY")}
+											Date of Departure:
+											{moment(this.state.ticketData[0].start_time).format("Do MMMM YY")}
+										</Text>
+										<Text>
+											{' '}
+											Departure Time:
+											{moment(this.state.ticketData[0].start_time).format("h:mm a")}
 										</Text>
 										<View style={styles.imageContainer}>
 											<Image
@@ -94,8 +99,13 @@ export default class TicketDetail extends React.Component {
 										</Text>
 										<Text>
 											{' '}
-											End Date and Time:
-											{moment(this.state.ticketData[1].end_time).format("dddd Do MMMM YY")}
+											Date of Arrival:
+											{moment(this.state.ticketData[1].end_time).format("Do MMMM YY")}
+										</Text>
+										<Text>
+											{' '}
+											Arrival Time:
+											{moment(this.state.ticketData[1].end_time).format("h:mm a")}
 										</Text>
 									</React.Fragment>
 								</View>

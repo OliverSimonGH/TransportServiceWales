@@ -40,9 +40,9 @@ export default class TicketLayout extends Component {
 
     render() {
         return (
-            <View style={{ backgroundColor: 'transparent', paddingBottom: 10}}>
+            <View style={{ backgroundColor: 'transparent', paddingBottom: 10 , paddingLeft: 15}}>
                 <Content>
-                    <ImageBackground source={require('../assets/images/active-tickets.png')} style={{ width: 300, height: 250, justifyContent: 'center' }}>
+                    <ImageBackground source={require('../assets/images/active-tickets.png')} style={{ width: 300, height: 275, justifyContent: 'center' }}>
 
 
                         <Left>
@@ -52,29 +52,29 @@ export default class TicketLayout extends Component {
                                     {this.state.ticketData.length >= 1 && (
                                         <View style={styles.container}>
                                             <React.Fragment>
-                                            
-                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15}}>
+
+                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
                                                     City From:
                                                     </Text>
-                                                    <Text>
-											{this.state.ticketData[0].city}
+                                                <Text>
+                                                    {this.state.ticketData[0].city}
                                                 </Text>
                                                 <Text>
                                                     {' '}
                                                     Departure:
 											{moment(this.state.ticketData[0].start_time).format("dddd Do h:mm a")}
                                                 </Text>
-                                               
-                                            <Text></Text>
-                                            <Text></Text>
-                                            <Text></Text>
-                                       <Text></Text>
 
-                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15}}>
+                                                <Text></Text>
+                                                <Text></Text>
+                                                <Text></Text>
+                                                <Text></Text>
+
+                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
                                                     To City:
                                                 </Text>
                                                 <Text>
-                                                {this.state.ticketData[1].city}
+                                                    {this.state.ticketData[1].city}
 
                                                 </Text>
                                                 <Text>
@@ -83,7 +83,7 @@ export default class TicketLayout extends Component {
 											{moment(this.state.ticketData[1].end_time).format("dddd Do h:mm a")}
                                                 </Text>
 
-                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15}}>
+                                                <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
                                                     Your seat has been reserved!
                                                 </Text>
                                             </React.Fragment>
