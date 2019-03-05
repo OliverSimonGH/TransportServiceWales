@@ -7,29 +7,52 @@ import GlobalHeader from '../../components/GlobalHeader';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ip from '../../ipstore';
+import WalletBalance from './WalletBalance';
+import uuid from 'uuid/v4';
 
-export default class SummaryScreen extends React.Component {
+import { connect } from 'react-redux';
+import { addTransaction } from '../../actions/transactionAction';
+import { userPayForTicket } from '../../actions/userAction';
+
+class SummaryScreen extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
+
 	state = {
 		isLoadingComplete: false,
 		data: [],
 		date: new Date(),
-		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }
+		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
+		total: 0.0
 	};
 
-	fetchData = async () => {
-		const response = await fetch(`http://${ip}:3000/journey`);
-		const JSONresponse = await response.json();
-		this.setState({ data: JSONresponse });
-	};
+	// fetchData = async () => {
+	// 	const response = await fetch(`http://${ip}:3000/journey`);
+	// 	const JSONresponse = await response.json();
+	// 	console.log(JSONresponse);
+	// 	this.setState({ data: JSONresponse });
+	// };
 
 	onSubmit = () => {
+		const {
+			date,
+			street,
+			endStreet,
+			numPassenger,
+			numWheelchair,
+			city,
+			endCity
+		} = this.props.navigation.state.params;
 		//Send data to the server
 		const data = {
-			data: this.state.data,
-			date: moment(this.state.data[0].date_of_journey).format('MMMM Do YYYY'),
+			data: {
+				startLocation: `${street}, ${city}`,
+				endLocation: `${endStreet}, ${endCity}`,
+				passenger: numPassenger,
+				wheelchair: numWheelchair
+			},
+			date: moment(date).format('MMMM Do YYYY')
 		};
 
 		fetch(`http://${ip}:3000/book`, {
@@ -45,12 +68,14 @@ export default class SummaryScreen extends React.Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
+						this.bookJourney();
+						this.payForTicket();
 						this.props.navigation.navigate('JourneyScreen');
 						break;
 					//User Exists
 					case 1:
 						this.setState({
-							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
+							errors: [ { title: 'Errors', content: 'There was an error whilst sending confirmation' } ]
 						});
 						break;
 				}
@@ -58,14 +83,70 @@ export default class SummaryScreen extends React.Component {
 			.catch((error) => console.log(error));
 	};
 
+	bookJourney = () => {
+		const bookingData = this.props.navigation.state.params;
+		fetch(`http://${ip}:3000/booking/temp`, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(bookingData)
+		});
+	};
+
 	componentDidMount() {
-		this.fetchData();
+		console.log(this.props.navigation.state.params);
+		const { numPassenger } = this.props.navigation.state.params;
+		this.setState({
+			total: parseInt(numPassenger * 3)
+		});
 	}
 
 	navigateTo = () => {
 		this.props.navigation.navigate('Home');
 	};
+
+	payForTicket = () => {
+		if (this.props.user.funds - this.state.total <= 0) {
+			//Throw error, not enough money to pay
+			return;
+		}
+		//Pay for Ticket
+		//Add Transaction
+		const data = {
+			current_funds: parseFloat(parseInt(this.props.user.funds) - parseInt(this.state.total)).toFixed(2),
+			spent_funds: this.state.total,
+			fk_transaction_type_id: 1
+		};
+
+		fetch(`http://${ip}:3000/user/addTransaction`, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then((reponse) => reponse.json())
+			.then((response) => {
+				if (response.status !== 10) return;
+
+				this.props.userPayForTicket(this.state.total);
+				this.props.onAddTransaction({
+					current_funds: parseFloat(parseInt(this.props.user.funds)).toFixed(2),
+					date: new Date(),
+					fk_transaction_type_id: 1,
+					fk_user_id: this.props.user.id,
+					spent_funds: this.state.total,
+					transaction_id: uuid(),
+					type: 'Ticket Purchased'
+				});
+			});
+	};
+
 	render() {
+		const data = this.props.navigation.state.params;
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
@@ -90,60 +171,46 @@ export default class SummaryScreen extends React.Component {
 							<View style={styles.summaryCard}>
 								<View style={styles.cardContent}>
 									<View style={styles.details}>
-										{this.state.data.map((coordinate) => {
-											return (
-												coordinate.fk_coordinate_type_id === 1 ?
-													<View key={coordinate.type}>
-														<View style={styles.icon}>
-															<Icon name="date-range" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{moment(this.state.data[0].date_of_journey).format(
-																	'MMMM Do YYYY'
-																)}
-															</Text>
-														</View>
-														<View style={styles.icon}>
-															<Icon name="my-location" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{this.state.data[0].street}, {this.state.data[0].city}
-															</Text>
-														</View>
-														<View style={styles.icon}>
-															<Icon name="location-on" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{this.state.data[1].street}, {this.state.data[1].city}
-															</Text>
-														</View>
-														<View style={styles.icon}>
-															<Icon name="people" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{this.state.data[1].no_of_passengers}
-																{this.state.data[1].no_of_passengers > 1 ? (
-																	' Passengers'
-																) : (
-																		' Passenger'
-																	)}
-															</Text>
-														</View>
-														<View style={styles.icon}>
-															<Icon name="people" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{this.state.data[1].no_of_wheelchairs}
-																{this.state.data[1].no_of_wheelchairs > 1 ? (
-																	' Wheelchairs'
-																) : (
-																		' Wheelchair'
-																	)}
-															</Text>
-														</View>
-													</View>
-													: null
-											);
-										})}
+										<View>
+											<View style={styles.icon}>
+												<Icon name="date-range" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{moment(data.date).format('MMMM Do YYYY')}
+												</Text>
+											</View>
+											<View style={styles.icon}>
+												<Icon name="my-location" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{data.street}, {data.city}
+												</Text>
+											</View>
+										</View>
 
+										<View>
+											<View style={styles.icon}>
+												<Icon name="location-on" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{data.endStreet}, {data.endCity}
+												</Text>
+											</View>
+											<View style={styles.icon}>
+												<Icon name="people" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{data.numPassenger}
+													{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
+												</Text>
+											</View>
+											<View style={styles.icon}>
+												<Icon name="people" size={20} color="#bcbcbc" />
+												<Text style={styles.cardBody}>
+													{data.numWheelchair}
+													{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
+												</Text>
+											</View>
+										</View>
 									</View>
 									<View style={styles.journeyInfo}>
-										<Text style={styles.cardBody}>£6.00</Text>
+										<Text style={styles.cardBody}>£3.00</Text>
 										<Icon name="directions-bus" size={65} color="#bcbcbc" />
 										<Text style={styles.cardVehicle}>Minibus</Text>
 									</View>
@@ -158,18 +225,18 @@ export default class SummaryScreen extends React.Component {
 								</Text>
 								<View style={styles.paymentSummary}>
 									<Text style={styles.paymentText}>Total</Text>
-									<Text style={styles.paymentText}>£6.00</Text>
+									<Text style={styles.paymentText}>£{this.state.total}.00</Text>
 								</View>
 
 								{/* Wallet information */}
 								<View style={styles.walletBlance}>
-									<Text style={styles.balance}>£12.00</Text>
-									<Text style={styles.body}>Wallet Balance</Text>
+									<WalletBalance type={2} />
 									<View style={styles.buttonContainer}>
 										<Button
 											danger
-											style={[styles.button, { backgroundColor: '#ff0000' }]}
-											onPress={this.onSubmit}>
+											style={[ styles.button, { backgroundColor: '#ff0000' } ]}
+											onPress={this.onSubmit}
+										>
 											<Text style={styles.buttonText}>Pay</Text>
 										</Button>
 										<Button
@@ -193,110 +260,123 @@ export default class SummaryScreen extends React.Component {
 	}
 }
 
-	const styles = StyleSheet.create({
-		introduction: {
-			marginTop: 15,
-			width: '80%',
-			flex: 1,
-			flexDirection: 'column',
-			alignSelf: 'center'
-		},
-		header1: {
-			width: '80%',
-			fontSize: 28,
-			color: 'gray',
-			marginBottom: 5
-		},
-		header2: {
-			fontSize: 16,
-			color: '#bcbcbc',
-			marginTop: 15,
-			marginBottom: 10
-		},
-		body: {
-			color: '#bcbcbc',
-			fontSize: 16
-		},
-		summaryCard: {
-			flex: 1,
-			alignItems: 'center',
-			marginTop: 15,
-			width: '100%',
-			borderTopWidth: 0.5,
-			borderTopColor: '#d3d3d3',
-			borderBottomWidth: 0.5,
-			borderBottomColor: '#d3d3d3'
-		},
-		cardContent: {
-			flex: 1,
-			flexDirection: 'row',
-			marginTop: 10,
-			width: '80%',
-			justifyContent: 'space-between'
-		},
-		details: {
-			width: '70%'
-		},
-		journeyInfo: {
-			flex: 1,
-			flexDirection: 'column',
-			alignItems: 'center',
-			width: '30%'
-		},
-		cardBody: {
-			fontSize: 18,
-			color: 'gray',
-			marginLeft: 6
-		},
-		cardVehicle: {
-			fontSize: 13,
-			color: 'gray',
-			marginLeft: 6
-		},
-		icon: {
-			flexDirection: 'row',
-			alignItems: 'center',
-			marginBottom: 15
-		},
-		paymentInfo: {
-			width: '80%',
-			alignSelf: 'center'
-		},
-		paymentText: {
-			fontSize: 18,
-			fontWeight: 'bold',
-			color: 'gray'
-		},
-		paymentSummary: {
-			flex: 1,
-			flexDirection: 'row',
-			justifyContent: 'space-between',
-			marginTop: 15,
-			paddingBottom: 15,
-			borderBottomColor: '#d3d3d3',
-			borderBottomWidth: 0.5
-		},
-		walletBlance: {
-			flex: 1,
-			flexDirection: 'column',
-			alignItems: 'center',
-			marginTop: 20
-		},
-		balance: {
-			fontSize: 20,
-			fontWeight: 'bold',
-			marginBottom: 8
-		},
-		buttonContainer: {
-			flex: 1,
-			flexDirection: 'row',
-			width: '100%',
-			marginTop: 15,
-			justifyContent: 'space-evenly',
-			marginBottom: 15
-		},
-		button: {
-			width: '45%',
-			justifyContent: 'center'
-		}
-	});
+const styles = StyleSheet.create({
+	introduction: {
+		marginTop: 15,
+		width: '80%',
+		flex: 1,
+		flexDirection: 'column',
+		alignSelf: 'center'
+	},
+	header1: {
+		width: '80%',
+		fontSize: 28,
+		color: 'gray',
+		marginBottom: 5
+	},
+	header2: {
+		fontSize: 16,
+		color: '#bcbcbc',
+		marginTop: 15,
+		marginBottom: 10
+	},
+	body: {
+		color: '#bcbcbc',
+		fontSize: 16
+	},
+	summaryCard: {
+		flex: 1,
+		alignItems: 'center',
+		marginTop: 15,
+		width: '100%',
+		borderTopWidth: 0.5,
+		borderTopColor: '#d3d3d3',
+		borderBottomWidth: 0.5,
+		borderBottomColor: '#d3d3d3'
+	},
+	cardContent: {
+		flex: 1,
+		flexDirection: 'row',
+		marginTop: 10,
+		width: '80%',
+		justifyContent: 'space-between'
+	},
+	details: {
+		width: '70%'
+	},
+	journeyInfo: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		width: '30%'
+	},
+	cardBody: {
+		fontSize: 18,
+		color: 'gray',
+		marginLeft: 6
+	},
+	cardVehicle: {
+		fontSize: 13,
+		color: 'gray',
+		marginLeft: 6
+	},
+	icon: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 15
+	},
+	paymentInfo: {
+		width: '80%',
+		alignSelf: 'center'
+	},
+	paymentText: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: 'gray'
+	},
+	paymentSummary: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginTop: 15,
+		paddingBottom: 15,
+		borderBottomColor: '#d3d3d3',
+		borderBottomWidth: 0.5
+	},
+	walletBlance: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		marginTop: 20
+	},
+	balance: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		marginBottom: 8
+	},
+	buttonContainer: {
+		flex: 1,
+		flexDirection: 'row',
+		width: '100%',
+		marginTop: 15,
+		justifyContent: 'space-evenly',
+		marginBottom: 15
+	},
+	button: {
+		width: '45%',
+		justifyContent: 'center'
+	}
+});
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		userPayForTicket: (amount) => dispatch(userPayForTicket(amount)),
+		onAddTransaction: (transaction) => dispatch(addTransaction(transaction))
+	};
+};
+
+const mapStateToProps = (state) => ({
+	user: state.userReducer.user
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SummaryScreen);

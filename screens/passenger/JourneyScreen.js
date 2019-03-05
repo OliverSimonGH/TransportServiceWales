@@ -263,14 +263,7 @@ export default class JourneyScreen extends Component {
 			numWheelchair: this.state.numWheelchair
 		};
 
-		fetch(`http://${ip}:3000/booking/temp`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		});
+		this.props.navigation.navigate('Summary', data);
 	};
 
 	render() {
@@ -438,7 +431,6 @@ export default class JourneyScreen extends Component {
 									style={styles.button}
 									onPress={() => {
 										this.onSubmit();
-										this.props.navigation.navigate('Summary');
 									}}
 								>
 									<Text>Search</Text>

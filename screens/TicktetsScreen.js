@@ -78,7 +78,6 @@ export default class TicketsScreen extends React.Component {
 				// 	count = 0;
 				// })
 			}
-			console.log(ticket.length);
 		}
 
 		return (

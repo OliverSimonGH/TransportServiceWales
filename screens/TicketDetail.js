@@ -23,7 +23,6 @@ export default class TicketDetail extends React.Component {
 		const { id } = this.props.navigation.state.params;
 
 		fetch(`http://${ip}:3000/ticketsQuery?id=${id}`).then((response) => response.json()).then((response) => {
-			console.log(response.ticket);
 			this.setState({
 				ticketData: response.ticket
 			});
