@@ -13,21 +13,19 @@ var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
 app.engine('ejs', engines.ejs);
-app.set('views', './views');
+app.set('views', '../views');
 app.set('view engine', 'ejs');
 
-const {
-	PORT = 3000
-} = process.env
+const { PORT = 3000 } = process.env;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
 
-if (typeof localStorage === "undefined" || localStorage === null) {
+if (typeof localStorage === 'undefined' || localStorage === null) {
 	var LocalStorage = require('node-localstorage').LocalStorage;
 	localStorage = new LocalStorage('./scratch');
-  }
+}
 
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
@@ -113,7 +111,7 @@ app.post('/login', (req, res) => {
 			if (error) throw error;
 			if (!success) return res.send({ status: 0 });
 			else {
-				localStorage.setItem('userId', rows[0].user_id)
+				localStorage.setItem('userId', rows[0].user_id);
 				return res.send({ content: rows[0], status: 10 });
 			}
 		});
@@ -188,7 +186,7 @@ app.post('/booking/temp', (req, res) => {
 	const numPassenger = req.body.numPassenger;
 	const numWheelchair = req.body.numWheelchair;
 
-	console.log(localStorage.getItem('userId'))
+	console.log(localStorage.getItem('userId'));
 	// const userID = req.session.userId !== undefined ? req.session.userId : 1;
 	connection.query(
 		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -287,26 +285,30 @@ app.get('/paypal', (req, res) => {
 });
 
 app.get('/user/amount', (req, res) => [
-	connection.query('select funds from user where user_id = ?',
-	[localStorage.getItem('userId')],
-	(error, rows, fields) => {
-		if(error) throw error;
-		else{
-			res.send(rows[0])
+	connection.query(
+		'select funds from user where user_id = ?',
+		[ localStorage.getItem('userId') ],
+		(error, rows, fields) => {
+			if (error) throw error;
+			else {
+				res.send(rows[0]);
+			}
 		}
-	})
-])
+	)
+]);
 
 app.get('/user/transactions', (req, res) => [
-	connection.query('SELECT t.*, tt.type FROM transaction t JOIN transaction_type tt ON tt.transaction_type_id = t.fk_transaction_type_id WHERE fk_user_id = ? ORDER BY date DESC',
-	[localStorage.getItem('userId')],
-	(error, rows, fields) => {
-		if(error) throw error;
-		else{
-			res.send(rows)
+	connection.query(
+		'SELECT t.*, tt.type FROM transaction t JOIN transaction_type tt ON tt.transaction_type_id = t.fk_transaction_type_id WHERE fk_user_id = ? ORDER BY date DESC',
+		[ localStorage.getItem('userId') ],
+		(error, rows, fields) => {
+			if (error) throw error;
+			else {
+				res.send(rows);
+			}
 		}
-	})
-])
+	)
+]);
 
 app.get('/driver/stops', function(req, res) {
 	connection.query(
@@ -349,7 +351,7 @@ app.get('/success', (req, res) => {
 
 			connection.query(
 				'UPDATE user SET funds = funds + ? WHERE user_id = ?',
-				[paypalAmount, userId],
+				[ paypalAmount, userId ],
 				(error, row, fields) => {
 					if (error) throw error;
 				}
@@ -357,7 +359,7 @@ app.get('/success', (req, res) => {
 
 			connection.query(
 				'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) SELECT user.funds, ?, ?, ?, ? from user WHERE user_id = ?',
-				[paypalAmount, new Date(), 2, userId, userId],
+				[ paypalAmount, new Date(), 2, userId, userId ],
 				(error, row, fields) => {
 					if (error) throw error;
 				}
@@ -371,26 +373,26 @@ app.post('/user/addTransaction', (req, res) => {
 	const current_funds = req.body.current_funds;
 	const spent_funds = req.body.spent_funds;
 	const fk_transaction_type_id = req.body.fk_transaction_type_id;
-	const userId = localStorage.getItem('userId')
-	
+	const userId = localStorage.getItem('userId');
+
 	connection.query(
 		'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
-		[current_funds, spent_funds, new Date(), fk_transaction_type_id, userId, userId],
+		[ current_funds, spent_funds, new Date(), fk_transaction_type_id, userId, userId ],
 		(error, row, fields) => {
 			if (error) throw error;
 			connection.query(
 				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
-				[spent_funds, userId],
+				[ spent_funds, userId ],
 				(error, row, fields) => {
 					if (error) throw error;
 					else {
-						res.send({status: 10})
+						res.send({ status: 10 });
 					}
 				}
 			);
 		}
 	);
-})
+});
 
 app.get('/cancel', (req, res) => {
 	res.render('cancel');
