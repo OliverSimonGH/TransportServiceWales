@@ -25,6 +25,17 @@ MyScheduleStack.navigationOptions = {
 	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-bus' : 'md-bus'} />
 };
 
-export default createBottomTabNavigator({
-	MyScheduleStack
-});
+export default createBottomTabNavigator(
+	{
+		MyScheduleStack
+	},
+	{
+		tabBarOptions: {
+			activeTintColor: 'white',
+			inactiveTintColor: '#cccccc',
+			style: {
+				backgroundColor: '#ff0000'
+			}
+		}
+	}
+);
