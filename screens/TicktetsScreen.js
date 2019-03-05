@@ -10,7 +10,6 @@ import tickets from './data';
 import ip from '../ip';
 
 import TicketLayout from './TicketLayout';
-import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
 
 export default class TicketsScreen extends React.Component {
 	static navigationOptions = {
@@ -33,7 +32,7 @@ export default class TicketsScreen extends React.Component {
 	}
 
 	openTicket = (data) => {
-		this.props.navigation.navigate('Details', { id: data });
+		this.props.navigation.navigate('Details', {id: data});
 	};
 
 	closeTicket = () => {
@@ -55,6 +54,7 @@ export default class TicketsScreen extends React.Component {
 		for (let i = 0; i < this.state.ticketData.length; i++) {
 			count++;
 			var currentTicket = this.state.ticketData[i];
+			// console.log(currentTicket)
 
 			if (count === 1) {
 				// data.to = currentTicket;
@@ -64,8 +64,9 @@ export default class TicketsScreen extends React.Component {
 			if (count === 2) {
 				// data.from = currentTicket;
 				var ticketId = currentTicket.ticket_id;
+				console.log(ticketId)
 				// new Promise((resolve, reject) => {
-				ticket.push(<TicketLayout onOpen={() => this.openTicket(ticketId)} key={i} />);
+				ticket.push(<TicketLayout onOpen={() => this.openTicket(ticketId)} key={i} ticketId={ticketId}/>);
 				count = 0;
 				// 	resolve();
 				// })
@@ -75,7 +76,6 @@ export default class TicketsScreen extends React.Component {
 				// 	count = 0;
 				// })
 			}
-			console.log(ticket.length);
 		}
 
 		return (
@@ -154,16 +154,9 @@ const styles = StyleSheet.create({
 	buttontext: {
 		color: '#000000'
 	},
-	secondaryButtonContainer: {
-		flex:1,
-		flexDirection: 'row',
-		marginTop: 25
-		
-    },
 	secondaryButton: {
 		flex: 1,
 		flexDirection: 'row',
-
 		width: '50%',
     },
 	secondaryButtontext: {

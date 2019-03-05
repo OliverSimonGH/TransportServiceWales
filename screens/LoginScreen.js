@@ -7,7 +7,7 @@ import ip from '../ip';
 
 export default class loginScreen extends Component {
 	state = {
-		email: 'Qwertyy@hotmail.com',
+		email: 'Qwerty@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};
