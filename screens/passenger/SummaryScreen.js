@@ -8,28 +8,69 @@ import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ip from '../../ipstore';
 import WalletBalance from './WalletBalance';
+import uuid from 'uuid/v4'
 
-export default class SummaryScreen extends React.Component {
+import { connect } from 'react-redux'
+import { addTransaction } from '../../actions/transactionAction';
+import { userPayForTicket } from '../../actions/userAction'
+
+class SummaryScreen extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
+
 	state = {
 		isLoadingComplete: false,
 		startData: [],
 		endData: [],
 		date: new Date(),
 		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
-		funds: 0.00
+		total: 0.00
 	};
 
 	componentDidMount(){
-		fetch(`http://${ip}:3000/user/amount`)
-		.then((response) => response.json())
+		const { numPassenger } = this.props.navigation.state.params
+		this.setState({
+			total: parseInt(numPassenger * 3)
+		})
+	}
+
+	payForTicket = () => {
+		if(this.props.user.funds - this.state.total <= 0){
+			//Throw error, not enough money to pay
+			return;
+		}
+		//Pay for Ticket
+		//Add Transaction
+		const data = {
+			current_funds: parseFloat(parseInt(this.props.user.funds) - parseInt(this.state.total)).toFixed(2),
+			spent_funds: this.state.total,
+			fk_transaction_type_id: 1
+		}
+
+		fetch(`http://${ip}:3000/user/addTransaction`, {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+		.then((reponse) => reponse.json())
 		.then((response) => {
-			this.setState({
-				funds: parseFloat(response.funds).toFixed(2)
-			});
-		});
+			if(response.status !== 10) return;
+
+			this.props.userPayForTicket(this.state.total)
+			this.props.onAddTransaction({
+			"current_funds": parseFloat(parseInt(this.props.user.funds)).toFixed(2),
+			"date": new Date(),
+			"fk_transaction_type_id": 1,
+			"fk_user_id": this.props.user.id,
+			"spent_funds": this.state.total,
+			"transaction_id": uuid(),
+			"type": "Ticket Purchased",
+		})
+		})
 	}
 
 	render() {
@@ -120,14 +161,14 @@ export default class SummaryScreen extends React.Component {
 								</Text>
 								<View style={styles.paymentSummary}>
 									<Text style={styles.paymentText}>Total</Text>
-									<Text style={styles.paymentText}>£{data.numPassenger * 3}.00</Text>
+									<Text style={styles.paymentText}>£{this.state.total}.00</Text>
 								</View>
 
 								{/* Wallet information */}
 								<View style={styles.walletBlance}>
 									<WalletBalance type={2} />
 									<View style={styles.buttonContainer}>
-										<Button danger style={[ styles.button, { backgroundColor: '#ff0000' } ]}>
+										<Button danger style={[ styles.button, { backgroundColor: '#ff0000' } ]} onPress={this.payForTicket}>
 											<Text style={styles.buttonText}>Pay</Text>
 										</Button>
 										<Button
@@ -258,3 +299,16 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	}
 });
+
+const mapDispatchToProps = dispatch => {
+	return {
+		userPayForTicket: amount => dispatch(userPayForTicket(amount)),
+		onAddTransaction: transaction => dispatch(addTransaction(transaction))
+	}
+}
+
+const mapStateToProps = state => ({
+	user: state.userReducer.user
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SummaryScreen)

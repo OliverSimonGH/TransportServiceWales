@@ -367,6 +367,31 @@ app.get('/success', (req, res) => {
 	});
 });
 
+app.post('/user/addTransaction', (req, res) => {
+	const current_funds = req.body.current_funds;
+	const spent_funds = req.body.spent_funds;
+	const fk_transaction_type_id = req.body.fk_transaction_type_id;
+	const userId = localStorage.getItem('userId')
+	
+	connection.query(
+		'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
+		[current_funds, spent_funds, new Date(), fk_transaction_type_id, userId, userId],
+		(error, row, fields) => {
+			if (error) throw error;
+			connection.query(
+				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
+				[spent_funds, userId],
+				(error, row, fields) => {
+					if (error) throw error;
+					else {
+						res.send({status: 10})
+					}
+				}
+			);
+		}
+	);
+})
+
 app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });
