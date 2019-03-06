@@ -29,9 +29,10 @@ export default class TicketLayout extends Component {
 
     componentDidMount() {
         const id = this.props.ticketId;
+        const expired = this.props.expired;
 
-        fetch(`http://${ip}:3000/ticketsQuery?id=${id}`).then((response) => response.json()).then((response) => {
-            console.log(response.ticket);
+        fetch(`http://${ip}:3000/ticketsQuery?id=${id}&expired=${expired}`).then((response) => response.json()).then((response) => {
+            console.log(response)
             this.setState({
                 ticketData: response.ticket
             });
@@ -39,6 +40,7 @@ export default class TicketLayout extends Component {
     }
 
     render() {
+
         return (
             <View style={{ backgroundColor: 'transparent', paddingBottom: 10 , paddingLeft: 15}}>
                 <Content>
@@ -64,11 +66,17 @@ export default class TicketLayout extends Component {
                                                     Departure:
 											{moment(this.state.ticketData[0].start_time).format("dddd Do h:mm a")}
                                                 </Text>
-
-                                                <Text></Text>
-                                                <Text></Text>
-                                                <Text></Text>
-                                                <Text></Text>
+                                                <View style={styles.imageContainer}>
+											<Image
+												source={require('../assets/images/ticket-logo.png')}
+												style={{
+													width: 150,
+													height: 150,
+													borderRadius: 10,
+													
+												}}
+											/>
+										</View>
 
                                                 <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
                                                     To City:

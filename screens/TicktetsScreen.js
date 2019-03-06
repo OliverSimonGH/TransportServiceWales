@@ -6,8 +6,8 @@ import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'na
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
-import tickets from './data';
 import ip from '../ip';
+import uuid from 'uuid/v4';
 
 import TicketLayout from './TicketLayout';
 
@@ -20,7 +20,9 @@ export default class TicketsScreen extends React.Component {
 		expansionIsOpen: false,
 		isLoadingComplete: false,
 		data: [],
-		ticketData: []
+		ticketData: [],
+		ticketExpired: [],
+		showActive: 0
 	};
 
 	componentDidMount() {
@@ -29,54 +31,28 @@ export default class TicketsScreen extends React.Component {
 				ticketData: response.ticket
 			});
 		});
+		fetch(`http://${ip}:3000/ticketsExpired`).then((response) => response.json()).then((response) => {
+			this.setState({
+				ticketExpired: response.ticket
+			});
+		});
 	}
 
-	openTicket = (data) => {
-		this.props.navigation.navigate('Details', {id: data});
+	openTicket = (ticketId) => {
+		this.props.navigation.navigate('Details', { id: ticketId });
 	};
 
-	closeTicket = () => {
-		console.log('hello');
-		this.setState({
-			expansionIsOpen: false
-		});
-	};
+	showActive = () => {
+		this.setState({ showActive: 0 })
+	}
 
-	render() {
-		// const data = {
-		// 	to: null,
-		// 	from: null
-		// }
+	showExpired = () => {
+		this.setState({ showActive: 1 })
+	}
 
-		var ticket = [];
-		var count = 0;
 
-		for (let i = 0; i < this.state.ticketData.length; i++) {
-			count++;
-			var currentTicket = this.state.ticketData[i];
-			// console.log(currentTicket)
 
-			if (count === 1) {
-				// data.to = currentTicket;
-				continue;
-			}
-
-			if (count === 2) {
-				// data.from = currentTicket;
-				var ticketId = currentTicket.ticket_id;
-				console.log(ticketId)
-				// new Promise((resolve, reject) => {
-				ticket.push(<TicketLayout onOpen={() => this.openTicket(ticketId)} key={i} ticketId={ticketId}/>);
-				count = 0;
-				// 	resolve();
-				// })
-				// .then(() => {
-				// 	data.to = null;
-				// 	data.from = null;
-				// 	count = 0;
-				// })
-			}
-		}
+	render() {		
 
 		return (
 			<StyleProvider style={getTheme(platform)}>
@@ -87,15 +63,24 @@ export default class TicketsScreen extends React.Component {
 							<View style={styles.titleContainer}>
 								<Text style={styles.title}>My Tickets</Text>
 							</View>
-							<View style={{flex: 1, flexDirection: 'row', paddingTop: 25, paddingBottom: 25}}>
-								<Button bordered danger style={styles.secondaryButton}>
+							<View style={{ flex: 1, flexDirection: 'row', paddingTop: 25, paddingBottom: 25 }}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.showActive}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
 								</Button>
-								<Button bordered danger style={styles.secondaryButton}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.showExpired}>
 									<Text style={styles.secondaryButtontext}>Expired Tickets</Text>
 								</Button>
 							</View>
-							<View style={{backgroundColor: 'transparent'}}>{ticket}</View>
+							{this.state.showActive === 0 && <View>{this.state.ticketData.map((ticket) => {
+								return (
+									<TicketLayout onOpen={() => this.openTicket(ticket.ticket_id)} key={uuid()} ticketId={ticket.ticket_id} expired={0}/>
+								)
+							})}</View>}
+							{this.state.showActive === 1 && <View>{this.state.ticketExpired.map((ticket) => {
+								return (
+									<TicketLayout onOpen={() => this.openTicket(ticket.ticket_id)} key={uuid()} ticketId={ticket.ticket_id} expired={1}/>
+								)
+							})}</View>}
 						</Content>
 					</Container>
 				</ScrollView>
@@ -158,7 +143,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		width: '50%',
-    },
+	},
 	secondaryButtontext: {
 		color: '#ff0000'
 	},

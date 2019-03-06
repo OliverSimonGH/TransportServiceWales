@@ -27,7 +27,7 @@ export default class TicketsScreen extends React.Component {
 	componentDidMount() {
 		fetch(`http://${ip}:3000/ticketsExpired`).then((response) => response.json()).then((response) => {
 			this.setState({
-				ticketData: response.ticket
+				ticketData: response.ticketExpired
 			});
 		});
 	}
@@ -94,6 +94,8 @@ export default class TicketsScreen extends React.Component {
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Expired Tickets</Text>
 								</Button>
+								<View>{ticket}</View>
+
 							</View>
 						</Content>
 					</Container>

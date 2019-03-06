@@ -22,9 +22,9 @@ export default class TicketDetail extends React.Component {
 
 	componentDidMount() {
 		const { id } = this.props.navigation.state.params;
-
-		fetch(`http://${ip}:3000/ticketsQuery?id=${id}`).then((response) => response.json()).then((response) => {
-			console.log(response.ticket);
+		console.log(id)
+		fetch(`http://${ip}:3000/ticketsQuery1?id=${id}`).then((response) => response.json()).then((response) => {
+			console.log(response)
 			this.setState({
 				ticketData: response.ticket
 			});
