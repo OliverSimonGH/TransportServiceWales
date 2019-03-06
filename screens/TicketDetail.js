@@ -23,7 +23,7 @@ export default class TicketDetail extends React.Component {
 	componentDidMount() {
 		const { id } = this.props.navigation.state.params;
 		fetch(`http://${ip}:3000/ticketsQuery1?id=${id}`).then((response) => response.json()).then((response) => {
-			console.log(response)
+			console.log(response);
 			this.setState({
 				ticketData: response.ticket
 			});
@@ -51,11 +51,7 @@ export default class TicketDetail extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-					<GlobalHeader
-						type={1}
-						navigateTo={this.navigateTo}
-						isBackButtonActive={1}
-					/>
+					<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 					<Container style={styles.contentContainer}>
 						<Content>
 							<View style={styles.titleContainer}>
@@ -77,12 +73,12 @@ export default class TicketDetail extends React.Component {
 										<Text>
 											{' '}
 											Date of Departure:
-											{moment(this.state.ticketData[0].start_time).format("Do MMMM YY")}
+											{moment(this.state.ticketData[0].start_time).format('Do MMMM YY')}
 										</Text>
 										<Text>
 											{' '}
 											Departure Time:
-											{moment(this.state.ticketData[0].start_time).format("h:mm a")}
+											{moment(this.state.ticketData[0].start_time).format('h:mm a')}
 										</Text>
 										<View style={styles.imageContainer}>
 											<Image
@@ -107,12 +103,12 @@ export default class TicketDetail extends React.Component {
 										<Text>
 											{' '}
 											Date of Arrival:
-											{moment(this.state.ticketData[1].end_time).format("Do MMMM YY")}
+											{moment(this.state.ticketData[1].end_time).format('Do MMMM YY')}
 										</Text>
 										<Text>
 											{' '}
 											Arrival Time:
-											{moment(this.state.ticketData[1].end_time).format("h:mm a")}
+											{moment(this.state.ticketData[1].end_time).format('h:mm a')}
 										</Text>
 									</React.Fragment>
 								</View>

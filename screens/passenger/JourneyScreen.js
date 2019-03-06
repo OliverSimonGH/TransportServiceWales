@@ -33,8 +33,8 @@ export default class JourneyScreen extends Component {
 
 			from: null,
 			to: null,
-			date: new Date(),
-			time: new Date(),
+			date: null,
+			time: null,
 			numPassenger: 1,
 			numWheelchair: 0,
 
