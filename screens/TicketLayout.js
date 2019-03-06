@@ -66,9 +66,9 @@ export default class TicketLayout extends Component {
                                                     Departure:
 											{moment(this.state.ticketData[0].start_time).format("dddd Do h:mm a")}
                                                 </Text>
-                                                <View style={styles.imageContainer}>
+                                                {/* <View style={styles.imageContainer}>
 											<Image
-												source={require('../assets/images/ticket-logo.png')}
+												source={require('../assets/images/transport.jpg')}
 												style={{
 													width: 150,
 													height: 150,
@@ -76,7 +76,7 @@ export default class TicketLayout extends Component {
 													
 												}}
 											/>
-										</View>
+										</View> */}
 
                                                 <Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
                                                     To City:
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
         paddingLeft: 34,
         paddingTop: 20,
         backgroundColor: 'transparent',
+        justifyContent: 'space-between'
 
     },
     imageContainer: {
