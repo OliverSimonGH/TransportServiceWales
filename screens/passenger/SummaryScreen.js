@@ -34,7 +34,7 @@ class SummaryScreen extends React.Component {
 	// 	this.setState({ data: JSONresponse });
 	// };
 
-	onSubmit = () => {
+	sendEmail = () => {
 		const {
 			date,
 			street,
@@ -68,14 +68,11 @@ class SummaryScreen extends React.Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						this.bookJourney();
-						this.payForTicket();
-						this.props.navigation.navigate('JourneyScreen');
 						break;
 					//User Exists
 					case 1:
 						this.setState({
-							errors: [ { title: 'Errors', content: 'There was an error whilst sending confirmation' } ]
+							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
 						});
 						break;
 				}
@@ -96,7 +93,6 @@ class SummaryScreen extends React.Component {
 	};
 
 	componentDidMount() {
-		console.log(this.props.navigation.state.params);
 		const { numPassenger } = this.props.navigation.state.params;
 		this.setState({
 			total: parseInt(numPassenger * 3)
@@ -143,6 +139,21 @@ class SummaryScreen extends React.Component {
 					type: 'Ticket Purchased'
 				});
 			});
+
+			const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
+			const navData = {
+				data: {
+					startLocation: `${street}, ${city}`,
+					endLocation: `${endStreet}, ${endCity}`,
+					passenger: numPassenger,
+					wheelchair: numWheelchair
+				},
+				date: moment(date).format('MMMM Do YYYY')
+			};
+
+			this.bookJourney();
+			this.sendEmail();
+			this.props.navigation.navigate('Confirmation', navData);
 	};
 
 	render() {
@@ -234,8 +245,8 @@ class SummaryScreen extends React.Component {
 									<View style={styles.buttonContainer}>
 										<Button
 											danger
-											style={[ styles.button, { backgroundColor: '#ff0000' } ]}
-											onPress={this.onSubmit}
+											style={[styles.button, { backgroundColor: '#ff0000' }]}
+											onPress={this.payForTicket}
 										>
 											<Text style={styles.buttonText}>Pay</Text>
 										</Button>
