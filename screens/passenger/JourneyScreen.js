@@ -9,7 +9,6 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import API_KEY from '../../google_api_key';
-import ip from '../../ipstore';
 
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
@@ -309,7 +308,7 @@ export default class JourneyScreen extends Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView>
-					<GlobalHeader type={3} header="Journey Planner" navigateTo={this.navigateTo} />
+					<GlobalHeader type={1} navigateTo={this.navigateTo} />
 					<Container style={styles.contentContainer}>
 						<Content>
 							{/* Favourite recent journeys button */}

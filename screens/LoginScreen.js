@@ -49,7 +49,8 @@ class loginScreen extends Component {
 						this.props.navigation.navigate('Driver');
 						break;
 				}
-			});
+			})
+			.catch((error) => console.log(error));
 	};
 
 	onRegisterClick = () => {
@@ -64,7 +65,7 @@ class loginScreen extends Component {
 		return (
 			<Container>
 				<Content>
-					<GlobalHeader type={2} navigateTo={this.navigateTo} />
+					<GlobalHeader type={1} navigateTo={this.navigateTo} />
 					{this.state.errors &&
 					!!this.state.errors.length && (
 						<Accordion
