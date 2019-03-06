@@ -34,7 +34,7 @@ class SummaryScreen extends React.Component {
 	// 	this.setState({ data: JSONresponse });
 	// };
 
-	onSubmit = () => {
+	onEmail = () => {
 		const {
 			date,
 			street,
@@ -68,9 +68,6 @@ class SummaryScreen extends React.Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						this.bookJourney();
-						this.payForTicket();
-						this.props.navigation.navigate('JourneyScreen');
 						break;
 					//User Exists
 					case 1:
@@ -92,7 +89,8 @@ class SummaryScreen extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(bookingData)
-		});
+		})
+		.catch((error) => console.log(error));
 	};
 
 	componentDidMount() {
@@ -123,7 +121,7 @@ class SummaryScreen extends React.Component {
 		fetch(`http://${ip}:3000/user/addTransaction`, {
 			method: 'POST',
 			headers: {
-				Accept: 'application/json',
+				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
@@ -133,8 +131,9 @@ class SummaryScreen extends React.Component {
 				if (response.status !== 10) return;
 
 				this.props.userPayForTicket(this.state.total);
+
 				this.props.onAddTransaction({
-					current_funds: parseFloat(parseInt(this.props.user.funds)).toFixed(2),
+					current_funds: parseFloat(this.props.user.funds).toFixed(2),
 					date: new Date(),
 					fk_transaction_type_id: 1,
 					fk_user_id: this.props.user.id,
@@ -142,18 +141,60 @@ class SummaryScreen extends React.Component {
 					transaction_id: uuid(),
 					type: 'Ticket Purchased'
 				});
-			});
+
+				this.bookJourney();
+				this.onEmail();
+				this.props.navigation.navigate('Home');
+			})
+			.catch((error) => console.log(error));
 	};
+
+	payWithConcessionary = () => {
+		const data = {
+			current_funds: this.props.user.funds,
+			spent_funds: 0.00,
+			fk_transaction_type_id: 3
+		};
+
+		fetch(`http://${ip}:3000/user/addTransaction`, {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then((reponse) => reponse.json())
+			.then((response) => {
+				if (response.status !== 10) return;
+
+				this.props.userPayForTicket(0.00);
+
+				this.props.onAddTransaction({
+					current_funds: parseFloat(this.props.user.funds).toFixed(2),
+					date: new Date(),
+					fk_transaction_type_id: 3,
+					fk_user_id: this.props.user.id,
+					spent_funds: 0.00,
+					transaction_id: uuid(),
+					type: 'Concessionary Ticket'
+				});
+			})
+
+			this.bookJourney();
+			this.onEmail();
+			this.props.navigation.navigate('Home');
+	}
 
 	render() {
 		const data = this.props.navigation.state.params;
+		console.log(this.props.user)
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
 					<Content>
 						<GlobalHeader
-							type={3}
-							header="Booking Summary"
+							type={1}
 							navigateTo={this.navigateTo}
 							isBackButtonActive={1}
 						/>
@@ -231,14 +272,16 @@ class SummaryScreen extends React.Component {
 								{/* Wallet information */}
 								<View style={styles.walletBlance}>
 									<WalletBalance type={2} />
+									{this.props.user.concessionary == 0 &&
 									<View style={styles.buttonContainer}>
 										<Button
 											danger
 											style={[ styles.button, { backgroundColor: '#ff0000' } ]}
-											onPress={this.onSubmit}
+											onPress={this.payForTicket}
 										>
 											<Text style={styles.buttonText}>Pay</Text>
 										</Button>
+										
 										<Button
 											bordered
 											danger
@@ -250,6 +293,34 @@ class SummaryScreen extends React.Component {
 											<Text style={styles.buttonText}>Add Funds</Text>
 										</Button>
 									</View>
+									}
+									{this.props.user.concessionary == 1 &&
+									<View style={styles.buttonButtonContainer}>
+									<View style={styles.buttonContainer}>
+										<Button
+											danger
+											style={[ styles.button, { backgroundColor: '#ff0000' } ]}
+											onPress={this.payForTicket}
+										>
+											<Text style={styles.buttonText}>Pay</Text>
+										</Button>
+										
+										<Button
+											danger
+											style={[ styles.button, { backgroundColor: '#ff0000' } ]}
+											onPress={() => {
+												this.props.navigation.navigate('AddFunds');
+											}}
+										>
+											<Text style={styles.buttonText}>Add Funds</Text>
+										</Button>
+									</View>
+									<View style={[styles.buttonContainer, {marginTop: -17, marginBottom: 25}]}>	
+										<Button bordered danger style={styles.buttonFullWidth} onPress={this.payWithConcessionary}>
+											<Text style={styles.buttonText}>Concessionary</Text>
+										</Button>
+									</View>
+									</View>}
 								</View>
 							</View>
 						</View>
@@ -360,11 +431,18 @@ const styles = StyleSheet.create({
 		width: '100%',
 		marginTop: 15,
 		justifyContent: 'space-evenly',
-		marginBottom: 15
 	},
 	button: {
 		width: '45%',
 		justifyContent: 'center'
+	},
+	buttonFullWidth: {
+		width: '94%',
+		justifyContent: 'center',
+		marginBottom: 15,
+	},
+	buttonButtonContainer: {
+		flexDirection: 'column'
 	}
 });
 

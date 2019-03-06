@@ -29,7 +29,8 @@ export default class TicketsScreen extends React.Component {
 			this.setState({
 				ticketData: response.ticket
 			});
-		});
+		})
+		.catch((error) => console.log(error));
 	}
 
 	openTicket = (data) => {
@@ -83,7 +84,7 @@ export default class TicketsScreen extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-					<GlobalHeader type={3} header="My Tickets" navigateTo={this.navigateTo} />
+					<GlobalHeader type={1} navigateTo={this.navigateTo} />
 					<Container style={styles.contentContainer}>
 						<Content>
 							<View style={styles.secondaryButtonContainer}>
