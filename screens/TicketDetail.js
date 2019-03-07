@@ -97,7 +97,7 @@ class TicketDetail extends React.Component {
 
 	ticketCancelled = (amount, cancellationFeeApplied) => {
 		const data = {
-			ticketId: 1,
+			ticketId: this.props.navigation.state.params.id,
 			amount: amount,
 			cancellationFeeApplied: cancellationFeeApplied
 		};
