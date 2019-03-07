@@ -437,6 +437,51 @@ app.post('/user/addTransaction', (req, res) => {
 	);
 });
 
+app.post('/user/cancelTicket', (req, res) => {
+	const userId = localStorage.getItem('userId');
+	const ticketId = req.body.ticketId;
+	const amount = req.body.amount;
+	const cancellationFeeApplied = req.body.cancellationFeeApplied;
+
+	connection.beginTransaction((err) => {
+		if (err) throw error
+
+		connection.query(
+			'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
+			[userId, ticketId],
+			(error, row, fields) => {
+				if (error) {
+					return connection.rollback(function () {
+						throw error;
+					});
+				}
+			}
+		);
+
+		if (cancellationFeeApplied) {
+			connection.query(
+				'UPDATE user SET funds = funds - 1 WHERE user_id = ?',
+				[userId, amount],
+				(error, row, fields) => {
+					if (error) {
+						return connection.rollback(function () {
+							throw error;
+						});
+					}
+				}
+			);
+		}
+
+		connection.commit((err) => {
+			if (err) {
+				return connection.rollback(() => {
+					throw err;
+				});
+			}
+		});
+	})
+})
+
 app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });

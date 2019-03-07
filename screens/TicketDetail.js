@@ -47,20 +47,25 @@ class TicketDetail extends React.Component {
 	}
 
 	cancelTicketPopupYes = (ticketDate) => {
-
 		// Cancellation fee applied
 		if (this.cancellationFeeApplied(ticketDate)) {
-			this.props.addTransaction({
-				current_funds: parseFloat(this.props.user.funds).toFixed(2),
-				date: new Date(),
-				fk_transaction_type_id: 4,
-				fk_user_id: this.props.user.id,
-				spent_funds: 0.00,
-				transaction_id: uuid(),
-				type: 'Ticket Cancelled',
-				cancellation_fee: 1
+			new Promise((resolve, reject) => {
+				this.props.userPayForTicket(1);
+				resolve()
 			})
-			// this.props.userPayForTicket(cancellation fee cost);
+			.then(() => {
+				this.props.addTransaction({
+					current_funds: parseFloat(this.props.user.funds).toFixed(2),
+					date: new Date(),
+					fk_transaction_type_id: 4,
+					fk_user_id: this.props.user.id,
+					spent_funds: 1,
+					transaction_id: uuid(),
+					type: 'Ticket Cancelled',
+					cancellation_fee: 1
+				})
+			})
+			this.ticketCancelled(0, 1)
 		}
 
 		// Cancellation fee not applied
@@ -75,14 +80,11 @@ class TicketDetail extends React.Component {
 				type: 'Ticket Cancelled',
 				cancellation_fee: 0
 			})
+			this.ticketCancelled(0, 0)
 		}
 
 		this.cancelTicketPopupNo();
 	}
-
-	navigateTo = () => {
-		this.props.navigation.navigate('Ticket');
-	};
 
 	cancellationFeeApplied = (ticketDate) => {
 		//Mock date at the moment, until we can get a journey time
@@ -92,6 +94,28 @@ class TicketDetail extends React.Component {
 		if (timeDiff <= 7200 && timeDiff >= 0) return true;
 		return false;
 	}
+
+	ticketCancelled = (amount, cancellationFeeApplied) => {
+		const data = {
+			ticketId: 1,
+			amount: amount,
+			cancellationFeeApplied: cancellationFeeApplied
+		};
+
+		return fetch(`http://${ip}:3000/user/cancelTicket`, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+		.catch(err => {})
+	}
+
+	navigateTo = () => {
+		this.props.navigation.navigate('Ticket');
+	};
 
 	render() {
 		return (
@@ -178,7 +202,7 @@ class TicketDetail extends React.Component {
 											/>
 											<DialogButton
 												text="Yes"
-												onPress={this.cancelTicketPopupYes(this.state.ticketData[0].start_time)}
+												onPress={() => this.cancelTicketPopupYes(this.state.ticketData[0].start_time)}
 											/>
 										</DialogFooter>
 									}
