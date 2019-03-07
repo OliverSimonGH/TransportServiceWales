@@ -46,39 +46,52 @@ class TicketDetail extends React.Component {
 		})
 	}
 
-	cancelTicketPopupYes = () => {
+	cancelTicketPopupYes = (ticketDate) => {
 
 		// Cancellation fee applied
-		// this.props.addTransaction({
-		// 	current_funds: parseFloat(this.props.user.funds).toFixed(2),
-		// 	date: new Date(),
-		// 	fk_transaction_type_id: 4,
-		// 	fk_user_id: this.props.user.id,
-		// 	spent_funds: 0.00,
-		// 	transaction_id: uuid(),
-		// 	type: 'Ticket Cancelled',
-		// 	cancellation_fee: 1
-		// })
-		// this.props.userPayForTicket(cancellation fee cost);
+		if (this.cancellationFeeApplied(ticketDate)) {
+			this.props.addTransaction({
+				current_funds: parseFloat(this.props.user.funds).toFixed(2),
+				date: new Date(),
+				fk_transaction_type_id: 4,
+				fk_user_id: this.props.user.id,
+				spent_funds: 0.00,
+				transaction_id: uuid(),
+				type: 'Ticket Cancelled',
+				cancellation_fee: 1
+			})
+			// this.props.userPayForTicket(cancellation fee cost);
+		}
 
-		//No cancellation fee not applied
-		this.props.addTransaction({
-			current_funds: parseFloat(this.props.user.funds).toFixed(2),
-			date: new Date(),
-			fk_transaction_type_id: 4,
-			fk_user_id: this.props.user.id,
-			spent_funds: 0.00,
-			transaction_id: uuid(),
-			type: 'Ticket Cancelled',
-			cancellation_fee: 0
-		})
+		// Cancellation fee not applied
+		else {
+			this.props.addTransaction({
+				current_funds: parseFloat(this.props.user.funds).toFixed(2),
+				date: new Date(),
+				fk_transaction_type_id: 4,
+				fk_user_id: this.props.user.id,
+				spent_funds: 0.00,
+				transaction_id: uuid(),
+				type: 'Ticket Cancelled',
+				cancellation_fee: 0
+			})
+		}
 
-		this.cancelTicketPopupNo()
+		this.cancelTicketPopupNo();
 	}
 
 	navigateTo = () => {
 		this.props.navigation.navigate('Ticket');
 	};
+
+	cancellationFeeApplied = (ticketDate) => {
+		//Mock date at the moment, until we can get a journey time
+		const journeytime = moment(ticketDate).add(1, 'hour');
+		const timeDiff = moment(journeytime).unix() - moment(ticketDate).unix()
+
+		if (timeDiff <= 7200 && timeDiff >= 0) return true;
+		return false;
+	}
 
 	render() {
 		return (
@@ -165,14 +178,14 @@ class TicketDetail extends React.Component {
 											/>
 											<DialogButton
 												text="Yes"
-												onPress={this.cancelTicketPopupYes}
+												onPress={this.cancelTicketPopupYes(this.state.ticketData[0].start_time)}
 											/>
 										</DialogFooter>
 									}
 									onTouchOutside={this.cancelTicketPopupNo}
 								>
 									<DialogContent>
-										<Text>Are you sure you want to cancel your journey from {this.state.ticketData[0].city}, {this.state.ticketData[0].street} to {this.state.ticketData[1].city}, {this.state.ticketData[1].street}?</Text>
+										<Text>Are you sure you want to cancel your journey from <Text style={{fontWeight: 'bold'}}>{this.state.ticketData[0].city}, {this.state.ticketData[0].street}</Text> to <Text style={{fontWeight: 'bold'}}>{this.state.ticketData[1].city}, {this.state.ticketData[1].street}</Text>?</Text>
 									</DialogContent>
 								</Dialog>
 								

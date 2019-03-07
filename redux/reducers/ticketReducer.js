@@ -35,6 +35,8 @@ export default function(state = initialState, action) {
                 newTicket = {}
             }
 
+            console.log(newTicketList)
+
             return {
                 ...state,
                 tickets: newTicketList

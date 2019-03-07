@@ -28,7 +28,7 @@ class TicketsScreen extends React.Component {
 	};
 
 	componentDidMount() {
-		console.log(this.props.fetchTickets())
+		this.props.fetchTickets()
 		fetch(`http://${ip}:3000/tickets`).then((response) => response.json()).then((response) => {
 			this.setState({
 				ticketData: response.ticket
