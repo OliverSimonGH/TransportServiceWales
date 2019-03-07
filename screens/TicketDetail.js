@@ -9,8 +9,13 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import moment from 'moment';
+import uuid from 'uuid/v4'
 
-export default class TicketDetail extends React.Component {
+import { connect } from 'react-redux';
+import { addTransaction } from '../redux/actions/transactionAction'
+import { userPayForTicket } from '../redux/actions/userAction'
+
+class TicketDetail extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -23,7 +28,6 @@ export default class TicketDetail extends React.Component {
 	componentDidMount() {
 		const { id } = this.props.navigation.state.params;
 		fetch(`http://${ip}:3000/ticketsQuery1?id=${id}`).then((response) => response.json()).then((response) => {
-			console.log(response);
 			this.setState({
 				ticketData: response.ticket
 			});
@@ -43,13 +47,33 @@ export default class TicketDetail extends React.Component {
 	}
 
 	cancelTicketPopupYes = () => {
-		this.setState({
-			cancelTicketPopup: true
-		})
-	}
 
-	cancelTicket = () => {
-		
+		// Cancellation fee applied
+		// this.props.addTransaction({
+		// 	current_funds: parseFloat(this.props.user.funds).toFixed(2),
+		// 	date: new Date(),
+		// 	fk_transaction_type_id: 4,
+		// 	fk_user_id: this.props.user.id,
+		// 	spent_funds: 0.00,
+		// 	transaction_id: uuid(),
+		// 	type: 'Ticket Cancelled',
+		// 	cancellation_fee: 1
+		// })
+		// this.props.userPayForTicket(cancellation fee cost);
+
+		//No cancellation fee not applied
+		this.props.addTransaction({
+			current_funds: parseFloat(this.props.user.funds).toFixed(2),
+			date: new Date(),
+			fk_transaction_type_id: 4,
+			fk_user_id: this.props.user.id,
+			spent_funds: 0.00,
+			transaction_id: uuid(),
+			type: 'Ticket Cancelled',
+			cancellation_fee: 0
+		})
+
+		this.cancelTicketPopupNo()
 	}
 
 	navigateTo = () => {
@@ -154,17 +178,6 @@ export default class TicketDetail extends React.Component {
 								
 							</React.Fragment>
 							}
-
-							{/* <Card >
-								<CardItem>
-									<Body>
-										<Text>
-											Are you sure you want to cancel your journey from {this.state.ticketData[0].city}, {this.state.ticketData[0].city} to {this.state.ticketData[1].city}, {this.state.ticketData[1].city}?
-								 				</Text>
-									</Body>
-								</CardItem>
-							</Card> */}
-
 						</Content>
 					</Container>
 				</ScrollView>
@@ -260,3 +273,16 @@ const styles = StyleSheet.create({
 		backgroundColor: '#ff0000'
 	}
 });
+
+const mapStateToProps = state => ({
+	user: state.userReducer.user
+})
+
+const mapDispatchToProps = dispatch => {
+	return {
+		userPayForTicket: amount => dispatch(userPayForTicket(amount)),
+		addTransaction: transaction => dispatch(addTransaction(transaction))
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TicketDetail)

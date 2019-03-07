@@ -250,6 +250,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`transaction` (
   `transaction_id` INT NOT NULL AUTO_INCREMENT,
   `current_funds` DECIMAL(15,2) NOT NULL,
   `spent_funds` DECIMAL(15,2) NOT NULL,
+  `cancellation_fee` TINYINT(4) NOT NULL DEFAULT '0',
   `date` DATETIME NOT NULL,
   `fk_transaction_type_id` INT NOT NULL,
   `fk_user_id` INT(11) NOT NULL,

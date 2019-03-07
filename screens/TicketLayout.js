@@ -26,7 +26,6 @@ export default class TicketLayout extends Component {
 		fetch(`http://${ip}:3000/ticketsQuery?id=${id}&expired=${expired}`)
 			.then((response) => response.json())
 			.then((response) => {
-				console.log(response);
 				this.setState({
 					ticketData: response.ticket
 				});

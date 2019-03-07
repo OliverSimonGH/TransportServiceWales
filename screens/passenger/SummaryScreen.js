@@ -134,7 +134,8 @@ class SummaryScreen extends React.Component {
 					fk_user_id: this.props.user.id,
 					spent_funds: this.state.total,
 					transaction_id: uuid(),
-					type: 'Ticket Purchased'
+					type: 'Ticket Purchased',
+					cancellation_fee: 0
 				});
 			})
 			.catch((error) => console.log(error));

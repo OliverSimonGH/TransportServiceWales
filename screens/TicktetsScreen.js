@@ -7,11 +7,13 @@ import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
-
 import TicketLayout from './TicketLayout';
 import uuid from 'uuid/v4';
 
-export default class TicketsScreen extends React.Component {
+import { connect } from 'react-redux';
+import { fetchTickets } from '../redux/actions/ticketAction';
+
+class TicketsScreen extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -26,6 +28,7 @@ export default class TicketsScreen extends React.Component {
 	};
 
 	componentDidMount() {
+		console.log(this.props.fetchTickets())
 		fetch(`http://${ip}:3000/tickets`).then((response) => response.json()).then((response) => {
 			this.setState({
 				ticketData: response.ticket
@@ -160,3 +163,9 @@ const styles = StyleSheet.create({
 		paddingTop: 10
 	}
 });
+
+const mapStateToProps = state => ({
+	tickets: state.ticketReducer.tickets
+})
+
+export default connect (mapStateToProps, {fetchTickets})(TicketsScreen)

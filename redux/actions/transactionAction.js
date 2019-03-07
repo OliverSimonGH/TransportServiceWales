@@ -13,6 +13,7 @@ export function fetchTransactions() {
         fetch(`http://${ip}:3000/user/transactions`)
 		.then((response) => response.json())
 		.then((response) => {
+            console.log(response)
             dispatch({
                 type: FETCH_TRANSACTIONS,
 				payload: response

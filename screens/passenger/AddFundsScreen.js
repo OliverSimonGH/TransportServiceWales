@@ -43,7 +43,8 @@ class AddFundsScreen extends React.Component {
 				fk_user_id: this.props.user.id,
 				spent_funds: amount,
 				transaction_id: uuid(),
-				type: 'Funds added'
+				type: 'Funds added',
+				cancellation_fee: 0
 			});
 
 			this.props.onUpdateUserFunds(amount);

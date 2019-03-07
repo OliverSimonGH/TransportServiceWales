@@ -25,10 +25,14 @@ class WalletTransaction extends Component {
 							{transaction.fk_transaction_type_id === 1 && <Text style={styles.purchaseBold}>- £{parseFloat(transaction.spent_funds).toFixed(2)}</Text>} 
 							{transaction.fk_transaction_type_id === 2 && <Text style={styles.purchaseBold}>+ £{parseFloat(transaction.spent_funds).toFixed(2)}</Text>} 
 							{transaction.fk_transaction_type_id === 3 && <Text style={styles.purchaseBold}>£{parseFloat(transaction.spent_funds).toFixed(2)}</Text>} 
+							{transaction.fk_transaction_type_id === 4 && transaction.cancellation_fee === 0 && <Text style={styles.purchaseBold}>£{parseFloat(transaction.spent_funds).toFixed(2)}</Text>}
+							{transaction.fk_transaction_type_id === 4 && transaction.cancellation_fee === 1 && <Text style={styles.purchaseBold}>- £{parseFloat(transaction.spent_funds).toFixed(2)}</Text>}
 					</View>
 				</View>
 			)
 		})
+
+		console.log(transactions)
 
 		return (
 			<View>
