@@ -11,8 +11,8 @@ import WalletBalance from './WalletBalance';
 import uuid from 'uuid/v4';
 
 import { connect } from 'react-redux';
-import { addTransaction } from '../../actions/transactionAction';
-import { userPayForTicket } from '../../actions/userAction';
+import { addTransaction } from '../../redux/actions/transactionAction';
+import { userPayForTicket } from '../../redux/actions/userAction';
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {

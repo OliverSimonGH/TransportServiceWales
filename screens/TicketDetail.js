@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOpacity, Image, Dimensions} from 'react-native';
+import Dialog, { DialogFooter, DialogButton, DialogContent, DialogTitle} from 'react-native-popup-dialog';
 // import API_KEY from '../google_api_key';
 import _ from 'lodash';
-import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
+import { Content, Container, Button, Text, StyleProvider } from 'native-base';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
@@ -15,8 +16,7 @@ export default class TicketDetail extends React.Component {
 	};
 
 	state = {
-		expansionIsOpen: false,
-		isLoadingComplete: false,
+		cancelTicketPopup: false,
 		ticketData: []
 	};
 
@@ -30,18 +30,27 @@ export default class TicketDetail extends React.Component {
 		});
 	}
 
-	openTicket = () => {
+	cancelTicketPopup = () => {
 		this.setState({
-			expansionIsOpen: true
-		});
-	};
+			cancelTicketPopup: true
+		})
+	}
 
-	closeTicket = () => {
-		console.log('hello');
+	cancelTicketPopupNo = () => {
 		this.setState({
-			expansionIsOpen: false
-		});
-	};
+			cancelTicketPopup: false
+		})
+	}
+
+	cancelTicketPopupYes = () => {
+		this.setState({
+			cancelTicketPopup: true
+		})
+	}
+
+	cancelTicket = () => {
+		
+	}
 
 	navigateTo = () => {
 		this.props.navigation.navigate('Ticket');
@@ -58,7 +67,8 @@ export default class TicketDetail extends React.Component {
 								<Text style={styles.title}>Ticket Details</Text>
 							</View>
 
-							{this.state.ticketData.length >= 1 && (
+							{this.state.ticketData.length >= 1 && 
+							<React.Fragment>
 								<View style={styles.container}>
 									<React.Fragment>
 										<Text>
@@ -110,9 +120,51 @@ export default class TicketDetail extends React.Component {
 											Arrival Time:
 											{moment(this.state.ticketData[1].end_time).format('h:mm a')}
 										</Text>
+										<View style={styles.buttonContainer}>
+											<Button danger style={styles.button} onPress={this.cancelTicketPopup}>
+												<Text>Cancel</Text>
+											</Button>
+										</View>
 									</React.Fragment>
 								</View>
-							)}
+							
+								
+								<Dialog
+									width={0.8}
+									visible={this.state.cancelTicketPopup}
+									dialogTitle={<DialogTitle title="Ticket Cancellation" />}
+									footer={
+										<DialogFooter>
+											<DialogButton
+												text="No"
+												onPress={this.cancelTicketPopupNo}
+											/>
+											<DialogButton
+												text="Yes"
+												onPress={this.cancelTicketPopupYes}
+											/>
+										</DialogFooter>
+									}
+									onTouchOutside={this.cancelTicketPopupNo}
+								>
+									<DialogContent>
+										<Text>Are you sure you want to cancel your journey from {this.state.ticketData[0].city}, {this.state.ticketData[0].street} to {this.state.ticketData[1].city}, {this.state.ticketData[1].street}?</Text>
+									</DialogContent>
+								</Dialog>
+								
+							</React.Fragment>
+							}
+
+							{/* <Card >
+								<CardItem>
+									<Body>
+										<Text>
+											Are you sure you want to cancel your journey from {this.state.ticketData[0].city}, {this.state.ticketData[0].city} to {this.state.ticketData[1].city}, {this.state.ticketData[1].city}?
+								 				</Text>
+									</Body>
+								</CardItem>
+							</Card> */}
+
 						</Content>
 					</Container>
 				</ScrollView>
@@ -125,7 +177,6 @@ const styles = StyleSheet.create({
 	container: {
 		marginLeft: 10,
 		marginBottom: 10,
-		height: 300,
 		width: 300,
 		borderRadius: 0.5,
 		borderWidth: 1,
@@ -196,5 +247,16 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: 'gray',
 		paddingTop: 10
+	},
+	buttonContainer: {
+		flexDirection: 'row',
+		alignSelf: 'center',
+		marginTop: 15,
+		alignItems: 'center'
+	},
+	button: {
+		width: '100%',
+		justifyContent: 'center',
+		backgroundColor: '#ff0000'
 	}
 });

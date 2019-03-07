@@ -4,7 +4,7 @@ import ip from '../../ipstore';
 import moment from 'moment';
 
 import { connect } from 'react-redux';
-import { fetchTransactions } from '../../actions/transactionAction';
+import { fetchTransactions } from '../../redux/actions/transactionAction';
 
 class WalletTransaction extends Component {
 

@@ -10,8 +10,8 @@ import WalletHeader from './WalletHeader';
 import WalletBalance from './WalletBalance';
 
 import { connect } from 'react-redux';
-import { addTransaction } from '../../actions/transactionAction';
-import { updateUserFunds } from '../../actions/userAction';
+import { addTransaction } from '../../redux/actions/transactionAction';
+import { updateUserFunds } from '../../redux/actions/userAction';
 
 class AddFundsScreen extends React.Component {
 	static navigationOptions = {

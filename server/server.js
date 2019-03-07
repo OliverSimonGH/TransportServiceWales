@@ -24,7 +24,7 @@ app.use(expressValidator());
 
 if (typeof localStorage === 'undefined' || localStorage === null) {
 	var LocalStorage = require('node-localstorage').LocalStorage;
-	localStorage = new LocalStorage('./scratch');
+	localStorage = new LocalStorage('./server/scratch');
 }
 
 // Change to your credentials
