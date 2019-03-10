@@ -19,30 +19,15 @@ class TicketsScreen extends React.Component {
 	};
 
 	state = {
-		expansionIsOpen: false,
-		isLoadingComplete: false,
-		data: [],
-		ticketData: [],
-		ticketExpired: [],
 		showActive: 0
 	};
 
 	componentDidMount() {
 		this.props.fetchTickets()
-		fetch(`http://${ip}:3000/tickets`).then((response) => response.json()).then((response) => {
-			this.setState({
-				ticketData: response.ticket
-			});
-		});
-		fetch(`http://${ip}:3000/ticketsExpired`).then((response) => response.json()).then((response) => {
-			this.setState({
-				ticketExpired: response.ticket
-			});
-		});
 	}
 
-	openTicket = (ticketId) => {
-		this.props.navigation.navigate('Details', { id: ticketId });
+	openTicket = (ticketData) => {
+		this.props.navigation.navigate('Details', { ticket: ticketData });
 	};
 
 	showActive = () => {
@@ -57,7 +42,7 @@ class TicketsScreen extends React.Component {
 		this.props.navigation.navigate('Ticket');
 	};
 
-	render() {		
+	render() {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
@@ -75,16 +60,22 @@ class TicketsScreen extends React.Component {
 									<Text style={styles.secondaryButtontext}>Expired Tickets</Text>
 								</Button>
 							</View>
-							{this.state.showActive === 0 && <View>{this.state.ticketData.map((ticket) => {
-								return (
-									<TicketLayout onOpen={() => this.openTicket(ticket.ticket_id)} key={uuid()} ticketId={ticket.ticket_id} expired={0}/>
-								)
-							})}</View>}
-							{this.state.showActive === 1 && <View>{this.state.ticketExpired.map((ticket) => {
-								return (
-									<TicketLayout onOpen={() => this.openTicket(ticket.ticket_id)} key={uuid()} ticketId={ticket.ticket_id} expired={1}/>
-								)
-							})}</View>}
+							<View>
+							{this.props.tickets !== 'undefined' && this.state.showActive === 0 && this.props.tickets.length > 0 && this.props.tickets.map((ticket) => {
+								if (ticket.expired === 0){
+									return(
+										<TicketLayout onOpen={() => this.openTicket(ticket)} key={uuid()} ticket={ticket}/>
+									)
+								}
+							})}
+							{this.props.tickets !== 'undefined' && this.state.showActive === 1 && this.props.tickets.length > 0 && this.props.tickets.map((ticket) => {
+								if (ticket.expired === 1){
+									return(
+										<TicketLayout onOpen={() => this.openTicket(ticket)} key={uuid()} ticket={ticket}/>
+									)
+								}
+							})}
+							</View>
 						</Content>
 					</Container>
 				</ScrollView>

@@ -12,26 +12,17 @@ import moment from 'moment';
 import uuid from 'uuid/v4'
 
 import { connect } from 'react-redux';
-import { addTransaction } from '../redux/actions/transactionAction'
-import { userPayForTicket } from '../redux/actions/userAction'
+import { addTransaction } from '../redux/actions/transactionAction';
+import { userPayForTicket } from '../redux/actions/userAction';
+import { cancelTicket, fetchTickets } from '../redux/actions/ticketAction';
 
 class TicketDetail extends React.Component {
 	static navigationOptions = {
 		header: null
-	};
+	}
 
 	state = {
-		cancelTicketPopup: false,
-		ticketData: []
-	};
-
-	componentDidMount() {
-		const { id } = this.props.navigation.state.params;
-		fetch(`http://${ip}:3000/ticketsQuery1?id=${id}`).then((response) => response.json()).then((response) => {
-			this.setState({
-				ticketData: response.ticket
-			});
-		});
+		cancelTicketPopup: false
 	}
 
 	cancelTicketPopup = () => {
@@ -65,7 +56,7 @@ class TicketDetail extends React.Component {
 					cancellation_fee: 1
 				})
 			})
-			this.ticketCancelled(0, 1)
+			this.ticketCancelledPost(0, 1)
 		}
 
 		// Cancellation fee not applied
@@ -80,10 +71,12 @@ class TicketDetail extends React.Component {
 				type: 'Ticket Cancelled',
 				cancellation_fee: 0
 			})
-			this.ticketCancelled(0, 0)
+			this.ticketCancelledPost(0, 0)
 		}
-
+		
+		this.props.ticketCancelRedux(this.props.navigation.state.params.ticket.id)
 		this.cancelTicketPopupNo();
+		this.navigateTo()
 	}
 
 	cancellationFeeApplied = (ticketDate) => {
@@ -95,9 +88,9 @@ class TicketDetail extends React.Component {
 		return false;
 	}
 
-	ticketCancelled = (amount, cancellationFeeApplied) => {
+	ticketCancelledPost = (amount, cancellationFeeApplied) => {
 		const data = {
-			ticketId: this.props.navigation.state.params.id,
+			ticketId: this.props.navigation.state.params.ticket.id,
 			amount: amount,
 			cancellationFeeApplied: cancellationFeeApplied
 		};
@@ -118,6 +111,7 @@ class TicketDetail extends React.Component {
 	};
 
 	render() {
+		const ticket = this.props.navigation.state.params.ticket;
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
@@ -127,29 +121,20 @@ class TicketDetail extends React.Component {
 							<View style={styles.titleContainer}>
 								<Text style={styles.title}>Ticket Details</Text>
 							</View>
-
-							{this.state.ticketData.length >= 1 && 
-							<React.Fragment>
+							
 								<View style={styles.container}>
-									<React.Fragment>
+								
 										<Text>
-											City From:
-											{this.state.ticketData[0].city}
+											From City: {ticket.fromCity}
 										</Text>
 										<Text>
-											{' '}
-											Street From:
-											{this.state.ticketData[0].street}
+											From Street: {ticket.fromStreet}
 										</Text>
 										<Text>
-											{' '}
-											Date of Departure:
-											{moment(this.state.ticketData[0].start_time).format('Do MMMM YY')}
+											Date of Departure: {moment(ticket.startTime).format('Do MMMM YY')}
 										</Text>
 										<Text>
-											{' '}
-											Departure Time:
-											{moment(this.state.ticketData[0].start_time).format('h:mm a')}
+											Departure Time: {moment(ticket.startTime).format('h:mm a')}
 										</Text>
 										<View style={styles.imageContainer}>
 											<Image
@@ -163,30 +148,24 @@ class TicketDetail extends React.Component {
 											/>
 										</View>
 										<Text>
-											To City:
-											{this.state.ticketData[1].city}
+											To City: {ticket.toCity}
 										</Text>
 										<Text>
-											{' '}
-											To Street:
-											{this.state.ticketData[1].street}
+											To Street: {ticket.toStreet}
 										</Text>
 										<Text>
-											{' '}
-											Date of Arrival:
-											{moment(this.state.ticketData[1].end_time).format('Do MMMM YY')}
+											Date of Arrival: {moment(ticket.endTime).format('Do MMMM YY')}
 										</Text>
 										<Text>
-											{' '}
-											Arrival Time:
-											{moment(this.state.ticketData[1].end_time).format('h:mm a')}
+											Arrival Time: {moment(ticket.endTime).format('h:mm a')}
 										</Text>
+										{ticket.expired === 0 && ticket.cancelled === 0 && 
 										<View style={styles.buttonContainer}>
 											<Button danger style={styles.button} onPress={this.cancelTicketPopup}>
 												<Text>Cancel</Text>
 											</Button>
-										</View>
-									</React.Fragment>
+										</View>}
+								
 								</View>
 							
 								
@@ -202,19 +181,19 @@ class TicketDetail extends React.Component {
 											/>
 											<DialogButton
 												text="Yes"
-												onPress={() => this.cancelTicketPopupYes(this.state.ticketData[0].start_time)}
+												onPress={() => this.cancelTicketPopupYes(ticket.startTime)}
 											/>
 										</DialogFooter>
 									}
 									onTouchOutside={this.cancelTicketPopupNo}
 								>
 									<DialogContent>
-										<Text>Are you sure you want to cancel your journey from <Text style={{fontWeight: 'bold'}}>{this.state.ticketData[0].city}, {this.state.ticketData[0].street}</Text> to <Text style={{fontWeight: 'bold'}}>{this.state.ticketData[1].city}, {this.state.ticketData[1].street}</Text>?</Text>
+										<Text>Are you sure you want to cancel your journey from <Text style={{fontWeight: 'bold'}}>{ticket.fromCity}, {ticket.fromStreet}</Text> to <Text style={{fontWeight: 'bold'}}>{ticket.toCity}, {ticket.toStreet}</Text>?</Text>
 									</DialogContent>
 								</Dialog>
 								
-							</React.Fragment>
-							}
+						
+							
 						</Content>
 					</Container>
 				</ScrollView>
@@ -318,7 +297,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
 	return {
 		userPayForTicket: amount => dispatch(userPayForTicket(amount)),
-		addTransaction: transaction => dispatch(addTransaction(transaction))
+		addTransaction: transaction => dispatch(addTransaction(transaction)),
+		ticketCancelRedux: ticketId => dispatch(cancelTicket(ticketId))
 	}
 }
 

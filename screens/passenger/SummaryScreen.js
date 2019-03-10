@@ -13,6 +13,7 @@ import uuid from 'uuid/v4';
 import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';
+import { addTicket } from '../../redux/actions/ticketAction';
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -26,13 +27,6 @@ class SummaryScreen extends React.Component {
 		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
 		total: 0.0
 	};
-
-	// fetchData = async () => {
-	// 	const response = await fetch(`http://${ip}:3000/journey`);
-	// 	const JSONresponse = await response.json();
-	// 	console.log(JSONresponse);
-	// 	this.setState({ data: JSONresponse });
-	// };
 
 	sendEmail = () => {
 		const {
@@ -107,6 +101,7 @@ class SummaryScreen extends React.Component {
 		}
 		//Pay for Ticket
 		//Add Transaction
+		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
 		const data = {
 			current_funds: parseFloat(parseInt(this.props.user.funds) - parseInt(this.state.total)).toFixed(2),
 			spent_funds: this.state.total,
@@ -137,10 +132,24 @@ class SummaryScreen extends React.Component {
 					type: 'Ticket Purchased',
 					cancellation_fee: 0
 				});
+
+				this.props.addTicket({
+					"accessibilityRequired": numWheelchair > 0 ? 1 : 0,
+					"cancelled": 0,
+					"endTime": date,
+					"expired": 0,
+					"fromCity": city,
+					"fromStreet": street,
+					"id": this.props.ticketslength,
+					"paid": 1,
+					"startTime": time,
+					"toCity": endCity,
+					"toStreet": endStreet,
+					"used": 0,
+				});
 			})
 			.catch((error) => console.log(error));
 
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
 		const navData = {
 			data: {
 				startLocation: `${street}, ${city}`,
@@ -158,6 +167,7 @@ class SummaryScreen extends React.Component {
 	};
 
 	payWithConcessionary = () => {
+		const { date, time, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
 		const data = {
 			current_funds: this.props.user.funds,
 			spent_funds: 0.00,
@@ -187,9 +197,23 @@ class SummaryScreen extends React.Component {
 					transaction_id: uuid(),
 					type: 'Concessionary Ticket'
 				});
+
+				this.props.addTicket({
+					"accessibilityRequired": numWheelchair > 0 ? 1 : 0,
+					"cancelled": 0,
+					"endTime": date,
+					"expired": 0,
+					"fromCity": city,
+					"fromStreet": street,
+					"id": this.props.ticketslength,
+					"paid": 1,
+					"startTime": time,
+					"toCity": endCity,
+					"toStreet": endStreet,
+					"used": 0,
+				});
 			})
 
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
 		const navData = {
 			data: {
 				startLocation: `${street}, ${city}`,
@@ -211,7 +235,6 @@ class SummaryScreen extends React.Component {
 
 	render() {
 		const data = this.props.navigation.state.params;
-		console.log(this.props.user)
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
@@ -472,12 +495,14 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = (dispatch) => {
 	return {
 		userPayForTicket: (amount) => dispatch(userPayForTicket(amount)),
-		onAddTransaction: (transaction) => dispatch(addTransaction(transaction))
+		onAddTransaction: (transaction) => dispatch(addTransaction(transaction)),
+		addTicket: (ticket) => dispatch(addTicket(ticket))
 	};
 };
 
 const mapStateToProps = (state) => ({
-	user: state.userReducer.user
+	user: state.userReducer.user,
+	ticketslength: state.ticketReducer.ticketsLength
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SummaryScreen);

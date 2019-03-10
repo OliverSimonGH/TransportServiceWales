@@ -1,7 +1,9 @@
-import { FETCH_TICKETS, REMOVE_TICKET} from '../actions/types'
+import { FETCH_TICKETS, CANCEL_TICKET, ADD_TICKET} from '../actions/types'
+import update from 'immutability-helper';
 
 const initialState = {
-    tickets: []
+    tickets: [],
+    ticketsLength: 0
 }
 
 export default function(state = initialState, action) {
@@ -24,6 +26,7 @@ export default function(state = initialState, action) {
                     newTicket.expired = ticket.expired;
                     newTicket.paid = ticket.paid;
                     newTicket.used = ticket.used;
+                    newTicket.cancelled = ticket.cancelled;
                     newTicket.accessibilityRequired = ticket.accessibility_required;
                     continue;
                 }
@@ -35,18 +38,28 @@ export default function(state = initialState, action) {
                 newTicket = {}
             }
 
-            console.log(newTicketList)
-
             return {
                 ...state,
-                tickets: newTicketList
+                tickets: newTicketList,
+                ticketsLength: newTicketList.length + 1
             }
 
-        case REMOVE_TICKET:
+        case CANCEL_TICKET:
+        
             return {
-                ...state          
+                ...state,
+                tickets: state.tickets.map(ticket => ticket.id === action.payload ? {...ticket, cancelled: 1, expired: 1} : ticket)  
             }
        
+        case ADD_TICKET:
+
+            console.log(state.ticketsLength)
+            return {
+                ...state,
+                tickets: [...state.tickets, action.payload],
+                ticketsLength: state.ticketsLength + 1
+            }
+
         default:
             return state;
     }

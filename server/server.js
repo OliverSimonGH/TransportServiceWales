@@ -447,7 +447,7 @@ app.post('/user/cancelTicket', (req, res) => {
 		if (err) throw error
 
 		connection.query(
-			'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
+			'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1, t.expired = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
 			[userId, ticketId],
 			(error, row, fields) => {
 				if (error) {
@@ -460,8 +460,8 @@ app.post('/user/cancelTicket', (req, res) => {
 
 		if (cancellationFeeApplied) {
 			connection.query(
-				'UPDATE user SET funds = funds - 1 WHERE user_id = ?',
-				[userId, amount],
+				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
+				[amount, userId],
 				(error, row, fields) => {
 					if (error) {
 						return connection.rollback(function () {
@@ -519,7 +519,7 @@ app.get('/ticketsQuery', function(req, res) {
 
 app.get('/user/tickets', function(req, res) {
 	connection.query(
-		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id',
+		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.cancelled, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id',
 		function(error, rows, fields) {
 			if (error) throw error;
 

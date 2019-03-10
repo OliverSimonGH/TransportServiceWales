@@ -1,12 +1,20 @@
-import { FETCH_TICKETS, REMOVE_TICKET } from './types'
+import { FETCH_TICKETS, CANCEL_TICKET, ADD_TICKET} from './types'
 import ip from '../../ipstore'
 
-export function removeTicket(ticket){
+export function cancelTicket(ticketId){
     return {
-        type: REMOVE_TICKET,
+        type: CANCEL_TICKET,
+        payload: ticketId
+    }
+}
+
+export function addTicket(ticket){
+    return {
+        type: ADD_TICKET,
         payload: ticket
     }
 }
+
 
 export function fetchTickets() {
     return function(dispatch) {

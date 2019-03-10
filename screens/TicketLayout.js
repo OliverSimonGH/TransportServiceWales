@@ -9,30 +9,8 @@ const cols = 3,
 	rows = 3;
 
 export default class TicketLayout extends Component {
-	static navigationOptions = {
-		header: null
-	};
-
-	state = {
-		expansionIsOpen: false,
-		isLoadingComplete: false,
-		ticketData: []
-	};
-
-	componentDidMount() {
-		const id = this.props.ticketId;
-		const expired = this.props.expired;
-
-		fetch(`http://${ip}:3000/ticketsQuery?id=${id}&expired=${expired}`)
-			.then((response) => response.json())
-			.then((response) => {
-				this.setState({
-					ticketData: response.ticket
-				});
-			});
-	}
-
 	render() {
+		const ticket = this.props.ticket;
 		return (
 			<View style={{ backgroundColor: 'transparent', paddingBottom: 10, paddingLeft: 15 }}>
 				<Content>
@@ -43,42 +21,29 @@ export default class TicketLayout extends Component {
 						<Left>
 							<Body>
 								<TouchableOpacity style={styles.container} onPress={this.props.onOpen}>
-									{this.state.ticketData.length >= 1 && (
 										<View style={styles.container}>
 											<React.Fragment>
 												<Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
 													From:
 												</Text>
 												<Text>
-													{this.state.ticketData[0].street}, {this.state.ticketData[0].city}
+													{ticket.fromStreet}, {ticket.fromCity}
 												</Text>
 												<Text>
 													Departure:{' '}
-													{moment(this.state.ticketData[0].start_time).format(
+													{moment(ticket.startTime).format(
 														'dddd Do h:mm a'
 													)}
 												</Text>
-												{/* <View style={styles.imageContainer}>
-											<Image
-												source={require('../assets/images/transport.jpg')}
-												style={{
-													width: 150,
-													height: 150,
-													borderRadius: 10,
-													
-												}}
-											/>
-										</View> */}
-
 												<Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
 													To:
 												</Text>
 												<Text>
-													{this.state.ticketData[1].street}, {this.state.ticketData[1].city}
+													{ticket.toStreet}, {ticket.toCity}
 												</Text>
 												<Text>
 													Arrival:{' '}
-													{moment(this.state.ticketData[1].end_time).format('dddd Do h:mm a')}
+													{moment(ticket.endTime).format('dddd Do h:mm a')}
 												</Text>
 
 												<Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
@@ -86,7 +51,7 @@ export default class TicketLayout extends Component {
 												</Text>
 											</React.Fragment>
 										</View>
-									)}
+
 								</TouchableOpacity>
 							</Body>
 						</Left>

@@ -33,8 +33,8 @@ export default class JourneyScreen extends Component {
 
 			from: null,
 			to: null,
-			date: null,
-			time: null,
+			date: new Date(),
+			time: new Date(),
 			numPassenger: 1,
 			numWheelchair: 0,
 
@@ -111,7 +111,6 @@ export default class JourneyScreen extends Component {
 	getRouteDirections = async () => {
 		const { placeID, endPlaceID, date, time } = this.state;
 
-		console.log(placeID, endPlaceID);
 		if (placeID.length === 0 || endPlaceID.length === 0) {
 			return console.log('Waiting for second input');
 		}
@@ -122,9 +121,7 @@ export default class JourneyScreen extends Component {
 			);
 			// const startLoc = "EhlRdWVlbiBTdHJlZXQsIENhcmRpZmYsIFVLIi4qLAoUChIJd_pfUbccbkgR8GM8fGAnzNYSFAoSCamRx0IRO1oCEXoliDJDoPjE";
 			const json = await response.json();
-			console.log(json);
 			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
-			console.log(points);
 			iStartLat = json.routes[0].legs[0].start_location.lat;
 			const iStartLng = json.routes[0].legs[0].start_location.lng;
 			const iEndLat = json.routes[0].legs[0].end_location.lat;
@@ -143,7 +140,6 @@ export default class JourneyScreen extends Component {
 			});
 			Keyboard.dismiss();
 			//  this.map.fitToCoordinates(pointCoords);
-			console.log('yay');
 		} catch (error) {
 			console.error(error);
 		}
@@ -158,7 +154,6 @@ export default class JourneyScreen extends Component {
 		this.setState({
 			locationPredictions: jsonResult.predictions
 		});
-		console.log(jsonResult);
 	}
 
 	// Get End Location
@@ -170,7 +165,6 @@ export default class JourneyScreen extends Component {
 		this.setState({
 			endLocationPredictions: jsonResult.predictions
 		});
-		console.log(jsonResult);
 	}
 
 	// Populate the input field with selected prediction
