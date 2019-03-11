@@ -11,6 +11,7 @@ import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
+import AmendTicket from '../screens/AmendTicket';
 
 const JourneyStack = createStackNavigator(
 	{
@@ -31,7 +32,8 @@ JourneyStack.navigationOptions = {
 const TicketsStack = createStackNavigator(
 	{
 		Ticket: TicketsScreen,
-		Details: TicketDetail
+		Details: TicketDetail,
+		Amend: AmendTicket,
 	},
 	{
 		initialRouteName: 'Ticket'

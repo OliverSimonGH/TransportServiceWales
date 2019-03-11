@@ -47,6 +47,21 @@ export default class TicketDetail extends React.Component {
 		this.props.navigation.navigate('Ticket');
 	};
 
+	amendTicket = () => {
+		data = {
+			ticketId: this.state.ticketData[0].ticket_id,
+			street: this.state.ticketData[0].street,
+			city: this.state.ticketData[0].city,
+			endStreet: this.state.ticketData[1].street,
+			endCity: this.state.ticketData[1].city,
+			date: this.state.ticketData[0].date_of_journey,
+			time: this.state.ticketData[0].time_of_journey,
+			numPassenger: this.state.ticketData[0].no_of_passengers,
+			numWheelchair: this.state.ticketData[0].no_of_wheelchairs,
+		}
+		this.props.navigation.navigate('Amend', data);
+	};
+
 	render() {
 		return (
 			<StyleProvider style={getTheme(platform)}>
@@ -113,6 +128,15 @@ export default class TicketDetail extends React.Component {
 									</React.Fragment>
 								</View>
 							)}
+							<View style={styles.buttonContainer}>
+								<Button
+									danger
+									style={[styles.button, { backgroundColor: '#ff0000' }]}
+									onPress={this.amendTicket}
+								>
+									<Text style={styles.buttonText}>AMEND TICKET</Text>
+								</Button>
+							</View>
 						</Content>
 					</Container>
 				</ScrollView>
@@ -131,27 +155,8 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: '#d6d7da'
 	},
-	iconWithInput: {
-		marginTop: 10
-	},
 	imageContainer: {
 		flex: 1
-	},
-	image: {
-		borderRadius: 10,
-		...StyleSheet.absoluteFillObject,
-		width: 10,
-		height: 10
-	},
-	locationSuggestion: {
-		backgroundColor: 'white',
-		padding: 5,
-		fontSize: 18,
-		borderWidth: 0.5
-	},
-	flex_1: {
-		flex: 1,
-		alignItems: 'center'
 	},
 	contentContainer: {
 		width: '80%',
@@ -159,36 +164,16 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignSelf: 'center'
 	},
-	map: {
-		...StyleSheet.absoluteFillObject
-	},
 	buttonContainer: {
+		flex: 1,
 		flexDirection: 'row',
-		alignSelf: 'center',
+		width: '100%',
 		marginTop: 15,
-		alignItems: 'center'
+		justifyContent: 'space-evenly',
 	},
 	button: {
-		width: '100%',
-		justifyContent: 'center',
-		color: '#ff6666'
-	},
-	buttontext: {
-		color: '#000000'
-	},
-	secondaryButtonContainer: {
-		flexDirection: 'row',
-		marginTop: 25
-	},
-	secondaryButton: {
-		width: '100%',
+		width: '45%',
 		justifyContent: 'center'
-	},
-	secondaryButtontext: {
-		color: '#ff0000'
-	},
-	Container: {
-		paddingTop: 20
 	},
 	title: {
 		textAlign: 'center',

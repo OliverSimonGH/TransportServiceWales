@@ -264,13 +264,15 @@ class SummaryScreen extends React.Component {
 													{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
 												</Text>
 											</View>
-											<View style={styles.icon}>
-												<Icon name="people" size={20} color="#bcbcbc" />
-												<Text style={styles.cardBody}>
-													{data.numWheelchair}
-													{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
-												</Text>
-											</View>
+											{data.numWheelchair > 0 ?
+												<View style={styles.icon}>
+													<Icon name="accessible" size={20} color="#bcbcbc" />
+													<Text style={styles.cardBody}>
+														{data.numWheelchair}
+														{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
+													</Text>
+												</View>
+												: null}
 										</View>
 									</View>
 									<View style={styles.journeyInfo}>
