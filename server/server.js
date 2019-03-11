@@ -36,7 +36,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: 'root'
+	password: ''
 });
 
 connection.connect((error) => {
@@ -148,11 +148,11 @@ app.post('/book', (req, res) => {
 			port: 465,
 			secure: true, // true for 465, false for other ports
 			auth: {
-				type: "OAuth2",
+				type: 'OAuth2',
 				user: 'tfwirt.test@gmail.com',
 				clientId: nodemailerOauth2Key.clientId,
 				clientSecret: nodemailerOauth2Key.clientSecret,
-				refreshToken: nodemailerOauth2Key.refreshToken,
+				refreshToken: nodemailerOauth2Key.refreshToken
 			}
 		});
 

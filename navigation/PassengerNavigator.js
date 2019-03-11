@@ -10,6 +10,7 @@ import TicketsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
+import Geofence from '../screens/experimental/Geofence';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 
 const JourneyStack = createStackNavigator(
@@ -17,9 +18,10 @@ const JourneyStack = createStackNavigator(
 		Home: JourneyScreen,
 		Summary: SummaryScreen,
 		Confirmation: ConfirmationScreen,
+		Trial: Geofence
 	},
 	{
-		initialRouteName: 'Home'
+		initialRouteName: 'Trial'
 	}
 );
 
