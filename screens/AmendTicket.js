@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ToastAndroid } from 'react-native';
-import { Button, Container, Content, Input, Item, StyleProvider, Text } from 'native-base';
+import { Accordion, Button, Container, Content, Input, Item, StyleProvider, Text } from 'native-base';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
@@ -19,6 +19,7 @@ class AmendTicket extends React.Component {
         date: null,
         time: null,
         numWheelchair: null,
+        errors: [],
     };
 
     onSubmit = () => {
@@ -45,18 +46,37 @@ class AmendTicket extends React.Component {
                     case 10:
                         this.props.navigation.navigate('Ticket');
                         break;
+                    //Input Validation Failed
+                    case 0:
+                        this.setState({
+                            errors: this.parseErrors(responseJSON.errors)
+                        });
+                        break;
                 }
             })
             .catch((error) => console.log(error));
     }
 
+    parseErrors = (errorList) => {
+        var errors = {
+            title: 'Errors',
+            content: ''
+        };
+
+        for (var i = 0; i < errorList.length; i++) {
+            errors.content += errorList[i].msg + '\n';
+        }
+
+        return [errors];
+    };
+
     navigateTo = () => {
         this.props.navigation.navigate('Details')
     }
 
-	handleNumWheelchairChange = (value) => {
-		this.setState({ numWheelchair: value });
-	};
+    handleNumWheelchairChange = (value) => {
+        this.setState({ numWheelchair: value });
+    };
 
     // Functionality to show/hide the date picker and to set the state
     _showDatePicker = () => this.setState({ isDatePickerVisible: true });
@@ -87,6 +107,25 @@ class AmendTicket extends React.Component {
                         isBackButtonActive={1}
                     />
                     <Content>
+                        {this.state.errors &&
+                            !!this.state.errors.length && (
+                                <Accordion
+                                    dataArray={this.state.errors}
+                                    icon="add"
+                                    expandedIcon="remove"
+                                    contentStyle={styles.errorStyle}
+                                    expanded={0}
+                                />
+                            )}
+                        {this.state.error && (
+                            <Accordion
+                                dataArray={this.state.error}
+                                icon="add"
+                                expandedIcon="remove"
+                                contentStyle={styles.errorStyle}
+                                expanded={0}
+                            />
+                        )}
                         <View style={styles.introduction}>
                             <Text style={styles.header1}>AMEND TICKET</Text>
                         </View>

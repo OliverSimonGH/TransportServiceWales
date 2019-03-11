@@ -490,13 +490,22 @@ app.get('/ticketsQuery1', function (req, res) {
 });
 
 app.post('/amendTicket', (req, res) => {
+	req.checkBody('numWheelchair', 'Please enter a numeric value for wheelchairs.').isNumeric();
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
 	const date = req.body.date;
 	const time = req.body.time;
 	const numWheelchair = req.body.numWheelchair;
 	const ticketId = req.body.ticketId;
 
 	connection.query(
-		'UPDATE ticket SET date_of_journey = ?, time_of_journey = ?, no_of_wheelchairs = ? WHERE ticket_id = ?',
+		`UPDATE ticket SET date_of_journey = ?, time_of_journey = ?, no_of_wheelchairs = ?
+		WHERE ticket_id = ?`,
 		[date, time, numWheelchair, ticketId],
 		(error, row, fields) => {
 			if (error) throw error;
