@@ -21,10 +21,18 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
+const validatorOptions = {
+	customValidators: {
+		greaterThan: (input, minValue) => {
+			return input <= minValue
+		}
+	}
+}
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(expressValidator());
+app.use(expressValidator(validatorOptions));
+
 
 if (typeof localStorage === 'undefined' || localStorage === null) {
 	var LocalStorage = require('node-localstorage').LocalStorage;
@@ -37,7 +45,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: 'root'
+	password: ''
 });
 
 connection.connect((error) => {
@@ -492,12 +500,12 @@ app.get('/ticketsQuery1', function (req, res) {
 
 app.post('/amendTicket', (req, res) => {
 	req.checkBody('numWheelchair', 'Please enter a numeric value for wheelchairs.').isNumeric();
-
-	req.checkBody('numWheelchair').custom(value => {
-		if (value < req.body.numPassenger) {
-			throw new Error('The number of wheelchairs exceeds the number of passengers');
-		}
-	})
+	req.checkBody('numWheelchair', 'The number of wheelchairs exceeds the number of passengers').greaterThan(req.body.numPassenger)
+	// .custom(value => {
+	// 	if (value > req.body.numPassenger) {
+	// 		throw new Error('The number of wheelchairs exceeds the number of passengers');
+	// 	}
+	// })
 
 	//Send errors back to client
 	const errors = req.validationErrors();
