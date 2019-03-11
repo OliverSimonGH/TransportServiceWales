@@ -1,5 +1,6 @@
 var express = require('express');
 var expressValidator = require('express-validator');
+const { check } = require('express-validator/check');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var app = express();
@@ -491,6 +492,12 @@ app.get('/ticketsQuery1', function (req, res) {
 
 app.post('/amendTicket', (req, res) => {
 	req.checkBody('numWheelchair', 'Please enter a numeric value for wheelchairs.').isNumeric();
+
+	req.checkBody('numWheelchair').custom(value => {
+		if (value < req.body.numPassenger) {
+			throw new Error('The number of wheelchairs exceeds the number of passengers');
+		}
+	})
 
 	//Send errors back to client
 	const errors = req.validationErrors();

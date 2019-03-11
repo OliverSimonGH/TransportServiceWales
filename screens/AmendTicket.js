@@ -30,6 +30,7 @@ class AmendTicket extends React.Component {
             date: this.state.date === null ? moment(ticket.date).format('YYYY-MM-DD HH:mm:ss') : this.state.date,
             time: this.state.time === null ? moment(ticket.time).format('YYYY-MM-DD HH:mm:ss') : this.state.time,
             numWheelchair: this.state.numWheelchair === null ? ticket.numWheelchair : this.state.numWheelchair,
+            numPassenger: ticket.numPassenger,
         };
         fetch(`http://${ip}:3000/amendTicket`, {
             method: 'POST',
