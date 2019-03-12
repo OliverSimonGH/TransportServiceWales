@@ -1,27 +1,31 @@
 import React, { Component } from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
+import { Platform, Text, View, StyleSheet, Button } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
 import geolib from 'geolib';
+import socketIO from 'socket.io-client';
 
 export default class Geofence extends Component {
 	state = {
 		locationResult: null,
-		// Cardiff Centre(ish)
-		aLat: 51.479861,
-		aLong: -3.179452,
-
 		// Cardiff Bay
 		lat: 51.464143,
 		long: -3.164009,
-
 		withinRadius: '',
 		Distance: ''
 	};
 
 	componentDidMount() {
 		this._getLocationAsync();
+		this.checkDriver();
+	}
+
+	async checkDriver() {
+		const socket = socketIO.connect(`http://${ip}:3000`);
+		socket.on('connect', () => {
+			console.log('client connected');
+		});
 	}
 
 	// Get location permission
@@ -73,10 +77,14 @@ export default class Geofence extends Component {
 		return (
 			<View style={styles.container}>
 				<Text style={styles.paragraph}>Location:</Text>
-				<Text> Starting position: Cardiff City Centre</Text>
-				<Text> Ending position: Cardiff Bay</Text>
+				<Text>Ending position: Cardiff Bay</Text>
 				<Text>Distance: {this.state.Distance}</Text>
 				<Text>Within radius?: {this.state.withinRadius}</Text>
+				<View>
+					{/* <Button onPress={() => this.checkDriver()}> */}
+					<Text onPress={() => this.checkDriver()}>Test</Text>
+					{/* </Button> */}
+				</View>
 			</View>
 		);
 	}

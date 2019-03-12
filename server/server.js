@@ -30,6 +30,13 @@ if (typeof localStorage === 'undefined' || localStorage === null) {
 	localStorage = new LocalStorage('./scratch');
 }
 
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+
+app.start = app.listen = function() {
+	return server.listen.apply(server, arguments);
+};
+
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
 var connection = mysql.createConnection({
@@ -489,4 +496,4 @@ app.get('/ticketsQuery1', function(req, res) {
 	);
 });
 
-app.listen(PORT);
+app.start(PORT);
