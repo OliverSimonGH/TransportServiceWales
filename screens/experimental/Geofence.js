@@ -2,18 +2,29 @@ import React, { Component } from 'react';
 import { Platform, Text, View, StyleSheet, Button } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
 import GlobalHeader from '../../components/GlobalHeader';
+import MapView, { Polyline, Marker } from 'react-native-maps';
+import PolyLine from '@mapbox/polyline';
+import _ from 'lodash';
+import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
 
 export default class Geofence extends Component {
+	static navigationOptions = {
+		header: null
+	};
 	state = {
 		locationResult: null,
 		// Cardiff Bay
-		lat: 51.464143,
-		long: -3.164009,
+		lat: null,
+		long: null,
 		withinRadius: '',
-		Distance: ''
+		Distance: '',
+		check: '',
+		driverLocation: null,
+		isDriverOnTheWay: false,
+		hasData: false
 	};
 
 	componentDidMount() {
@@ -21,10 +32,21 @@ export default class Geofence extends Component {
 		this.checkDriver();
 	}
 
+	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
+	// Retrieving data from the driver side via the driver to passenger socket
 	async checkDriver() {
 		const socket = socketIO.connect(`http://${ip}:3000`);
 		socket.on('connect', () => {
 			console.log('client connected');
+			socket.emit('trackVehicle');
+		});
+
+		socket.on('driverLocation', (driverLocation) => {
+			this.setState({
+				check: 'Yes you are getting data from driver side',
+				isDriverOnTheWay: true,
+				driverLocation: driverLocation
+			});
 		});
 	}
 
@@ -39,8 +61,12 @@ export default class Geofence extends Component {
 		// Get user's location
 		let location = await Location.getCurrentPositionAsync({});
 		this.setState({
-			locationResult: location
+			locationResult: location,
+			lat: location.coords.latitude,
+			long: location.coords.longitude,
+			hasData: true
 		});
+		console.log(location.coords.latitude);
 
 		// Check if the driver's (point) position is within x amount of Kilometers from user's position
 		let isNearby = await geolib.isPointInCircle(
@@ -73,36 +99,88 @@ export default class Geofence extends Component {
 
 	render() {
 		// Check content of the data before rendereing
-		if (this.state.locationResult == null) return null;
+		//if (this.state.lat == null) return null;
+
+		let marker = null;
+		let driverMarker = null;
+
+		if (this.state.isDriverOnTheWay) {
+			driverMarker = <Marker coordinate={this.state.driverLocation} />;
+		}
 		return (
+			// <View style={styles.container}>
+			// 	<Text style={styles.paragraph}>Location:</Text>
+			// 	<Text>Ending position: Cardiff Bay</Text>
+			// 	<Text>{this.state.check}</Text>
+			// 	<Text>Distance: {this.state.Distance}</Text>
+			// 	<Text>Within radius?: {this.state.withinRadius}</Text>
+			// 	<View>
+			// 		{/* <Button onPress={() => this.checkDriver()}> */}
+			// 		<Text onPress={() => this.checkDriver()}>Test</Text>
+			// 		{/* </Button> */}
+			// 	</View>
+			// </View>
+
 			<View style={styles.container}>
-				<Text style={styles.paragraph}>Location:</Text>
-				<Text>Ending position: Cardiff Bay</Text>
-				<Text>Distance: {this.state.Distance}</Text>
-				<Text>Within radius?: {this.state.withinRadius}</Text>
-				<View>
-					{/* <Button onPress={() => this.checkDriver()}> */}
-					<Text onPress={() => this.checkDriver()}>Test</Text>
-					{/* </Button> */}
-				</View>
+				{/* {this.state.hasData === true && ( */}
+
+				<MapView
+					ref={(map) => {
+						this.map = map;
+					}}
+					style={styles.map}
+					initialRegion={{
+						latitude: this.state.lat,
+						longitude: this.state.long,
+						latitudeDelta: 0.015,
+						longitudeDelta: 0.0121
+					}}
+					showsUserLocation={true}
+				>
+					{driverMarker}
+				</MapView>
+				{/* )}; */}
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingTop: Constants.statusBarHeight,
-		backgroundColor: '#ecf0f1'
+	findDriver: {
+		backgroundColor: 'black',
+		marginTop: 'auto',
+		margin: 20,
+		padding: 15,
+		paddingLeft: 30,
+		paddingRight: 30,
+		alignSelf: 'center'
 	},
-	paragraph: {
-		margin: 24,
+	findDriverText: {
+		fontSize: 20,
+		color: 'white',
+		fontWeight: '600'
+	},
+	suggestions: {
+		backgroundColor: 'white',
+		padding: 5,
 		fontSize: 18,
-		fontWeight: 'bold',
-		textAlign: 'center',
-		color: '#34495e'
+		borderWidth: 0.5,
+		marginLeft: 5,
+		marginRight: 5
+	},
+	destinationInput: {
+		height: 40,
+		borderWidth: 0.5,
+		marginTop: 50,
+		marginLeft: 5,
+		marginRight: 5,
+		padding: 5,
+		backgroundColor: 'white'
+	},
+	container: {
+		...StyleSheet.absoluteFillObject
+	},
+	map: {
+		...StyleSheet.absoluteFillObject
 	}
 });

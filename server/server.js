@@ -33,9 +33,26 @@ if (typeof localStorage === 'undefined' || localStorage === null) {
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
-app.start = app.listen = function() {
-	return server.listen.apply(server, arguments);
-};
+let driverSocket = null;
+let passengerSocket = null;
+
+io.on('connection', (socket) => {
+	console.log('a user connected');
+	socket.on('trackVehicle', (x) => {
+		passengerSocket = socket;
+		console.log('Passenger tracking vehicle');
+	});
+
+	socket.on('driverLocation', (driverLocation) => {
+		console.log(driverLocation);
+		passengerSocket.emit('driverLocation', driverLocation);
+	});
+
+	socket.on('connectDriver', () => {
+		console.log('Driver has connected');
+		driverSocket = socket;
+	});
+});
 
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
@@ -495,5 +512,9 @@ app.get('/ticketsQuery1', function(req, res) {
 		}
 	);
 });
+
+app.start = app.listen = function() {
+	return server.listen.apply(server, arguments);
+};
 
 app.start(PORT);

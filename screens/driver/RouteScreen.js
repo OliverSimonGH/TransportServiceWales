@@ -7,6 +7,7 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
+import socketIO from 'socket.io-client';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -24,6 +25,8 @@ class RouteScreen extends Component {
 
 		// Start / End location
 		this.state = {
+			busStartingLocationLat: 51.47667946,
+			busStartingLocationLong: -3.180427374,
 			coordinates: [
 				{
 					latitude: 51.47667946,
@@ -40,6 +43,7 @@ class RouteScreen extends Component {
 		};
 
 		this.mapView = null;
+		this.socket = null;
 	}
 
 	fetchData = async () => {
@@ -50,6 +54,22 @@ class RouteScreen extends Component {
 
 	componentDidMount() {
 		this.fetchData();
+		this.openDriverSocket();
+	}
+
+	async openDriverSocket() {
+		this.socket = socketIO.connect(`http://${ip}:3000`);
+		this.socket.on('connect', () => {
+			console.log('driver client connected');
+			this.socket.emit('connectDriver');
+		});
+	}
+
+	startRoute() {
+		this.socket.emit('driverLocation', {
+			latitude: this.state.busStartingLocationLat,
+			longitude: this.state.busStartingLocationLong
+		});
 	}
 
 	render() {
@@ -147,6 +167,18 @@ class RouteScreen extends Component {
 								<Text style={styles.journeyInfo}>
 									<Icon name="arrow-back" size={15} /> Back
 								</Text>
+							</View>
+						</Button>
+					</View>
+					<View style={styles.calloutView}>
+						<Button
+							style={styles.journeyInfoContainer}
+							onPress={() => {
+								this.startRoute();
+							}}
+						>
+							<View>
+								<Text style={styles.journeyInfo}>Start Route</Text>
 							</View>
 						</Button>
 					</View>
