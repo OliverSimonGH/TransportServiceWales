@@ -39,7 +39,8 @@ class RouteScreen extends Component {
 			],
 			data: [],
 			distance: '',
-			duration: ''
+			duration: '',
+			xMapCoords: []
 		};
 
 		this.mapView = null;
@@ -70,7 +71,18 @@ class RouteScreen extends Component {
 			latitude: this.state.busStartingLocationLat,
 			longitude: this.state.busStartingLocationLong
 		});
+
+		// Return location of specific start place
+		// ...
+		// Start Maps
 	}
+
+	TestStates = () => {
+		const data = {
+			check: this.state.xMapCoords
+		};
+		//console.log(data);
+	};
 
 	render() {
 		return (
@@ -137,7 +149,8 @@ class RouteScreen extends Component {
 							onReady={(result) => {
 								this.setState({
 									distance: result.distance,
-									duration: result.duration
+									duration: result.duration,
+									xMapCoords: result.coordinates
 								});
 
 								this.mapView.fitToCoordinates(result.coordinates, {
@@ -175,6 +188,7 @@ class RouteScreen extends Component {
 							style={styles.journeyInfoContainer}
 							onPress={() => {
 								this.startRoute();
+								this.TestStates();
 							}}
 						>
 							<View>

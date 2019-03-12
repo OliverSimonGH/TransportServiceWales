@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, Text, View, StyleSheet, Button } from 'react-native';
+import { Platform, Text, View, StyleSheet, Button, Image, Dimensions, Alert } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
 import GlobalHeader from '../../components/GlobalHeader';
 import MapView, { Polyline, Marker } from 'react-native-maps';
@@ -9,6 +9,11 @@ import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
+
+let { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 export default class Geofence extends Component {
 	static navigationOptions = {
@@ -23,8 +28,10 @@ export default class Geofence extends Component {
 		Distance: '',
 		check: '',
 		driverLocation: null,
+		mapCoords: null,
 		isDriverOnTheWay: false,
-		hasData: false
+		hasData: false,
+		pointCoords: []
 	};
 
 	componentDidMount() {
@@ -42,6 +49,11 @@ export default class Geofence extends Component {
 		});
 
 		socket.on('driverLocation', (driverLocation) => {
+			const pointCoords = [ ...this.state.pointCoords, driverLocation ];
+			this.map.fitToCoordinates(pointCoords, {
+				edgePadding: { top: 20, bottom: 20, left: 20, right: 20 }
+			});
+
 			this.setState({
 				check: 'Yes you are getting data from driver side',
 				isDriverOnTheWay: true,
@@ -105,25 +117,14 @@ export default class Geofence extends Component {
 		let driverMarker = null;
 
 		if (this.state.isDriverOnTheWay) {
-			driverMarker = <Marker coordinate={this.state.driverLocation} />;
+			driverMarker = (
+				<Marker coordinate={this.state.driverLocation} title={'Service XX'} description={'Bus Location'}>
+					<Image source={require('../../assets/images/bus-icon.png')} style={{ width: 40, height: 40 }} />
+				</Marker>
+			);
 		}
 		return (
-			// <View style={styles.container}>
-			// 	<Text style={styles.paragraph}>Location:</Text>
-			// 	<Text>Ending position: Cardiff Bay</Text>
-			// 	<Text>{this.state.check}</Text>
-			// 	<Text>Distance: {this.state.Distance}</Text>
-			// 	<Text>Within radius?: {this.state.withinRadius}</Text>
-			// 	<View>
-			// 		{/* <Button onPress={() => this.checkDriver()}> */}
-			// 		<Text onPress={() => this.checkDriver()}>Test</Text>
-			// 		{/* </Button> */}
-			// 	</View>
-			// </View>
-
 			<View style={styles.container}>
-				{/* {this.state.hasData === true && ( */}
-
 				<MapView
 					ref={(map) => {
 						this.map = map;
@@ -132,14 +133,13 @@ export default class Geofence extends Component {
 					initialRegion={{
 						latitude: this.state.lat,
 						longitude: this.state.long,
-						latitudeDelta: 0.015,
-						longitudeDelta: 0.0121
+						latitudeDelta: LATITUDE_DELTA,
+						longitudeDelta: LONGITUDE_DELTA
 					}}
 					showsUserLocation={true}
 				>
 					{driverMarker}
 				</MapView>
-				{/* )}; */}
 			</View>
 		);
 	}
