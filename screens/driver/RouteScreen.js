@@ -1,7 +1,7 @@
 import { Button, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, TextInput } from 'react-native';
-
+import { Dimensions, StyleSheet, View, TextInput, Image } from 'react-native';
+import { Constants, Location, Permissions, TaskManager } from 'expo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -27,6 +27,10 @@ class RouteScreen extends Component {
 		this.state = {
 			busStartingLocationLat: 51.47667946,
 			busStartingLocationLong: -3.180427374,
+			latDriver: null,
+			longDriver: null,
+			locationResult: null,
+			driverStartedRoute: false,
 			coordinates: [
 				{
 					latitude: 51.47667946,
@@ -56,7 +60,27 @@ class RouteScreen extends Component {
 	componentDidMount() {
 		this.fetchData();
 		this.openDriverSocket();
+		this._getLocationAsync();
 	}
+
+	// Get location permission
+	_getLocationAsync = async () => {
+		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+		if (status !== 'granted') {
+			this.setState({
+				locationResult: 'Permission to access location was denied'
+			});
+		}
+		// Get driver location
+		let location = await Location.getCurrentPositionAsync({});
+		this.setState({
+			locationResult: location,
+			latDriver: location.coords.latitude,
+			longDriver: location.coords.longitude,
+			hasData: true
+		});
+		console.log(location);
+	};
 
 	async openDriverSocket() {
 		this.socket = socketIO.connect(`http://${ip}:3000`);
@@ -68,8 +92,12 @@ class RouteScreen extends Component {
 
 	startRoute() {
 		this.socket.emit('driverLocation', {
-			latitude: this.state.busStartingLocationLat,
-			longitude: this.state.busStartingLocationLong
+			latitude: this.state.latDriver,
+			longitude: this.state.longDriver
+		});
+
+		this.setState({
+			driverStartedRoute: true
 		});
 
 		// Return location of specific start place
@@ -79,12 +107,25 @@ class RouteScreen extends Component {
 
 	TestStates = () => {
 		const data = {
-			check: this.state.xMapCoords
+			check: this.state.longDriver
 		};
-		//console.log(data);
+		console.log(data);
 	};
 
 	render() {
+		let driverMarker = null;
+
+		if (this.state.driverStartedRoute) {
+			driverMarker = (
+				<Marker
+					coordinate={{ longitude: this.state.longDriver, latitude: this.state.latDriver }}
+					title={'Service XX'}
+					description={'Bus Location'}
+				>
+					<Image source={require('../../assets/images/bus-icon.png')} style={{ width: 40, height: 40 }} />
+				</Marker>
+			);
+		}
 		return (
 			<View style={StyleSheet.absoluteFill}>
 				<View style={styles.bottom}>
@@ -167,6 +208,7 @@ class RouteScreen extends Component {
 							}}
 						/>
 					)}
+					{driverMarker}
 				</MapView>
 				<Callout>
 					<View style={styles.calloutView}>

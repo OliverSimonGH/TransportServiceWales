@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, Text, View, StyleSheet, Button, Image, Dimensions, Alert } from 'react-native';
-import { Constants, Location, Permissions } from 'expo';
+import { Constants, Location, Permissions, TaskManager } from 'expo';
 import GlobalHeader from '../../components/GlobalHeader';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import PolyLine from '@mapbox/polyline';
