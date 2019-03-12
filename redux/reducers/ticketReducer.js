@@ -27,6 +27,7 @@ export default function(state = initialState, action) {
                     newTicket.paid = ticket.paid;
                     newTicket.used = ticket.used;
                     newTicket.cancelled = ticket.cancelled;
+                    newTicket.completed = ticket.completed;
                     newTicket.accessibilityRequired = ticket.accessibility_required;
                     continue;
                 }

@@ -6,12 +6,10 @@ import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'na
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ipstore';
 import TicketLayout from './TicketLayout';
 import uuid from 'uuid/v4';
 
 import { connect } from 'react-redux';
-import { fetchTickets } from '../redux/actions/ticketAction';
 
 class TicketsScreen extends React.Component {
 	static navigationOptions = {
@@ -21,10 +19,6 @@ class TicketsScreen extends React.Component {
 	state = {
 		showActive: 0
 	};
-
-	componentDidMount() {
-		this.props.fetchTickets()
-	}
 
 	openTicket = (ticketData) => {
 		this.props.navigation.navigate('Details', { ticket: ticketData });
@@ -159,4 +153,4 @@ const mapStateToProps = state => ({
 	tickets: state.ticketReducer.tickets
 })
 
-export default connect (mapStateToProps, {fetchTickets})(TicketsScreen)
+export default connect (mapStateToProps)(TicketsScreen)

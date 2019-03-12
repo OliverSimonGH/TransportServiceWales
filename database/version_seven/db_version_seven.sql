@@ -5,10 +5,12 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
 -- Schema transport
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `transport` ;
-
+DROP SCHEMA `transport`;
 -- -----------------------------------------------------
 -- Schema transport
 -- -----------------------------------------------------
@@ -63,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`journey` (
   `end_time` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`journey_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 7
+AUTO_INCREMENT = 14
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -90,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`coordinate` (
     FOREIGN KEY (`fk_journey_id`)
     REFERENCES `transport`.`journey` (`journey_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 11
+AUTO_INCREMENT = 27
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -110,7 +112,19 @@ CREATE TABLE IF NOT EXISTS `transport`.`ticket` (
   `time_of_journey` DATETIME NOT NULL,
   PRIMARY KEY (`ticket_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 7
+AUTO_INCREMENT = 14
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `transport`.`transaction_type`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `transport`.`transaction_type` (
+  `transaction_type_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `type` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`transaction_type_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -133,8 +147,8 @@ CREATE TABLE IF NOT EXISTS `transport`.`user` (
   `user_id` INT(11) NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(100) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
-  `funds` DECIMAL(15,2) NULL DEFAULT 0.00,
-  `concessionary` TINYINT NULL DEFAULT 1,
+  `funds` DECIMAL(15,2) NULL DEFAULT '0.00',
+  `concessionary` TINYINT(4) NULL DEFAULT '1',
   `forename` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NULL DEFAULT NULL,
   `phone_number` VARCHAR(45) NOT NULL,
@@ -161,22 +175,57 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `transport`.`transaction`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `transport`.`transaction` (
+  `transaction_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `current_funds` DECIMAL(15,2) NOT NULL,
+  `spent_funds` DECIMAL(15,2) NOT NULL,
+  `cancellation_fee` TINYINT(4) NOT NULL DEFAULT '0',
+  `date` DATETIME NOT NULL,
+  `fk_transaction_type_id` INT(11) NOT NULL,
+  `fk_user_id` INT(11) NOT NULL,
+  PRIMARY KEY (`transaction_id`),
+  INDEX `fk_transaction_transaction_type1_idx` (`fk_transaction_type_id` ASC) ,
+  INDEX `fk_transaction_user1_idx` (`fk_user_id` ASC) ,
+  CONSTRAINT `fk_transaction_transaction_type1`
+    FOREIGN KEY (`fk_transaction_type_id`)
+    REFERENCES `transport`.`transaction_type` (`transaction_type_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_transaction_user1`
+    FOREIGN KEY (`fk_user_id`)
+    REFERENCES `transport`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 14
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `transport`.`user_journey`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `transport`.`user_journey` (
   `fk_journey_id` INT(11) NOT NULL,
   `fk_ticket_id` INT(11) NOT NULL,
+  `fk_user_id` INT(11) NOT NULL,
   `paid` TINYINT(4) NOT NULL DEFAULT '0',
-  `fk_user_id` TINYINT(4) NULL DEFAULT NULL,
-  PRIMARY KEY (`fk_journey_id`),
+  `completed` TINYINT(4) NOT NULL DEFAULT 0,
   INDEX `fk_journey_has_user_journey1_idx` (`fk_journey_id` ASC) ,
   INDEX `fk_user_journey_ticket1_idx` (`fk_ticket_id` ASC) ,
+  INDEX `fk_user_journey_user1_idx` (`fk_user_id` ASC) ,
   CONSTRAINT `fk_journey_has_user_journey1`
     FOREIGN KEY (`fk_journey_id`)
     REFERENCES `transport`.`journey` (`journey_id`),
   CONSTRAINT `fk_user_journey_ticket1`
     FOREIGN KEY (`fk_ticket_id`)
-    REFERENCES `transport`.`ticket` (`ticket_id`))
+    REFERENCES `transport`.`ticket` (`ticket_id`),
+  CONSTRAINT `fk_user_journey_user1`
+    FOREIGN KEY (`fk_user_id`)
+    REFERENCES `transport`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -231,43 +280,6 @@ CREATE TABLE IF NOT EXISTS `transport`.`user_vehicle` (
     REFERENCES `transport`.`vehicle` (`vehicle_id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `transport`.`transaction_type`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `transport`.`transaction_type` (
-  `transaction_type_id` INT NOT NULL AUTO_INCREMENT,
-  `type` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`transaction_type_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `transport`.`transaction`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `transport`.`transaction` (
-  `transaction_id` INT NOT NULL AUTO_INCREMENT,
-  `current_funds` DECIMAL(15,2) NOT NULL,
-  `spent_funds` DECIMAL(15,2) NOT NULL,
-  `cancellation_fee` TINYINT(4) NOT NULL DEFAULT '0',
-  `date` DATETIME NOT NULL,
-  `fk_transaction_type_id` INT NOT NULL,
-  `fk_user_id` INT(11) NOT NULL,
-  PRIMARY KEY (`transaction_id`),
-  INDEX `fk_transaction_transaction_type1_idx` (`fk_transaction_type_id` ASC) ,
-  INDEX `fk_transaction_user1_idx` (`fk_user_id` ASC) ,
-  CONSTRAINT `fk_transaction_transaction_type1`
-    FOREIGN KEY (`fk_transaction_type_id`)
-    REFERENCES `transport`.`transaction_type` (`transaction_type_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_transaction_user1`
-    FOREIGN KEY (`fk_user_id`)
-    REFERENCES `transport`.`user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

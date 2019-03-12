@@ -32,8 +32,6 @@ class WalletTransaction extends Component {
 			)
 		})
 
-		console.log(transactions)
-
 		return (
 			<View>
 				<Text style={styles.transactionHeader}>Recent Transactions</Text>
