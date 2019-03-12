@@ -168,7 +168,7 @@ app.post('/book', (req, res) => {
 		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: 'laura.vuilleumier@gmail.com', // receiver address
+			to: email, // receiver address
 			subject: 'Your booking details', // Subject line
 			text: 'Hello world?', // plain text body
 			html: output // html body
@@ -500,12 +500,7 @@ app.get('/ticketsQuery1', function (req, res) {
 
 app.post('/amendTicket', (req, res) => {
 	req.checkBody('numWheelchair', 'Please enter a numeric value for wheelchairs.').isNumeric();
-	req.checkBody('numWheelchair', 'The number of wheelchairs exceeds the number of passengers').greaterThan(req.body.numPassenger)
-	// .custom(value => {
-	// 	if (value > req.body.numPassenger) {
-	// 		throw new Error('The number of wheelchairs exceeds the number of passengers');
-	// 	}
-	// })
+	req.checkBody('numWheelchair', 'The number of wheelchairs exceeds the number of passengers.').greaterThan(req.body.numPassenger);
 
 	//Send errors back to client
 	const errors = req.validationErrors();
