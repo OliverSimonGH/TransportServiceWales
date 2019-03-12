@@ -1,4 +1,4 @@
-import { FETCH_TICKETS, CANCEL_TICKET, ADD_TICKET} from '../actions/types'
+import { FETCH_TICKETS, CANCEL_TICKET, ADD_TICKET, FAVOURITE_TICKET, REMOVE_FAVOURITE_TICKET } from '../actions/types'
 import update from 'immutability-helper';
 
 const initialState = {
@@ -6,8 +6,8 @@ const initialState = {
     ticketsLength: 0
 }
 
-export default function(state = initialState, action) {
-    switch(action.type) {
+export default function (state = initialState, action) {
+    switch (action.type) {
         case FETCH_TICKETS:
 
             const fetchedTickets = action.payload.ticket;
@@ -16,8 +16,8 @@ export default function(state = initialState, action) {
 
             for (let i = 1; i < fetchedTickets.length + 1; i++) {
                 const ticket = fetchedTickets[i - 1];
-                
-                if(i % 2 === 1){
+
+                if (i % 2 === 1) {
                     newTicket.id = ticket.ticket_id;
                     newTicket.fromCity = ticket.city;
                     newTicket.fromStreet = ticket.street;
@@ -47,12 +47,26 @@ export default function(state = initialState, action) {
             }
 
         case CANCEL_TICKET:
-        
+
             return {
                 ...state,
-                tickets: state.tickets.map(ticket => ticket.id === action.payload ? {...ticket, cancelled: 1, expired: 1} : ticket)  
+                tickets: state.tickets.map(ticket => ticket.id === action.payload ? { ...ticket, cancelled: 1, expired: 1 } : ticket)
             }
-       
+
+        case FAVOURITE_TICKET:
+
+            return {
+                ...state,
+                tickets: state.tickets.map(ticket => ticket.id === action.payload ? { ...ticket, favourited: 1 } : ticket)
+            }
+
+        case REMOVE_FAVOURITE_TICKET:
+
+            return {
+                ...state,
+                tickets: state.tickets.map(ticket => ticket.id === action.payload ? { ...ticket, favourited: 0 } : ticket)
+            }
+
         case ADD_TICKET:
 
             console.log(state.ticketsLength)

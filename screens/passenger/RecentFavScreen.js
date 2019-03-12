@@ -7,6 +7,7 @@ import ip from '../../ipstore';
 import uuid from 'uuid/v4'
 
 import { connect } from 'react-redux'
+import { favouriteTicket, removeFavouriteTicket } from '../../redux/actions/ticketAction';
 
 const { width } = Dimensions.get('window')
 class RecentFavScreen extends Component {
@@ -52,6 +53,14 @@ class RecentFavScreen extends Component {
                 }
             })
             .catch((error) => console.log(error));
+
+        if (this.state.favourited === 1) {
+            this.props.favourite(this.state.ticketId);
+        }
+        else if (this.state.favourited === 0) {
+            this.props.removeFavourite(this.state.ticketId);
+        }
+        this.setState({ state: this.state });
     }
 
     render() {
@@ -119,4 +128,11 @@ const mapStateToProps = state => ({
     user: state.userReducer.user
 })
 
-export default connect(mapStateToProps)(RecentFavScreen)
+const mapDispatchToProps = dispatch => {
+    return {
+        favourite: ticketId => dispatch(favouriteTicket(ticketId)),
+        removeFavourite: ticketId => dispatch(removeFavouriteTicket(ticketId)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecentFavScreen)
