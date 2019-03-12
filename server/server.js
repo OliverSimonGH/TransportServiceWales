@@ -13,7 +13,7 @@ var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
 app.engine('ejs', engines.ejs);
-app.set('views', '../views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
@@ -33,7 +33,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: ''
+	password: 'root'
 });
 
 connection.connect((error) => {
@@ -541,5 +541,24 @@ app.get('/ticketsQuery1', function(req, res) {
 		}
 	);
 });
+
+app.post('/toggleFavourite', (req, res) => {
+	const ticketId = req.body.ticketId;
+	const favourited = req.body.favourited;
+
+	connection.query(
+		`UPDATE user_journey SET favourited = ?
+		WHERE fk_ticket_id = ?`,
+		[favourited, ticketId],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
+			}
+		}
+	);
+	console.log('Done');
+});
+
 
 app.listen(PORT);

@@ -36,7 +36,7 @@ class SummaryScreen extends React.Component {
 			numPassenger,
 			numWheelchair,
 			city,
-			endCity
+			endCity,
 		} = this.props.navigation.state.params;
 		//Send data to the server
 		const data = {
@@ -101,7 +101,7 @@ class SummaryScreen extends React.Component {
 		}
 		//Pay for Ticket
 		//Add Transaction
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
+		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity, time } = this.props.navigation.state.params;
 		const data = {
 			current_funds: parseFloat(parseInt(this.props.user.funds) - parseInt(this.state.total)).toFixed(2),
 			spent_funds: this.state.total,

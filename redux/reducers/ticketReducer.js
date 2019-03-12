@@ -28,6 +28,7 @@ export default function(state = initialState, action) {
                     newTicket.used = ticket.used;
                     newTicket.cancelled = ticket.cancelled;
                     newTicket.completed = ticket.completed;
+                    newTicket.favourited = ticket.favourited;
                     newTicket.accessibilityRequired = ticket.accessibility_required;
                     continue;
                 }
