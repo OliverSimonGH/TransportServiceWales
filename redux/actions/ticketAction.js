@@ -40,6 +40,5 @@ export function fetchTickets() {
                     payload: response
                 })
             });
-        console.log('Ticket data fetched');
     }
 }

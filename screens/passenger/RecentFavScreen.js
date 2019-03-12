@@ -83,8 +83,9 @@ class RecentFavScreen extends Component {
                                             <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>TO:</Text><Text style={{ flex: 4 }}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
                                         </View>
                                         <TouchableOpacity onPress={() => {
-                                            this.setState({ favourited: 0, ticketId: ticket.id });
-                                            this.toggleFavouriteJourney();
+                                            this.setState({ favourited: 0, ticketId: ticket.id }, () => {
+                                                this.toggleFavouriteJourney();
+                                            });
                                         }} >
                                             <View style={{ justifyContent: 'center' }}>
                                                 <Icon name="star" style={{ fontSize: 35, color: "#ff0000" }} />
@@ -105,8 +106,9 @@ class RecentFavScreen extends Component {
                                             <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>TO:</Text><Text style={{ flex: 4 }}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
                                         </View>
                                         <TouchableOpacity onPress={() => {
-                                            this.setState({ favourited: 1, ticketId: ticket.id });
-                                            this.toggleFavouriteJourney();
+                                            this.setState({ favourited: 1, ticketId: ticket.id }, () => {
+                                                this.toggleFavouriteJourney();
+                                            });
                                         }} >
                                             <View style={{ justifyContent: 'center' }}>
                                                 <Icon name="star-outline" style={{ fontSize: 35, color: "#ff0000" }} />
