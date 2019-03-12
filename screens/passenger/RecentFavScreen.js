@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Text, View, Dimensions, TouchableOpacity } from 'react-native'
-import { Container, Content, Icon } from 'native-base';
+import { Container, Content } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader'
 import ip from '../../ipstore';
-// import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/AntDesign';
 import uuid from 'uuid/v4'
 
 import { connect } from 'react-redux'
@@ -88,7 +88,7 @@ class RecentFavScreen extends Component {
                                             });
                                         }} >
                                             <View style={{ justifyContent: 'center' }}>
-                                                <Icon name="star" style={{ fontSize: 35, color: "#ff0000" }} />
+                                                <Icon name="star" size={35} color="#ff0000" />
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -111,7 +111,7 @@ class RecentFavScreen extends Component {
                                             });
                                         }} >
                                             <View style={{ justifyContent: 'center' }}>
-                                                <Icon name="star-outline" style={{ fontSize: 35, color: "#ff0000" }} />
+                                                <Icon name="staro" size={35} color="#ff0000" />
                                             </View>
                                         </TouchableOpacity>
                                     </View>
