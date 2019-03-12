@@ -545,7 +545,6 @@ app.get('/ticketsQuery1', function (req, res) {
 app.post('/toggleFavourite', (req, res) => {
 	const ticketId = req.body.ticketId;
 	const favourited = req.body.favourited;
-	console.log(favourited);
 
 	connection.query(
 		`UPDATE user_journey SET favourited = ?
@@ -555,7 +554,6 @@ app.post('/toggleFavourite', (req, res) => {
 			if (error) throw error;
 			else {
 				res.send({ status: 10 });
-				console.log('Done');
 			}
 		}
 	);
