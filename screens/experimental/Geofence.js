@@ -59,6 +59,8 @@ export default class Geofence extends Component {
 				isDriverOnTheWay: true,
 				driverLocation: driverLocation
 			});
+
+			console.log(pointCoords);
 		});
 	}
 

@@ -57,11 +57,15 @@ class RouteScreen extends Component {
 		this.setState({ data: coordinate });
 	};
 
-	componentDidMount() {
+	componentDidMount = async () => {
 		this.fetchData();
 		this.openDriverSocket();
 		this._getLocationAsync();
-	}
+
+		await Location.startLocationUpdatesAsync('firstTask', {
+			accuracy: Location.Accuracy.High
+		});
+	};
 
 	// Get location permission
 	_getLocationAsync = async () => {
@@ -112,7 +116,19 @@ class RouteScreen extends Component {
 		console.log(data);
 	};
 
+	testLocation = async () => {
+		await Location.startLocationUpdatesAsync('firstTask', {
+			accuracy: Location.Accuracy.High,
+			timeInterval: 15000,
+			distanceInterval: 5
+		});
+
+		console.log('Tracking?');
+	};
+
 	render() {
+		//if (this.state.longDriver == null) return null;
+
 		let driverMarker = null;
 
 		if (this.state.driverStartedRoute) {
@@ -231,6 +247,7 @@ class RouteScreen extends Component {
 							onPress={() => {
 								this.startRoute();
 								this.TestStates();
+								this.testLocation();
 							}}
 						>
 							<View>
@@ -281,3 +298,45 @@ const styles = StyleSheet.create({
 });
 
 export default RouteScreen;
+
+TaskManager.defineTask('firstTask', ({ data, error }) => {
+	console.log('location update');
+	if (error) {
+		console.log(error);
+		return;
+	}
+	if (data) {
+		const { locations } = data;
+		// do something with the locations captured in the background
+		console.log('locations XXXXXXXXXXX', locations);
+	}
+});
+
+// export const BACKGROUND_LOCATION_UPDATES_TASK = 'background-location-updates'
+
+// TaskManager.defineTask(BACKGROUND_LOCATION_UPDATES_TASK, handleLocationUpdate)
+
+// export async function handleLocationUpdate({ data, error }) {
+//     console.log('location update')
+//     if (error) {
+// 		return
+// 	}
+//      if (data) {
+//         try {
+//             const { locations } = data
+//             console.log('locations',locations)
+//         } catch (error) {
+//             console.log('the error',error)
+//         }
+//     }
+// }
+
+// export async function initializeBackgroundLocation(){
+//     let isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_LOCATION_UPDATES_TASK)
+//     if (!isRegistered) await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_UPDATES_TASK, {
+//         accuracy: Location.Accuracy.High,
+//         /* after edit */
+//         timeInterval: 2500,
+//         distanceInterval: 5,
+//     })
+// }
