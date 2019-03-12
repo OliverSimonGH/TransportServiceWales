@@ -14,14 +14,19 @@ class RecentFavScreen extends Component {
         header: null
     };
 
+    state = {
+        ticketId: null,
+        favourited: null,
+    };
+
     navigateTo = () => {
         this.props.navigation.navigate('Home');
     };
 
-    toggleFavouriteJourney = (id, favourited) => {
+    toggleFavouriteJourney = () => {
         const data = {
-            ticketId: id,
-            favourited: favourited,
+            ticketId: this.state.ticketId,
+            favourited: this.state.favourited,
         }
 
         fetch(`http://${ip}:3000/toggleFavourite`, {
@@ -68,9 +73,14 @@ class RecentFavScreen extends Component {
                                             <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>FROM:</Text><Text style={{ flex: 4 }}>{ticket.toStreet}, {ticket.toCity}</Text></View>
                                             <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>TO:</Text><Text style={{ flex: 4 }}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
                                         </View>
-                                        <View style={{ justifyContent: 'center' }}>
-                                            <Icon name="star" size={35} color="#ff0000" />
-                                        </View>
+                                        <TouchableOpacity onPress={() => {
+                                            this.setState({ favourited: 0, ticketId: ticket.id });
+                                            this.toggleFavouriteJourney();
+                                        }} >
+                                            <View style={{ justifyContent: 'center' }}>
+                                                <Icon name="star" style={{ fontSize: 35, color: "#ff0000" }} />
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
                                 )
                             }
@@ -85,9 +95,12 @@ class RecentFavScreen extends Component {
                                             <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>FROM:</Text><Text style={{ flex: 4 }}>{ticket.toStreet}, {ticket.toCity}</Text></View>
                                             <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>TO:</Text><Text style={{ flex: 4 }}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
                                         </View>
-                                        <TouchableOpacity onPress={this.toggleFavouriteJourney(ticket.id, favourited = 1)} >
+                                        <TouchableOpacity onPress={() => {
+                                            this.setState({ favourited: 1, ticketId: ticket.id });
+                                            this.toggleFavouriteJourney();
+                                        }} >
                                             <View style={{ justifyContent: 'center' }}>
-                                                <Icon name="star-outline" size={35} style={{ color: "#ff0000" }} />
+                                                <Icon name="star-outline" style={{ fontSize: 35, color: "#ff0000" }} />
                                             </View>
                                         </TouchableOpacity>
                                     </View>
