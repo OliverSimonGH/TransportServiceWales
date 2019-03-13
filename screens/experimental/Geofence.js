@@ -60,14 +60,14 @@ export default class Geofence extends Component {
 				driverLocation: driverLocation
 			});
 
-			// Check if the driver's (point) position is within x amount of Kilometers from user's position
+			// Check if the driver's (point) position is within x amount of metre from user's position
 			let isNearby = geolib.isPointInCircle(
 				// Vehicle Position
 				{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
 				// Point/User Position (checking if above has entered region below)
 				{ latitude: this.state.lat, longitude: this.state.long },
-				// Radius in KM
-				300
+				// Radius in metre
+				20
 			);
 			// If if it's true or false, set state and distance
 			if (isNearby === true) {
@@ -81,9 +81,10 @@ export default class Geofence extends Component {
 					withinRadius: 'Yes',
 					Distance: c
 				});
+
+				Alert.alert(`Driver is ${c} metre's away`);
 				console.log('ENTERED REGION', c);
 			} else {
-				console.log('NOT IN REGION');
 				this.setState({
 					withinRadius: 'No',
 					Distance: 'Unknown'

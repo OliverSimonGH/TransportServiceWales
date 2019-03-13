@@ -45,7 +45,6 @@ io.on('connection', (socket) => {
 
 	socket.on('driverLocation', (driverLocation) => {
 		passengerSocket.emit('driverLocation', driverLocation);
-		console.log('Location Update:', driverLocation);
 	});
 
 	socket.on('connectDriver', () => {

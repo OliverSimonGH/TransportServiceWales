@@ -122,7 +122,7 @@ class RouteScreen extends Component {
 						longitude: loc.coords.longitude
 					});
 					//  this.props.dispatch(setGps(loc));
-					console.log('watchGotUpdate');
+
 					this.setState({
 						latDriver: loc.coords.latitude,
 						longDriver: loc.coords.longitude
