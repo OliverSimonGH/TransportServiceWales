@@ -10,7 +10,7 @@ import { addUser } from '../actions/userAction';
 
 class loginScreen extends Component {
 	state = {
-		email: 'JonesA@hotmail.com',
+		email: 'JonesAA@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};

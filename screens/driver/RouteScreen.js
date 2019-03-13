@@ -1,6 +1,6 @@
 import { Button, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, TextInput, Image } from 'react-native';
+import { Dimensions, StyleSheet, View, TextInput, Image, AsyncStorage } from 'react-native';
 import { Constants, Location, Permissions, TaskManager } from 'expo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -8,6 +8,10 @@ import MapViewDirections from 'react-native-maps-directions';
 import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
 import socketIO from 'socket.io-client';
+
+//import { store } from '../../App';
+import { connect } from 'react-redux';
+import { updateLocation } from '../../actions/locationActions';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -61,10 +65,6 @@ class RouteScreen extends Component {
 		this.fetchData();
 		this.openDriverSocket();
 		this._getLocationAsync();
-
-		await Location.startLocationUpdatesAsync('firstTask', {
-			accuracy: Location.Accuracy.High
-		});
 	};
 
 	// Get location permission
@@ -86,6 +86,8 @@ class RouteScreen extends Component {
 		console.log(location);
 	};
 
+	// Driver Socket
+	// Subscribes to socket when component is mounted
 	async openDriverSocket() {
 		this.socket = socketIO.connect(`http://${ip}:3000`);
 		this.socket.on('connect', () => {
@@ -94,36 +96,45 @@ class RouteScreen extends Component {
 		});
 	}
 
-	startRoute() {
-		this.socket.emit('driverLocation', {
-			latitude: this.state.latDriver,
-			longitude: this.state.longDriver
+	// Background Tracking - Needs Redux ? - > Not sending data right now to socket
+	trackDriverLocationBackground = async () => {
+		await Location.startLocationUpdatesAsync('firstTask', {
+			accuracy: Location.Accuracy.High,
+			timeInterval: 3000,
+			distanceInterval: 5
 		});
+		console.log('Tracking?');
+	};
 
+	// Foreground Tracking - Works
+	// Emits to socket new coordinates every 3 seconds
+	trackDriverLocationForeground = async () => {
+		let locationWatch = await Location.watchPositionAsync(
+			{
+				accuracy: Location.Accuracy.High,
+				timeInterval: 3000,
+				distanceInterval: 5
+			},
+			(loc) => {
+				if (loc.timestamp) {
+					this.socket.emit('driverLocation', {
+						latitude: loc.coords.latitude,
+						longitude: loc.coords.longitude
+					});
+					//  this.props.dispatch(setGps(loc));
+					console.log('watchGotUpdate');
+					this.setState({
+						latDriver: loc.coords.latitude,
+						longDriver: loc.coords.longitude
+					});
+				} else {
+					//log error
+				}
+			}
+		);
 		this.setState({
 			driverStartedRoute: true
 		});
-
-		// Return location of specific start place
-		// ...
-		// Start Maps
-	}
-
-	TestStates = () => {
-		const data = {
-			check: this.state.longDriver
-		};
-		console.log(data);
-	};
-
-	testLocation = async () => {
-		await Location.startLocationUpdatesAsync('firstTask', {
-			accuracy: Location.Accuracy.High,
-			timeInterval: 15000,
-			distanceInterval: 5
-		});
-
-		console.log('Tracking?');
 	};
 
 	render() {
@@ -142,6 +153,7 @@ class RouteScreen extends Component {
 				</Marker>
 			);
 		}
+
 		return (
 			<View style={StyleSheet.absoluteFill}>
 				<View style={styles.bottom}>
@@ -245,9 +257,7 @@ class RouteScreen extends Component {
 						<Button
 							style={styles.journeyInfoContainer}
 							onPress={() => {
-								this.startRoute();
-								this.TestStates();
-								this.testLocation();
+								this.trackDriverLocationForeground();
 							}}
 						>
 							<View>
@@ -297,9 +307,14 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default RouteScreen;
+const mapStateToProps = (state) => ({
+	test: state.driverReducer.newLocation
+});
 
-TaskManager.defineTask('firstTask', ({ data, error }) => {
+export default connect(mapStateToProps, updateLocation)(RouteScreen);
+
+// Background location tracker
+TaskManager.defineTask('firstTask', async ({ data, error }) => {
 	console.log('location update');
 	if (error) {
 		console.log(error);
@@ -307,36 +322,5 @@ TaskManager.defineTask('firstTask', ({ data, error }) => {
 	}
 	if (data) {
 		const { locations } = data;
-		// do something with the locations captured in the background
-		console.log('locations XXXXXXXXXXX', locations);
 	}
 });
-
-// export const BACKGROUND_LOCATION_UPDATES_TASK = 'background-location-updates'
-
-// TaskManager.defineTask(BACKGROUND_LOCATION_UPDATES_TASK, handleLocationUpdate)
-
-// export async function handleLocationUpdate({ data, error }) {
-//     console.log('location update')
-//     if (error) {
-// 		return
-// 	}
-//      if (data) {
-//         try {
-//             const { locations } = data
-//             console.log('locations',locations)
-//         } catch (error) {
-//             console.log('the error',error)
-//         }
-//     }
-// }
-
-// export async function initializeBackgroundLocation(){
-//     let isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_LOCATION_UPDATES_TASK)
-//     if (!isRegistered) await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_UPDATES_TASK, {
-//         accuracy: Location.Accuracy.High,
-//         /* after edit */
-//         timeInterval: 2500,
-//         distanceInterval: 5,
-//     })
-// }

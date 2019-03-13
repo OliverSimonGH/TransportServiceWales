@@ -60,7 +60,7 @@ export default class Geofence extends Component {
 				driverLocation: driverLocation
 			});
 
-			console.log(pointCoords);
+			//console.log(pointCoords);
 		});
 	}
 
@@ -78,9 +78,10 @@ export default class Geofence extends Component {
 			locationResult: location,
 			lat: location.coords.latitude,
 			long: location.coords.longitude,
+
 			hasData: true
 		});
-		console.log(location.coords.latitude);
+		console.log(location);
 
 		// Check if the driver's (point) position is within x amount of Kilometers from user's position
 		let isNearby = await geolib.isPointInCircle(
