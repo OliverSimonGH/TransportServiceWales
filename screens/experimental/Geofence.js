@@ -60,7 +60,35 @@ export default class Geofence extends Component {
 				driverLocation: driverLocation
 			});
 
-			//console.log(pointCoords);
+			// Check if the driver's (point) position is within x amount of Kilometers from user's position
+			let isNearby = geolib.isPointInCircle(
+				// Vehicle Position
+				{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
+				// Point/User Position (checking if above has entered region below)
+				{ latitude: this.state.lat, longitude: this.state.long },
+				// Radius in KM
+				300
+			);
+			// If if it's true or false, set state and distance
+			if (isNearby === true) {
+				let c = geolib.getDistance(
+					// User Position
+					{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
+					// Point Position
+					{ latitude: this.state.lat, longitude: this.state.long }
+				);
+				this.setState({
+					withinRadius: 'Yes',
+					Distance: c
+				});
+				console.log('ENTERED REGION', c);
+			} else {
+				console.log('NOT IN REGION');
+				this.setState({
+					withinRadius: 'No',
+					Distance: 'Unknown'
+				});
+			}
 		});
 	}
 
@@ -82,34 +110,6 @@ export default class Geofence extends Component {
 			hasData: true
 		});
 		console.log(location);
-
-		// Check if the driver's (point) position is within x amount of Kilometers from user's position
-		let isNearby = await geolib.isPointInCircle(
-			// User Position
-			{ latitude: location.coords.latitude, longitude: location.coords.longitude },
-			// Point Position
-			{ latitude: this.state.lat, longitude: this.state.long },
-			// Radius in KM
-			5000
-		);
-		// If if it's true or false, set state and distance
-		if (isNearby === true) {
-			let c = geolib.getDistance(
-				// User Position
-				{ latitude: location.coords.latitude, longitude: location.coords.longitude },
-				// Point Position
-				{ latitude: this.state.lat, longitude: this.state.long }
-			);
-			this.setState({
-				withinRadius: 'Yes',
-				Distance: c
-			});
-		} else {
-			this.setState({
-				withinRadius: 'No',
-				Distance: 'Unknown'
-			});
-		}
 	};
 
 	render() {
