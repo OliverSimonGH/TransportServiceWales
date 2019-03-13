@@ -261,6 +261,18 @@ app.post('/add/addvehicle', (req, res) => {
 	
 });
 
+app.get('/driver/Myvehicles', function(req, res) {
+	connection.query('SELECT * FROM Vehicles', function(error, rows, fields) {
+		if (error) console.log(error);
+		else {
+			// console.log(rows);
+			res.send(rows);
+		}
+	});
+});
+
+
+
 app.get('/paypal-button', (req, res) => {
 	res.render('index');
 });
