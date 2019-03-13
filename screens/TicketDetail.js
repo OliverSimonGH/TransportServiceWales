@@ -1,3 +1,5 @@
+'use strict';
+
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOpacity, Image } from 'react-native';
 // import API_KEY from '../google_api_key';
@@ -8,6 +10,7 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import moment from 'moment';
+import { strictEqual } from 'assert';
 
 export default class TicketDetail extends React.Component {
 	static navigationOptions = {
