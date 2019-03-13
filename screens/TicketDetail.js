@@ -10,7 +10,7 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import moment from 'moment';
-import { strictEqual } from 'assert';
+import QRCode from 'react-native-qrcode';
 
 export default class TicketDetail extends React.Component {
 	static navigationOptions = {
@@ -84,14 +84,15 @@ export default class TicketDetail extends React.Component {
 											{moment(this.state.ticketData[0].start_time).format('h:mm a')}
 										</Text>
 										<View style={styles.imageContainer}>
-											<Image
-												source={require('../assets/images/qrcode.jpg')}
-												style={{
-													width: 150,
-													height: 150,
-													borderRadius: 10,
-													alignSelf: 'center'
-												}}
+										<QRCode
+											value={this.state.text}
+											style={{
+												width: 150,
+												height:10,
+												borderRadius: 10,
+												alignSelf:'center'											}}
+											bgColor='red'
+											fgColor='white'
 											/>
 										</View>
 										<Text>
