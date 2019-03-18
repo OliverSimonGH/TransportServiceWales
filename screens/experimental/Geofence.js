@@ -50,9 +50,6 @@ export default class Geofence extends Component {
 
 		socket.on('driverLocation', (driverLocation) => {
 			const pointCoords = [ ...this.state.pointCoords, driverLocation ];
-			this.map.fitToCoordinates(pointCoords, {
-				edgePadding: { top: 20, bottom: 20, left: 20, right: 20 }
-			});
 
 			this.setState({
 				check: 'Yes you are getting data from driver side',
@@ -84,6 +81,8 @@ export default class Geofence extends Component {
 
 				Alert.alert(`Driver is ${c} metre's away`);
 				console.log('ENTERED REGION', c);
+
+				// insert send text-notifcation
 			} else {
 				this.setState({
 					withinRadius: 'No',
@@ -107,10 +106,8 @@ export default class Geofence extends Component {
 			locationResult: location,
 			lat: location.coords.latitude,
 			long: location.coords.longitude,
-
 			hasData: true
 		});
-		console.log(location);
 	};
 
 	render() {
