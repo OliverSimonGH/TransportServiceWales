@@ -441,6 +441,14 @@ app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });
 
+app.get('/userDetails', function(req, res) {
+	connection.query('SELECT forename, surname, email, phone_number FROM user', function(error, rows, fields) {
+		if (error) throw error;
+
+		res.send({ details: rows });
+	});
+});
+
 app.get('/tickets', function(req, res) {
 	connection.query('SELECT ticket_id FROM ticket WHERE expired = 0', function(error, rows, fields) {
 		if (error) throw error;
