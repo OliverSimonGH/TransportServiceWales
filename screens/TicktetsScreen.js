@@ -44,7 +44,7 @@ class TicketsScreen extends React.Component {
 							<View style={styles.buttonContainer}>
 								{this.state.showActive === 0 ?
 									<>
-										<Button danger style={styles.activeButtonSelected} onPress={this.showActive}>
+										<Button style={styles.activeButtonSelected} onPress={this.showActive}>
 											<Text>Active Tickets</Text>
 										</Button>
 										<Button bordered danger style={styles.expiredButton} onPress={this.showExpired}>
@@ -56,7 +56,7 @@ class TicketsScreen extends React.Component {
 										<Button bordered danger style={styles.activeButton} onPress={this.showActive}>
 											<Text>Active Tickets</Text>
 										</Button>
-										<Button danger style={styles.expiredButtonSelected} onPress={this.showExpired}>
+										<Button style={styles.expiredButtonSelected} onPress={this.showExpired}>
 											<Text>Expired Tickets</Text>
 										</Button>
 									</>

@@ -32,6 +32,8 @@ export default function (state = initialState, action) {
                     newTicket.completed = ticket.completed;
                     newTicket.favourited = ticket.favourited;
                     newTicket.accessibilityRequired = ticket.accessibility_required;
+                    newTicket.numPassengers = ticket.no_of_passengers,
+                    newTicket.numWheelchairs = ticket.no_of_wheelchairs
                     continue;
                 }
 

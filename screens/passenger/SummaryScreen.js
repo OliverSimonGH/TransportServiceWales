@@ -135,6 +135,10 @@ class SummaryScreen extends React.Component {
 
 				this.props.addTicket({
 					"accessibilityRequired": numWheelchair > 0 ? 1 : 0,
+					"date": date,
+					"time": time,
+					"numPassengers": numPassenger,
+					"numWheelchairs": numWheelchair,
 					"cancelled": 0,
 					"endTime": date,
 					"expired": 0,

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/Ionicons';
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default class TicketLayout extends Component {
 	render() {
@@ -11,19 +12,45 @@ export default class TicketLayout extends Component {
 				<View style={styles.ticketTypeContainer}>
 					{ticket.expired ?
 						<View style={[styles.ticketType, { backgroundColor: '#bcbcbc' }]}>
-							<Text style={styles.ticketTypeText}>SGL</Text>
+							<Text style={styles.ticketTypeText}>
+								SGL
+								{/* Code prepared for return tickets - don't remove */}
+								{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
+							</Text>
 						</View>
 						:
 						<View style={styles.ticketType}>
-							<Text style={styles.ticketTypeText}>SGL</Text>
+							<Text style={styles.ticketTypeText}>
+								SGL
+								{/* Code prepared for return tickets - don't remove */}
+								{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
+							</Text>
 						</View>
 					}
 				</View>
 				<TouchableOpacity onPress={this.props.onOpen}>
 					<View style={styles.ticket}>
-						<View style={styles.ticketDateTime}>
-							<Text style={styles.dateText}>{moment(ticket.date).format('Do MMMM YYYY')}</Text>
-							<Text style={styles.timeText}>{moment(ticket.time).format('LT')}</Text>
+						<View style={styles.ticketHeader}>
+							<View style={styles.ticketDateTime}>
+								<Text style={styles.dateText}>{moment(ticket.date).format('Do MMMM YYYY')}</Text>
+								<Text style={styles.timeText}>{moment(ticket.time).format('LT')}</Text>
+							</View>
+							<View style={styles.passengerInfo}>
+								<View style={styles.icon}>
+									<IonIcon name="md-people" size={20} color="#999999" />
+									<Text style={[styles.body, { marginLeft: 5 }]}>
+										{ticket.numPassengers}
+									</Text>
+								</View>
+								{ticket.numWheelchairs > 0 ?
+									<View style={styles.icon}>
+										<MaterialIcon name="accessible" size={20} color="#999999" />
+										<Text style={[styles.body, { marginLeft: 5 }]}>
+											{ticket.numWheelchairs}
+										</Text>
+									</View>
+									: null}
+							</View>
 						</View>
 						<View style={styles.ticketDetails}>
 							<View style={styles.ticketFrom}>
@@ -31,14 +58,18 @@ export default class TicketLayout extends Component {
 								<Text style={styles.body}>{ticket.fromCity}</Text>
 							</View>
 							<View style={styles.ticketTypeIcon}>
-								<Icon name="ios-arrow-round-forward" size={30} color="#bcbcbc" />
-								{/* <Icon name="ios-swap" size={30} color="#999999" /> */}
+								{/* Code prepared for return tickets - don't remove */}
+								{/* {ticket.return ?
+									<Icon name="ios-swap" size={30} color="#999999" />
+									:
+									<Icon name="ios-arrow-round-forward" size={30} color="#999999" />
+								} */}
+								<IonIcon name="ios-arrow-round-forward" size={30} color="#999999" />
 							</View>
 							<View style={styles.ticketTo}>
 								<Text style={styles.body}>{ticket.toStreet},</Text>
 								<Text style={styles.body}>{ticket.toCity}</Text>
 							</View>
-							<View></View>
 						</View>
 					</View>
 				</TouchableOpacity>
@@ -79,8 +110,13 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'column',
 	},
-	ticketDateTime: {
+	ticketHeader: {
+		flexDirection: 'row',
 		marginTop: 10,
+	},
+	ticketDateTime: {
+		width: '50%',
+		marginRight: 10,
 	},
 	dateText: {
 		color: '#999999',
@@ -91,6 +127,11 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		marginTop: 5,
 	},
+	passengerInfo: {
+		width: '50%',
+		flexDirection: 'row',
+		alignSelf: 'flex-start',
+	},
 	ticketDetails: {
 		marginTop: 5,
 		flex: 1,
@@ -99,10 +140,11 @@ const styles = StyleSheet.create({
 	},
 	ticketFrom: {
 		width: '40%',
+		marginRight: 5,
 	},
 	ticketTypeIcon: {
 		width: '10%',
-		marginRight: 10,
+		marginRight: 5,
 	},
 	ticketTo: {
 		width: '45%',
@@ -110,5 +152,10 @@ const styles = StyleSheet.create({
 	body: {
 		color: '#999999',
 		fontSize: 14,
+	},
+	icon: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginRight: 15,
 	},
 });
