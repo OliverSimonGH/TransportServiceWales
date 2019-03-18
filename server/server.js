@@ -18,9 +18,18 @@ app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
 
+const validatorOptions = {
+	customValidators: {
+		greaterThan: (input, minValue) => {
+			return input <= minValue
+		}
+	}
+}
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use(expressValidator(validatorOptions))
 
 if (typeof localStorage === 'undefined' || localStorage === null) {
 	var LocalStorage = require('node-localstorage').LocalStorage;
@@ -558,6 +567,36 @@ app.post('/toggleFavourite', (req, res) => {
 		}
 	);
 });
+
+app.post('/amendTicket', (req, res) => {
+	req.checkBody('numWheelchair', 'Please enter a numeric value for wheelchairs.').isNumeric();
+	req.checkBody('numWheelchair', 'The number of wheelchairs exceeds the number of passengers.').greaterThan(req.body.numPassenger);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+	const date = req.body.date;
+	const time = req.body.time;
+	const numWheelchair = req.body.numWheelchair;
+	const ticketId = req.body.ticketId;
+	console.log(date, time, numWheelchair, ticketId);
+
+	connection.query(
+		`UPDATE ticket SET date_of_journey = ?, time_of_journey = ?, no_of_wheelchairs = ?
+		WHERE ticket_id = ?`,
+		[date, time, numWheelchair, ticketId],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
+			}
+		}
+	);
+});
+
 
 
 app.listen(PORT);

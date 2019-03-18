@@ -26,7 +26,7 @@ class AmendTicket extends React.Component {
         const ticket = this.props.navigation.state.params.ticket;
         //Send data to the server
         const data = {
-            ticketId: ticket.ticketId,
+            ticketId: ticket.id,
             date: this.state.date === null ? moment(ticket.date).format('YYYY-MM-DD HH:mm:ss') : this.state.date,
             time: this.state.time === null ? moment(ticket.time).format('YYYY-MM-DD HH:mm:ss') : this.state.time,
             numWheelchair: this.state.numWheelchair === null ? ticket.numWheelchairs : this.state.numWheelchair,
@@ -127,9 +127,6 @@ class AmendTicket extends React.Component {
                                 expanded={0}
                             />
                         )}
-                        <View style={styles.introduction}>
-                            <Text style={styles.header1}>AMEND TICKET</Text>
-                        </View>
 
                         {/* Summary of the current ticket */}
                         <View style={styles.summaryCard}>
@@ -262,13 +259,6 @@ class AmendTicket extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    introduction: {
-        marginTop: 15,
-        width: '80%',
-        flex: 1,
-        flexDirection: 'column',
-        alignSelf: 'center'
-    },
     inputs: {
         width: '80%',
         flex: 1,
@@ -294,10 +284,7 @@ const styles = StyleSheet.create({
     summaryCard: {
         flex: 1,
         alignItems: 'center',
-        marginTop: 15,
         width: '100%',
-        borderTopWidth: 0.5,
-        borderTopColor: '#d3d3d3',
         borderBottomWidth: 0.5,
         borderBottomColor: '#d3d3d3'
     },
