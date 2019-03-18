@@ -9,6 +9,9 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 
+import { connect } from 'react-redux';
+import { amendTicket } from '../redux/actions/ticketAction';
+
 class AmendTicket extends React.Component {
     static navigationOptions = {
         header: null
@@ -45,6 +48,7 @@ class AmendTicket extends React.Component {
                 switch (responseJSON.status) {
                     //Success
                     case 10:
+                        this.props.amendTicket(data)
                         this.props.navigation.navigate('Ticket');
                         break;
                     //Input Validation Failed
@@ -344,4 +348,10 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AmendTicket;
+const mapDispatchToProps = dispatch => {
+    return {
+        amendTicket: (data) => dispatch(amendTicket(data))
+    };
+};
+
+export default connect(null, mapDispatchToProps)(AmendTicket);

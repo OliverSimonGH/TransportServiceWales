@@ -1,9 +1,16 @@
-import { FETCH_TICKETS, CANCEL_TICKET, ADD_TICKET, FAVOURITE_TICKET, REMOVE_FAVOURITE_TICKET } from './types'
+import { FETCH_TICKETS, CANCEL_TICKET, AMEND_TICKET, ADD_TICKET, FAVOURITE_TICKET, REMOVE_FAVOURITE_TICKET } from './types'
 import ip from '../../ipstore'
 
 export function cancelTicket(ticketId) {
     return {
         type: CANCEL_TICKET,
+        payload: ticketId
+    }
+}
+
+export function amendTicket(ticketId) {
+    return {
+        type: AMEND_TICKET,
         payload: ticketId
     }
 }

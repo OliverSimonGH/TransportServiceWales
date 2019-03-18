@@ -43,6 +43,12 @@ class RecentFavScreen extends Component {
                 switch (responseJSON.status) {
                     //Success
                     case 10:
+                        if (this.state.favourited === 1) {
+                            this.props.favourite(this.state.ticketId);
+                        }
+                        else if (this.state.favourited === 0) {
+                            this.props.removeFavourite(this.state.ticketId);
+                        }
                         break;
                     //User Exists
                     case 1:
@@ -53,14 +59,6 @@ class RecentFavScreen extends Component {
                 }
             })
             .catch((error) => console.log(error));
-
-        if (this.state.favourited === 1) {
-            this.props.favourite(this.state.ticketId);
-        }
-        else if (this.state.favourited === 0) {
-            this.props.removeFavourite(this.state.ticketId);
-        }
-        this.setState({ state: this.state });
     }
 
     render() {

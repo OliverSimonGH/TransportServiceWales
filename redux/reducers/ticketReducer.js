@@ -1,4 +1,4 @@
-import { FETCH_TICKETS, CANCEL_TICKET, ADD_TICKET, FAVOURITE_TICKET, REMOVE_FAVOURITE_TICKET } from '../actions/types'
+import { FETCH_TICKETS, CANCEL_TICKET, AMEND_TICKET, ADD_TICKET, FAVOURITE_TICKET, REMOVE_FAVOURITE_TICKET } from '../actions/types'
 import update from 'immutability-helper';
 
 const initialState = {
@@ -55,6 +55,20 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 tickets: state.tickets.map(ticket => ticket.id === action.payload ? { ...ticket, cancelled: 1, expired: 1 } : ticket)
+            }
+
+        case AMEND_TICKET:
+            const data = action.payload;
+
+            return {
+                ...state,
+                tickets: state.tickets.map(ticket => ticket.id === data.ticketId ?
+                    {
+                        ...ticket,
+                        numWheelchairs: data.numWheelchair,
+                        date: data.date,
+                        time: data.time,
+                    } : ticket)
             }
 
         case FAVOURITE_TICKET:

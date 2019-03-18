@@ -582,7 +582,6 @@ app.post('/amendTicket', (req, res) => {
 	const time = req.body.time;
 	const numWheelchair = req.body.numWheelchair;
 	const ticketId = req.body.ticketId;
-	console.log(date, time, numWheelchair, ticketId);
 
 	connection.query(
 		`UPDATE ticket SET date_of_journey = ?, time_of_journey = ?, no_of_wheelchairs = ?
