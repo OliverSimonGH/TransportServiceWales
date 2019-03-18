@@ -25,6 +25,11 @@ class TicketDetail extends React.Component {
 		cancelTicketPopup: false
 	}
 
+	amendTicket = (ticketData) => {
+		this.props.navigation.navigate('Amend', { ticket: ticketData });
+	};
+
+
 	cancelTicketPopup = () => {
 		this.setState({
 			cancelTicketPopup: true
@@ -235,7 +240,7 @@ class TicketDetail extends React.Component {
 									danger
 									bordered
 									style={styles.button}
-								// onPress={this.amendTicket}
+									onPress={() => { this.amendTicket(ticket) }}
 								>
 									<Text style={styles.buttonText}>AMEND</Text>
 								</Button>
