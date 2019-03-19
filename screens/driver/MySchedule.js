@@ -26,7 +26,7 @@ export default class MySchedule extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch(`http://${ip}:3000/driver/stops`);
+		const response = await fetch(`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`);
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};

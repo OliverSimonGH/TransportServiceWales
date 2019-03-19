@@ -26,6 +26,7 @@ export default class DriverSchedule extends React.Component {
 					const element = response[i];
 
 					if (i % 2 === 0) {
+						journey.id = element.journey_id
 						journey.fromCity = element.city;
 						journey.fromStreet = element.street;
 						journey.startTime = element.start_time;
@@ -75,7 +76,7 @@ export default class DriverSchedule extends React.Component {
 												name="arrow-forward"
 												size={40}
 												onPress={() => {
-													this.props.navigation.navigate('SelectedJourney');
+													this.props.navigation.navigate('SelectedJourney', {id: journey.id});
 												}}
 											/>
 										</Right>
