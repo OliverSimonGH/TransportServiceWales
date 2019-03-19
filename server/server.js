@@ -193,15 +193,11 @@ app.post('/book', (req, res) => {
 });
 
 app.get('/driver/schedule', function(req, res) {
+	const journeyId = req.query.id;
 	connection.query(
-		`  SELECT c.street, c.city, c.fk_coordinate_type_id, c.longitude, c.latitude, t.date_of_journey, t.time_of_journey,
-	t.no_of_passengers, t.no_of_wheelchairs
-FROM ticket t
-JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id 
-JOIN journey j ON uj.fk_journey_id = j.journey_id 
-JOIN coordinate c ON j.journey_id = c.fk_journey_id
-WHERE c.fk_coordinate_type_id = 1;`,
-		function(error, rows, fields) {
+		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, c.longitude, c.latitude, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
+		[journeyId],
+		(error, rows, fields) => {
 			if (error) console.log(error);
 			else {
 				res.send(rows);

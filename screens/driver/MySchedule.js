@@ -127,7 +127,7 @@ export default class MySchedule extends React.Component {
 						</View>
 						<MapView
 							onPress={() => {
-								this.props.navigation.navigate('Route');
+								this.props.navigation.navigate('Route', {id: this.props.navigation.state.params.id});
 							}}
 							style={styles.map}
 							minZoomLevel={zoomAmount}
