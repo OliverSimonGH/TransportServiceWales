@@ -10,20 +10,20 @@ export default {
         paddingTop: 11,
         paddingLeft: 10
     },
-    taskListView: {
+    VehicleListView: {
         paddingBottom: 100
     },
-    taskTitle: {
+    VehicleTitle: {
         color: '#797979',
         marginLeft: 0,
         marginBottom: 6
     },
-    taskDate: {
+    VehicleDate: {
         color: '#B2B2B2',
         fontSize: 12,
         marginTop: 2
     },
-    taskEffort: {
+    VehicleEffort: {
         color: '#000000',
         flexDirection: 'column',
         fontWeight: 'bold'
