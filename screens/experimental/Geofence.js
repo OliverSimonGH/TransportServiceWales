@@ -38,6 +38,14 @@ export default class Geofence extends Component {
 	componentDidMount() {
 		this._getLocationAsync();
 		this.checkDriver();
+		// Channel for popup notifications
+		if (Platform.OS === 'android') {
+			Expo.Notifications.createChannelAndroidAsync('reminders', {
+				name: 'Reminders',
+				priority: 'max',
+				vibrate: [ 0, 250, 250, 250 ]
+			});
+		}
 	}
 
 	async componentWillMount() {
@@ -68,22 +76,6 @@ export default class Geofence extends Component {
 			deviceToken: token
 		});
 		console.log(token);
-		// POST the token to your backend server from where you can retrieve it to send push notifications.
-		//   return fetch(PUSH_ENDPOINT, {
-		//     method: 'POST',
-		//     headers: {
-		//       Accept: 'application/json',
-		//       'Content-Type': 'application/json',
-		//     },
-		//     body: JSON.stringify({
-		//       token: {
-		//         value: token,
-		//       },
-		//       user: {
-		//         username: 'Brent',
-		//       },
-		//     }),
-		//   });
 	};
 
 	sendPushNotification = () => {
@@ -97,12 +89,14 @@ export default class Geofence extends Component {
 				to: `${this.state.deviceToken}`,
 				sound: 'default',
 				title: 'Demo',
-				body: 'Demo Check'
+				priority: 'high',
+				body: 'Demo Check',
+				sound: 'default', // android 7.0 , 6, 5 , 4
+				channelId: 'reminders' // android 8.0 later
 			})
 		});
+		console.log(response);
 	};
-
-	//const PUSH_ENDPOINT = 'https://your-server.com/users/push-token';
 
 	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
 	// Retrieving data from the driver side via the driver to passenger socket
@@ -144,8 +138,9 @@ export default class Geofence extends Component {
 					Distance: c
 				});
 
-				Alert.alert(`Driver is ${c} metre's away`);
+				//Alert.alert(`Driver is ${c} metre's away`);
 				console.log('ENTERED REGION', c);
+				this.sendPushNotification();
 
 				// insert send text-notifcation
 			} else {
