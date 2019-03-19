@@ -52,7 +52,8 @@ class SummaryScreen extends React.Component {
 				passenger: numPassenger,
 				wheelchair: numWheelchair
 			},
-			date: moment(date).format('MMMM Do YYYY')
+			date: moment(date).format('MMMM Do YYYY'),
+			email: this.props.user.email
 		};
 
 		fetch(`http://${ip}:3000/book`, {
@@ -72,7 +73,7 @@ class SummaryScreen extends React.Component {
 					//User Exists
 					case 1:
 						this.setState({
-							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
+							errors: [ { title: 'Errors', content: 'There was an error whilst sending confirmation' } ]
 						});
 						break;
 				}
@@ -89,8 +90,7 @@ class SummaryScreen extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(bookingData)
-		})
-			.catch((error) => console.log(error));
+		}).catch((error) => console.log(error));
 	};
 
 	componentDidMount() {
@@ -116,7 +116,7 @@ class SummaryScreen extends React.Component {
 		fetch(`http://${ip}:3000/user/addTransaction`, {
 			method: 'POST',
 			headers: {
-				'Accept': 'application/json',
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
@@ -139,7 +139,15 @@ class SummaryScreen extends React.Component {
 			})
 			.catch((error) => console.log(error));
 
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
+		const {
+			date,
+			street,
+			endStreet,
+			numPassenger,
+			numWheelchair,
+			city,
+			endCity
+		} = this.props.navigation.state.params;
 		const navData = {
 			data: {
 				startLocation: `${street}, ${city}`,
@@ -153,20 +161,19 @@ class SummaryScreen extends React.Component {
 		this.bookJourney();
 		this.sendEmail();
 		this.props.navigation.navigate('Confirmation', navData);
-
 	};
 
 	payWithConcessionary = () => {
 		const data = {
 			current_funds: this.props.user.funds,
-			spent_funds: 0.00,
+			spent_funds: 0.0,
 			fk_transaction_type_id: 3
 		};
 
 		fetch(`http://${ip}:3000/user/addTransaction`, {
 			method: 'POST',
 			headers: {
-				'Accept': 'application/json',
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
@@ -175,20 +182,28 @@ class SummaryScreen extends React.Component {
 			.then((response) => {
 				if (response.status !== 10) return;
 
-				this.props.userPayForTicket(0.00);
+				this.props.userPayForTicket(0.0);
 
 				this.props.onAddTransaction({
 					current_funds: parseFloat(this.props.user.funds).toFixed(2),
 					date: new Date(),
 					fk_transaction_type_id: 3,
 					fk_user_id: this.props.user.id,
-					spent_funds: 0.00,
+					spent_funds: 0.0,
 					transaction_id: uuid(),
 					type: 'Concessionary Ticket'
 				});
-			})
+			});
 
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
+		const {
+			date,
+			street,
+			endStreet,
+			numPassenger,
+			numWheelchair,
+			city,
+			endCity
+		} = this.props.navigation.state.params;
 		const navData = {
 			data: {
 				startLocation: `${street}, ${city}`,
@@ -202,7 +217,7 @@ class SummaryScreen extends React.Component {
 		this.bookJourney();
 		this.sendEmail();
 		this.props.navigation.navigate('Confirmation', navData);
-	}
+	};
 
 	navigateTo = () => {
 		this.props.navigation.navigate('Home');
@@ -210,16 +225,12 @@ class SummaryScreen extends React.Component {
 
 	render() {
 		const data = this.props.navigation.state.params;
-		console.log(this.props.user)
+		console.log(this.props.user);
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
 					<Content>
-						<GlobalHeader
-							type={1}
-							navigateTo={this.navigateTo}
-							isBackButtonActive={1}
-						/>
+						<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 						<View>
 							{/* Page header and introductory text */}
 							<View style={styles.introduction}>
@@ -294,11 +305,11 @@ class SummaryScreen extends React.Component {
 								{/* Wallet information */}
 								<View style={styles.walletBlance}>
 									<WalletBalance type={2} />
-									{this.props.user.concessionary == 0 &&
+									{this.props.user.concessionary == 0 && (
 										<View style={styles.buttonContainer}>
 											<Button
 												danger
-												style={[styles.button, { backgroundColor: '#ff0000' }]}
+												style={[ styles.button, { backgroundColor: '#ff0000' } ]}
 												onPress={this.payForTicket}
 											>
 												<Text style={styles.buttonText}>Pay</Text>
@@ -315,13 +326,13 @@ class SummaryScreen extends React.Component {
 												<Text style={styles.buttonText}>Add Funds</Text>
 											</Button>
 										</View>
-									}
-									{this.props.user.concessionary == 1 &&
+									)}
+									{this.props.user.concessionary == 1 && (
 										<View style={styles.buttonButtonContainer}>
 											<View style={styles.buttonContainer}>
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: '#ff0000' }]}
+													style={[ styles.button, { backgroundColor: '#ff0000' } ]}
 													onPress={this.payForTicket}
 												>
 													<Text style={styles.buttonText}>Pay</Text>
@@ -329,7 +340,7 @@ class SummaryScreen extends React.Component {
 
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: '#ff0000' }]}
+													style={[ styles.button, { backgroundColor: '#ff0000' } ]}
 													onPress={() => {
 														this.props.navigation.navigate('AddFunds');
 													}}
@@ -337,12 +348,20 @@ class SummaryScreen extends React.Component {
 													<Text style={styles.buttonText}>Add Funds</Text>
 												</Button>
 											</View>
-											<View style={[styles.buttonContainer, { marginTop: -17, marginBottom: 25 }]}>
-												<Button bordered danger style={styles.buttonFullWidth} onPress={this.payWithConcessionary}>
+											<View
+												style={[ styles.buttonContainer, { marginTop: -17, marginBottom: 25 } ]}
+											>
+												<Button
+													bordered
+													danger
+													style={styles.buttonFullWidth}
+													onPress={this.payWithConcessionary}
+												>
 													<Text style={styles.buttonText}>Concessionary</Text>
 												</Button>
 											</View>
-										</View>}
+										</View>
+									)}
 								</View>
 							</View>
 						</View>
@@ -452,7 +471,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		width: '100%',
 		marginTop: 15,
-		justifyContent: 'space-evenly',
+		justifyContent: 'space-evenly'
 	},
 	button: {
 		width: '45%',
@@ -461,7 +480,7 @@ const styles = StyleSheet.create({
 	buttonFullWidth: {
 		width: '94%',
 		justifyContent: 'center',
-		marginBottom: 15,
+		marginBottom: 15
 	},
 	buttonButtonContainer: {
 		flexDirection: 'column'
