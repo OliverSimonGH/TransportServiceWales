@@ -32,7 +32,8 @@ export default class Geofence extends Component {
 		isDriverOnTheWay: false,
 		hasData: false,
 		pointCoords: [],
-		deviceToken: ''
+		deviceToken: '',
+		pickupLocation: '55 Mary Street'
 	};
 
 	componentDidMount() {
@@ -88,11 +89,12 @@ export default class Geofence extends Component {
 			body: JSON.stringify({
 				to: `${this.state.deviceToken}`,
 				sound: 'default',
-				title: 'Demo',
+				title: 'Your transport is nearby!',
 				priority: 'high',
-				body: 'Demo Check',
+				body: `Service 43 will be at ${this.state.pickupLocation} in ${this.state.Distance} meters`, // insert service number, pickup location
 				sound: 'default', // android 7.0 , 6, 5 , 4
-				channelId: 'reminders' // android 8.0 later
+				channelId: 'reminders', // android 8.0 later
+				icon: '../../assets/images/Notification_Icon_3.png'
 			})
 		});
 		console.log(response);
@@ -127,7 +129,7 @@ export default class Geofence extends Component {
 			);
 			// If if it's true or false, set state and distance
 			if (isNearby === true) {
-				let c = geolib.getDistance(
+				let distance = geolib.getDistance(
 					// User Position
 					{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
 					// Point Position
@@ -135,11 +137,11 @@ export default class Geofence extends Component {
 				);
 				this.setState({
 					withinRadius: 'Yes',
-					Distance: c
+					Distance: distance
 				});
 
 				//Alert.alert(`Driver is ${c} metre's away`);
-				console.log('ENTERED REGION', c);
+				console.log('ENTERED REGION', distance);
 				this.sendPushNotification();
 
 				// insert send text-notifcation
