@@ -228,79 +228,50 @@ app.get('/journey', function(req, res) {
 });
 
 app.post('/booking/temp', (req, res) => {
-	const startPlaceId = req.body.place_id;
-	const startStreet = req.body.street;
-	const startCity = req.body.city;
-	const startCountry = req.body.country;
-	const startLat = req.body.lat;
-	const startLng = req.body.lng;
-	const startType = req.body.startType;
+	const startPlaceId = req.body.jData.place_id;
+	const startStreet = req.body.jData.street;
+	const startCity = req.body.jData.city;
+	const startCountry = req.body.jData.country;
+	const startLat = req.body.jData.lat;
+	const startLng = req.body.jData.lng;
+	const startType = req.body.jData.startType;
 
-	const endPlaceId = req.body.endPlaceID;
-	const endStreet = req.body.endStreet;
-	const endCity = req.body.endCity;
-	const endCountry = req.body.endCountry;
-	const endLat = req.body.endLat;
-	const endLng = req.body.endLng;
-	const endType = req.body.endType;
+	const date = req.body.jData.date;
+	const time = req.body.jData.time;
+	const numPassenger = req.body.jData.numPassenger;
+	const numWheelchair = req.body.jData.numWheelchair;
 
-	const date = req.body.date;
-	const time = req.body.time;
-	const numPassenger = req.body.numPassenger;
-	const numWheelchair = req.body.numWheelchair;
-
-	console.log(localStorage.getItem('userId'));
-	// const userID = req.session.userId !== undefined ? req.session.userId : 1;
+	const journeyId = req.body.jId;
+	const userId = localStorage.getItem('userId');
+	
 	connection.query(
 		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
-		[ numPassenger, numWheelchair, 0, 0, date, time, new Date() ],
+		[numPassenger, numWheelchair, 0, 0, date, time, new Date()],
 		(error, row1, fields) => {
 			if (error) throw error;
 
 			connection.query(
-				'INSERT INTO journey (start_time, end_time) VALUES (?, ?)',
-				[ new Date(), new Date() ],
-				(error, row, fields) => {
-					if (error) throw error;
-					// console.log(row.insertId, userID, row1.insertId, 1);
-
-					connection.query(
-						'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
-						[ row.insertId, 1, row1.insertId, 1 ],
-						(errors, rows, fields) => {
-							if (errors) throw errors;
-						}
-					);
-
-					connection.query(
-						'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-						[
-							startPlaceId,
-							startStreet,
-							startCity,
-							startCountry,
-							startLat,
-							startLng,
-							startType,
-							row.insertId
-						],
-						(error, row, fields) => {
-							if (error) throw error;
-						}
-					);
-
-					connection.query(
-						'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-						[ endPlaceId, endStreet, endCity, endCountry, endLat, endLng, endType, row.insertId ],
-						(error, row, fields) => {
-							if (error) throw error;
-						}
-					);
+				'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
+				[journeyId, userId, row1.insertId, 1],
+				(errors, rows, fields) => {
+					if (errors) throw errors;
 				}
 			);
+
+			connection.query(
+				'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+				[startPlaceId, startStreet, startCity, startCountry, startLat, startLng, startType, journeyId],
+				(error, row, fields) => {
+					if (error) throw error;
+				}
+			);
+
+
 		}
 	);
-});
+}
+);
+
 
 app.get('/paypal-button', (req, res) => {
 	res.render('index');

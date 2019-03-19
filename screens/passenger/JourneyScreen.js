@@ -50,7 +50,7 @@ class JourneyScreen extends Component {
 			country: 'UK',
 			lat: '51.4816575,',
 			lng: '-3.1458798,',
-			startType: 1,
+			startType: 3,
 
 			//EndLocation
 			endLocationPredictions: [],

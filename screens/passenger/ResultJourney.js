@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, TouchableOpacity } from 'react-native'
 import ip from '../../ipstore'
 import key from '../../google_api_key'
 import moment from 'moment';
@@ -11,7 +11,14 @@ export default class ResultJourney extends Component {
   state = {
     startDate: null,
     endDate: null,
-    newTotalTime: 0 
+    newTotalTime: 0,
+    destroyComponent: false
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.destroyComponent === true) {
+      this.props.remove()
+    }
   }
 
   componentDidMount() {
@@ -99,16 +106,13 @@ export default class ResultJourney extends Component {
     var newTotalTime = parseInt(this.state.newTotalTime / 60)
     
     if(newTotalTime >= totalTotalMinutes){
-      //Remove component when virtual bus stop time > total travel time
-      //Scuffed Code
-      this.props.remove()
+      this.setState({
+        destroyComponent: true
+      })
     }
 
-    console.log(newTotalTime)
-    console.log(totalTotalMinutes)
-
     return (
-      <View style={{ padding: 10, borderBottomColor: '#dfdfdf', borderBottomWidth: 1, flexDirection: "row", alignItems: 'center' }}>
+      <TouchableOpacity style={{ padding: 10, borderBottomColor: '#dfdfdf', borderBottomWidth: 1, flexDirection: "row", alignItems: 'center' }} onPress={this.props.onClick}>
         <View style={{ flex: 1 }}><Text style={{fontWeight: 'bold' }}>{`${departDays} days \n ${departHours} hours \n ${departMinutes} mins`}</Text></View>
         <View style={{ flexDirection: 'row', flex: 5 }}>
           <View style={{ flexDirection: 'column', flex: 1, marginLeft: 20, marginRight: 20 }}>
@@ -124,7 +128,7 @@ export default class ResultJourney extends Component {
           <Text style={{ fontWeight: 'bold', fontSize: 20 }}>£3.00</Text>
           <Text></Text>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 }

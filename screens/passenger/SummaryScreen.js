@@ -37,7 +37,7 @@ class SummaryScreen extends React.Component {
 			numWheelchair,
 			city,
 			endCity
-		} = this.props.navigation.state.params;
+		} = this.props.navigation.state.params.jData;
 		//Send data to the server
 		const data = {
 			data: {
@@ -88,7 +88,7 @@ class SummaryScreen extends React.Component {
 	};
 
 	componentDidMount() {
-		const { numPassenger } = this.props.navigation.state.params;
+		const { numPassenger } = this.props.navigation.state.params.jData;
 		this.setState({
 			total: parseInt(numPassenger * 3)
 		});
@@ -101,7 +101,7 @@ class SummaryScreen extends React.Component {
 		}
 		//Pay for Ticket
 		//Add Transaction
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
+		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params.jData;
 		const data = {
 			current_funds: parseFloat(parseInt(this.props.user.funds) - parseInt(this.state.total)).toFixed(2),
 			spent_funds: this.state.total,
@@ -168,7 +168,7 @@ class SummaryScreen extends React.Component {
 	};
 
 	payWithConcessionary = () => {
-		const { date, time, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
+		const { date, time, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params.jData;
 		const data = {
 			current_funds: this.props.user.funds,
 			spent_funds: 0.00,
@@ -232,11 +232,11 @@ class SummaryScreen extends React.Component {
 	}
 
 	navigateTo = () => {
-		this.props.navigation.navigate('Home');
+		this.props.navigation.navigate('Results');
 	};
 
 	render() {
-		const data = this.props.navigation.state.params;
+		const data = this.props.navigation.state.params.jData;
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>

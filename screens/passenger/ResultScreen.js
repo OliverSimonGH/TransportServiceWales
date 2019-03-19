@@ -23,6 +23,10 @@ class ResultScreen extends Component {
         })
     }
 
+    onJourneyPress = (id) => {
+        this.props.navigation.navigate('Summary', { jData: this.props.navigation.state.params, jId: id});
+    }
+
     componentDidMount(){
         const { lat, lng, endCity, endStreet } = this.props.navigation.state.params;
 
@@ -32,7 +36,7 @@ class ResultScreen extends Component {
             for (let i = 0; i < response.results.length; i++) {
                 const id = response.results[i].journey_id;
                 this.setState({
-                    journey: [...this.state.journey, <ResultJourney key={id} id={id} lat={lat.replace(',', '')} lng={lng.replace(',', '')} remove={() => this.removeOverTimeLimitJourneys(id)}/>]
+                    journey: [...this.state.journey, <ResultJourney key={id} id={id} lat={lat.replace(',', '')} lng={lng.replace(',', '')} remove={() => this.removeOverTimeLimitJourneys(id)} onClick={() => this.onJourneyPress(id)}/>]
                 })
             }
         })
