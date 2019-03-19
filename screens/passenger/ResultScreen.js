@@ -17,8 +17,14 @@ class ResultScreen extends Component {
         journey: []
     }
 
+    removeOverTimeLimitJourneys = (id) => {
+        this.setState({
+            journey: this.state.journey.filter(journey => journey.props.id !== id)
+        })
+    }
+
     componentDidMount(){
-        const { endCity, endStreet } = this.props.navigation.state.params;
+        const { lat, lng, endCity, endStreet } = this.props.navigation.state.params;
 
         fetch(`http://${ip}:3000/journeyResults?street=${endStreet}&city=${endCity}`)
         .then(response => response.json())
@@ -26,7 +32,7 @@ class ResultScreen extends Component {
             for (let i = 0; i < response.results.length; i++) {
                 const id = response.results[i].journey_id;
                 this.setState({
-                    journey: [...this.state.journey, <ResultJourney key={id} id={id} />]
+                    journey: [...this.state.journey, <ResultJourney key={id} id={id} lat={lat.replace(',', '')} lng={lng.replace(',', '')} remove={() => this.removeOverTimeLimitJourneys(id)}/>]
                 })
             }
         })
@@ -37,14 +43,7 @@ class ResultScreen extends Component {
     };
 
     render() {
-        var journeys = []
-
-        for (let index = 0; index < 5; index++) {
-            journeys.push(<ResultJourney key={index} />)
-        }
-
         const { city, street, endCity, endStreet } = this.props.navigation.state.params;
-
         return (
             <Container>
                 <GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
