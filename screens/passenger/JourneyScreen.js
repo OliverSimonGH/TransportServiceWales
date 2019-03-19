@@ -262,7 +262,7 @@ class JourneyScreen extends Component {
 			numWheelchair: this.state.numWheelchair
 		};
 
-		this.props.navigation.navigate('Summary', data);
+		this.props.navigation.navigate('Results', data);
 	};
 
 	journey = () => {

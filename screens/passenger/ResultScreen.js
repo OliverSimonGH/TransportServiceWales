@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import { Container, Content } from 'native-base';
 import Icon from 'react-native-vector-icons/Entypo';
+import ip from '../../ipstore'
 
 import GlobalHeader from '../../components/GlobalHeader';
 import ResultJourney from './ResultJourney'
@@ -9,47 +10,70 @@ import ResultJourney from './ResultJourney'
 class ResultScreen extends Component {
 
     static navigationOptions = {
-		header: null
-	};
-
-	navigateTo = () => {
-		this.props.navigation.navigate('Home');
+        header: null
     };
-    
-  render() {
-      var journeys = []
-
-    for (let index = 0; index < 5; index++) {
-          journeys.push(<ResultJourney />)
+   
+    state = {
+        journey: []
     }
 
-    return (
-        <Container>
-        <GlobalHeader type={1} navigateTo={this.navigateTo} />
-        <Content>
-           <View style={{padding: 25, flexDirection: 'column', borderBottomColor: '#dfdfdf', borderBottomWidth: 1}}>
-                <Text style={{fontSize: 25}}>SELECT A JOURNEY</Text>
-                <View style={{flexDirection: 'row', marginTop: 25}}>
-                    <View style={{flexDirection: 'row'}}>
-                        <Text>Location One (<Icon name="location-pin" size={15}/>)</Text>
+    componentDidMount(){
+        const { endCity, endStreet } = this.props.navigation.state.params;
+
+        fetch(`http://${ip}:3000/journeyResults?street=${endStreet}&city=${endCity}`)
+        .then(response => response.json())
+        .then(response => {
+            for (let i = 0; i < response.results.length; i++) {
+                const id = response.results[i].journey_id;
+                this.setState({
+                    journey: [...this.state.journey, <ResultJourney key={id} id={id} />]
+                })
+            }
+        })
+	}
+
+    navigateTo = () => {
+        this.props.navigation.navigate('Home');
+    };
+
+    render() {
+        var journeys = []
+
+        for (let index = 0; index < 5; index++) {
+            journeys.push(<ResultJourney key={index} />)
+        }
+
+        const { city, street, endCity, endStreet } = this.props.navigation.state.params;
+
+        return (
+            <Container>
+                <GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
+                <Content>
+                    <View style={{ padding: 25, flexDirection: 'column', borderBottomColor: '#dfdfdf', borderBottomWidth: 1 }}>
+                        <Text style={{ fontSize: 25 }}>SELECT A JOURNEY</Text>
+                        <View style={{ flexDirection: 'column', marginTop: 20 }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Icon name="location-pin" size={20} style={{ flex: 1 }} />
+                                <Text style={{ flex: 11, fontSize: 15 }}>{`${street}, ${city}`}</Text>
+                            </View>
+                            <View>
+                                <Icon name="dots-two-vertical" size={20} />
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Icon name="flag" size={20} style={{ flex: 1 }} />
+                                <Text style={{ flex: 11, fontSize: 15 }}>{`${endStreet}, ${endCity}`}</Text>
+                            </View>
+                        </View>
                     </View>
-                    <View style={{marginLeft: 10, marginRight: 10}}>
-                        <Icon name="arrow-long-right" size={20}/>
+                    {this.state.journey.length > 0 ? this.state.journey : <Text style={{ padding: 15, borderBottomColor: '#dfdfdf', borderBottomWidth: 1 , width: '100%'}}>No journeys' available</Text>}
+                    <View style={{ alignItems: "center", padding: 25 }}>
+                        <Text>Nothing Available?</Text>
+                        <Text style={{ color: '#ff0000', marginTop: 5 }}>CONTACT US</Text>
                     </View>
-                    <View style={{flexDirection: 'row'}}>
-                        <Text>Location Two (<Icon name="flag" size={15} />)</Text>
-                    </View>
-                </View>
-           </View>
-           { journeys }
-           <View style={{alignItems: "center", padding: 25}}>
-               <Text>Nothing Available?</Text>
-               <Text style={{color: '#ff0000', marginTop: 5}}>CONTACT US</Text>
-           </View>
-        </Content>
-    </Container>
-    )
-  }
+                </Content>
+            </Container>
+        )
+    }
 }
 
 export default ResultScreen

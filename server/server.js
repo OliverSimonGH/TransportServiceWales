@@ -47,6 +47,26 @@ paypal.configure({
 	client_secret: paypalApiKey.client_secret
 });
 
+app.get('/journey', (req, res) => {
+	const journeyId = req.query.journeyId;
+
+	connection.query(
+		'SELECT * FROM coordinate WHERE fk_journey_id = ?',
+		[journeyId],
+		(error, rows, fields) => {
+			if (error) throw error;
+
+			connection.query(
+				'SELECT * FROM journey WHERE journey_id = ?',
+				[journeyId],
+				(error, row, fields) => {
+					if (error) throw error;
+					
+					res.send({ results: rows, start_time: row[0].start_time, end_time: row[0].end_time});
+				})
+		})
+})
+
 app.post('/register', (req, res) => {
 	//Check for errors in user input
 	req.checkBody('firstName', 'First name cannot be empty').notEmpty().trim();
@@ -541,5 +561,34 @@ app.get('/ticketsQuery1', function(req, res) {
 		}
 	);
 });
+
+app.get('/journeyResults', (req, res) => {
+	const street = req.query.street;
+	const city = req.query.city;
+
+
+	connection.query(
+		'SELECT j.journey_id FROM coordinate c JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.street = ? AND c.city = ? AND c.fk_coordinate_type_id = 2',
+		[street, city],
+		(error, rows, fields) => {
+			if (error) throw error;
+			res.send({ results: rows });
+		})
+})
+
+// app.get('/journeyResults', (req, res) => {
+// 	const street = req.query.street;
+// 	const city = req.query.city;
+
+
+// 	connection.query(
+// 		'SELECT * FROM coordinate WHERE fk_journey_id IN (SELECT j.journey_id FROM coordinate c JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.street = ? AND c.city = ? AND c.fk_coordinate_type_id = 2)',
+// 		[street, city],
+// 		(error, rows, fields) => {
+// 			if (error) throw error;
+// 			res.send({ results: rows });
+// 		})
+// })
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
