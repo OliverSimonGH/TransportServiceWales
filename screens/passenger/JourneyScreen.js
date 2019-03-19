@@ -48,8 +48,8 @@ class JourneyScreen extends Component {
 			street: 'South Park Road',
 			city: 'Cardiff',
 			country: 'UK',
-			lat: '51.4816575,',
-			lng: '-3.1458798,',
+			lat: 51.4816575,
+			lng: -3.1458798,
 			startType: 3,
 
 			//EndLocation
@@ -59,8 +59,8 @@ class JourneyScreen extends Component {
 			endStreet: 'South Clive Street',
 			endCity: 'Cardiff',
 			endCountry: 'UK',
-			endLat: '51.4599197,',
-			endLng: '-3.1844829,',
+			endLat: 51.4599197,
+			endLng: -3.1844829,
 			endType: 2
 		};
 		this.startPositionDebounced = _.debounce(this.startPosition, 500);

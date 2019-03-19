@@ -29,14 +29,16 @@ class ResultScreen extends Component {
 
     componentDidMount(){
         const { lat, lng, endCity, endStreet } = this.props.navigation.state.params;
+        console.log(lat, lng)
 
         fetch(`http://${ip}:3000/journeyResults?street=${endStreet}&city=${endCity}`)
         .then(response => response.json())
         .then(response => {
+            if  (response.results.length < 1) return;
             for (let i = 0; i < response.results.length; i++) {
                 const id = response.results[i].journey_id;
                 this.setState({
-                    journey: [...this.state.journey, <ResultJourney key={id} id={id} lat={lat.replace(',', '')} lng={lng.replace(',', '')} remove={() => this.removeOverTimeLimitJourneys(id)} onClick={() => this.onJourneyPress(id)}/>]
+                    journey: [...this.state.journey, <ResultJourney key={id} id={id} lat={lat} lng={lng} remove={() => this.removeOverTimeLimitJourneys(id)} onClick={() => this.onJourneyPress(id)}/>]
                 })
             }
         })

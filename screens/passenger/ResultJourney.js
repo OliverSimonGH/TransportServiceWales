@@ -59,7 +59,7 @@ export default class ResultJourney extends Component {
         fetch(`https://maps.googleapis.com/maps/api/directions/json?key=${key}&origin=place_id:${start}&destination=place_id:${end}&waypoints=${this.waypointArrayToString(waypoints)}`)
           .then(response => response.json())
           .then(response => {
-            // console.log(response.routes[0].legs)
+            console.log(`https://maps.googleapis.com/maps/api/directions/json?key=${key}&origin=place_id:${start}&destination=place_id:${end}&waypoints=${this.waypointArrayToString(waypoints)}`)
               response.routes[0].legs.map(leg => {
                 this.setState({
                   newTotalTime: parseInt(this.state.newTotalTime) + parseInt(leg.duration.value)
