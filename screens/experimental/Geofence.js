@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { Platform, Text, View, StyleSheet, Button, Image, Dimensions, Alert } from 'react-native';
-import { Constants, Location, Permissions, TaskManager, Notifications } from 'expo';
-import GlobalHeader from '../../components/GlobalHeader';
+import { Platform, View, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { Location, Permissions, Notifications } from 'expo';
 import MapView, { Polyline, Marker } from 'react-native-maps';
-import PolyLine from '@mapbox/polyline';
-import _ from 'lodash';
-import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
@@ -21,16 +17,13 @@ export default class Geofence extends Component {
 	};
 	state = {
 		locationResult: null,
-		// Cardiff Bay
 		lat: null,
 		long: null,
 		withinRadius: '',
 		Distance: '',
-		check: '',
 		driverLocation: null,
 		mapCoords: null,
 		isDriverOnTheWay: false,
-		hasData: false,
 		pointCoords: [],
 		deviceToken: '',
 		pickupLocation: '55 Mary Street'
@@ -111,9 +104,7 @@ export default class Geofence extends Component {
 
 		socket.on('driverLocation', (driverLocation) => {
 			const pointCoords = [ ...this.state.pointCoords, driverLocation ];
-
 			this.setState({
-				check: 'Yes you are getting data from driver side',
 				isDriverOnTheWay: true,
 				driverLocation: driverLocation
 			});
@@ -139,12 +130,8 @@ export default class Geofence extends Component {
 					withinRadius: 'Yes',
 					Distance: distance
 				});
-
-				//Alert.alert(`Driver is ${c} metre's away`);
 				console.log('ENTERED REGION', distance);
 				this.sendPushNotification();
-
-				// insert send text-notifcation
 			} else {
 				this.setState({
 					withinRadius: 'No',
@@ -167,18 +154,12 @@ export default class Geofence extends Component {
 		this.setState({
 			locationResult: location,
 			lat: location.coords.latitude,
-			long: location.coords.longitude,
-			hasData: true
+			long: location.coords.longitude
 		});
 	};
 
 	render() {
-		// Check content of the data before rendereing
-		//if (this.state.lat == null) return null;
-
-		let marker = null;
 		let driverMarker = null;
-
 		if (this.state.isDriverOnTheWay) {
 			driverMarker = (
 				<Marker coordinate={this.state.driverLocation} title={'Service XX'} description={'Bus Location'}>
@@ -217,37 +198,6 @@ export default class Geofence extends Component {
 }
 
 const styles = StyleSheet.create({
-	findDriver: {
-		backgroundColor: 'black',
-		marginTop: 'auto',
-		margin: 20,
-		padding: 15,
-		paddingLeft: 30,
-		paddingRight: 30,
-		alignSelf: 'center'
-	},
-	findDriverText: {
-		fontSize: 20,
-		color: 'white',
-		fontWeight: '600'
-	},
-	suggestions: {
-		backgroundColor: 'white',
-		padding: 5,
-		fontSize: 18,
-		borderWidth: 0.5,
-		marginLeft: 5,
-		marginRight: 5
-	},
-	destinationInput: {
-		height: 40,
-		borderWidth: 0.5,
-		marginTop: 50,
-		marginLeft: 5,
-		marginRight: 5,
-		padding: 5,
-		backgroundColor: 'white'
-	},
 	container: {
 		...StyleSheet.absoluteFillObject
 	},
@@ -265,11 +215,7 @@ const styles = StyleSheet.create({
 	},
 	calloutView: {
 		flexDirection: 'row',
-		// backgroundColor: 'rgba(255, 255, 255, 0.9)',
-		// borderRadius: 10,
-		// width: '40%',
 		marginLeft: '5%',
-		// marginRight: '30%',
 		marginTop: 50
 	}
 });
