@@ -344,6 +344,18 @@ app.get('/user/transactions', (req, res) => [
 	)
 ]);
 
+app.get('/driver/journeys', (req, res) => {
+	connection.query(
+		`SELECT j.*, c.* FROM journey j JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_coordinate_type_id = 1 OR c.fk_coordinate_type_id = 2`,
+		function(error, rows, fields) {
+			if (error) throw error;
+			else {
+				res.send(rows);
+			}
+		}
+	);
+})
+
 app.get('/driver/stops', function(req, res) {
 	connection.query(
 		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
