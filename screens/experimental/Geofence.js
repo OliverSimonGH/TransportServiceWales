@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, Text, View, StyleSheet, Button, Image, Dimensions, Alert } from 'react-native';
-import { Constants, Location, Permissions, TaskManager } from 'expo';
+import { Constants, Location, Permissions, TaskManager, Notifications } from 'expo';
 import GlobalHeader from '../../components/GlobalHeader';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import PolyLine from '@mapbox/polyline';
@@ -31,13 +31,78 @@ export default class Geofence extends Component {
 		mapCoords: null,
 		isDriverOnTheWay: false,
 		hasData: false,
-		pointCoords: []
+		pointCoords: [],
+		deviceToken: ''
 	};
 
 	componentDidMount() {
 		this._getLocationAsync();
 		this.checkDriver();
 	}
+
+	async componentWillMount() {
+		await this.registerForPushNotificationsAsync();
+	}
+
+	registerForPushNotificationsAsync = async () => {
+		const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		let finalStatus = existingStatus;
+
+		// only ask if permissions have not already been determined, because
+		// iOS won't necessarily prompt the user a second time.
+		if (existingStatus !== 'granted') {
+			// Android remote notification permissions are granted during the app
+			// install, so this will only ask on iOS
+			const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+			finalStatus = status;
+		}
+
+		// Stop here if the user did not grant permissions
+		if (finalStatus !== 'granted') {
+			return;
+		}
+
+		// Get the token that uniquely identifies this device
+		let token = await Notifications.getExpoPushTokenAsync();
+		this.setState({
+			deviceToken: token
+		});
+		console.log(token);
+		// POST the token to your backend server from where you can retrieve it to send push notifications.
+		//   return fetch(PUSH_ENDPOINT, {
+		//     method: 'POST',
+		//     headers: {
+		//       Accept: 'application/json',
+		//       'Content-Type': 'application/json',
+		//     },
+		//     body: JSON.stringify({
+		//       token: {
+		//         value: token,
+		//       },
+		//       user: {
+		//         username: 'Brent',
+		//       },
+		//     }),
+		//   });
+	};
+
+	sendPushNotification = () => {
+		let response = fetch('https://exp.host/--/api/v2/push/send', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				to: `${this.state.deviceToken}`,
+				sound: 'default',
+				title: 'Demo',
+				body: 'Demo Check'
+			})
+		});
+	};
+
+	//const PUSH_ENDPOINT = 'https://your-server.com/users/push-token';
 
 	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
 	// Retrieving data from the driver side via the driver to passenger socket
@@ -125,12 +190,12 @@ export default class Geofence extends Component {
 			);
 		}
 		return (
-			<View style={styles.container}>
+			<View style={StyleSheet.absoluteFill}>
 				<MapView
 					ref={(map) => {
 						this.map = map;
 					}}
-					style={styles.map}
+					style={StyleSheet.absoluteFill}
 					initialRegion={{
 						latitude: this.state.lat,
 						longitude: this.state.long,
@@ -141,6 +206,14 @@ export default class Geofence extends Component {
 				>
 					{driverMarker}
 				</MapView>
+				<View style={styles.calloutView}>
+					<Button
+						onPress={() => {
+							this.sendPushNotification();
+						}}
+						title="Press Me"
+					/>
+				</View>
 			</View>
 		);
 	}
@@ -183,5 +256,23 @@ const styles = StyleSheet.create({
 	},
 	map: {
 		...StyleSheet.absoluteFillObject
+	},
+	journeyInfo: {
+		color: 'black'
+	},
+	journeyInfoContainer: {
+		backgroundColor: 'white',
+		borderColor: 'rgba(46, 49, 50, 0.5)',
+
+		borderWidth: 1
+	},
+	calloutView: {
+		flexDirection: 'row',
+		// backgroundColor: 'rgba(255, 255, 255, 0.9)',
+		// borderRadius: 10,
+		// width: '40%',
+		marginLeft: '5%',
+		// marginRight: '30%',
+		marginTop: 50
 	}
 });
