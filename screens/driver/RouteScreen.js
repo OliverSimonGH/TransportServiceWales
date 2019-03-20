@@ -254,13 +254,13 @@ class RouteScreen extends Component {
 					</View>
 					<View style={styles.calloutView}>
 						<Button
-							style={styles.journeyInfoContainer}
+							style={styles.buttonTop}
 							onPress={() => {
 								this.trackDriverLocationForeground();
 							}}
 						>
 							<View>
-								<Text style={styles.journeyInfo}>Start Route</Text>
+								<Text style={styles.ButtonTopText}>Start Route</Text>
 							</View>
 						</Button>
 					</View>
@@ -288,6 +288,13 @@ const styles = StyleSheet.create({
 		borderColor: 'rgba(46, 49, 50, 0.5)',
 
 		borderWidth: 1
+	},
+	buttonTop: {
+		backgroundColor: '#2dabff'
+	},
+
+	ButtonTopText: {
+		color: 'white'
 	},
 	calloutView: {
 		flexDirection: 'row',

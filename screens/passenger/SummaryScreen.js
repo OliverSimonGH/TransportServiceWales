@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { Content, Container, Button, Text, StyleProvider, Item, Row } from 'native-base';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ip from '../../ipstore';
 import WalletBalance from './WalletBalance';
 import uuid from 'uuid/v4';
-
+import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';
@@ -25,7 +25,8 @@ class SummaryScreen extends React.Component {
 		data: [],
 		date: new Date(),
 		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
-		total: 0.0
+		total: 0.0,
+		deviceToken: ''
 	};
 
 	sendEmail = () => {
@@ -92,6 +93,18 @@ class SummaryScreen extends React.Component {
 		this.setState({
 			total: parseInt(numPassenger * 3)
 		});
+
+		// Channel for popup notifications
+		if (Platform.OS === 'android') {
+			Expo.Notifications.createChannelAndroidAsync('reminders', {
+				name: 'Reminders',
+				priority: 'max',
+				vibrate: [ 0, 250, 250, 250 ]
+			});
+		}
+	}
+	async componentWillMount() {
+		await this.registerForPushNotificationsAsync();
 	}
 
 	payForTicket = () => {
@@ -176,6 +189,7 @@ class SummaryScreen extends React.Component {
 
 		this.bookJourney();
 		this.sendEmail();
+		this.sendPushNotification();
 		this.props.navigation.navigate('Confirmation', navData);
 	};
 
@@ -253,7 +267,54 @@ class SummaryScreen extends React.Component {
 
 		this.bookJourney();
 		this.sendEmail();
+		this.sendPushNotification();
 		this.props.navigation.navigate('Confirmation', navData);
+	};
+
+	registerForPushNotificationsAsync = async () => {
+		const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		let finalStatus = existingStatus;
+
+		// only ask if permissions have not already been determined, because
+		// iOS won't necessarily prompt the user a second time.
+		if (existingStatus !== 'granted') {
+			// Android remote notification permissions are granted during the app
+			// install, so this will only ask on iOS
+			const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+			finalStatus = status;
+		}
+
+		// Stop here if the user did not grant permissions
+		if (finalStatus !== 'granted') {
+			return;
+		}
+
+		// Get the token that uniquely identifies this device
+		let token = await Notifications.getExpoPushTokenAsync();
+		this.setState({
+			deviceToken: token
+		});
+		console.log(token);
+	};
+
+	sendPushNotification = () => {
+		let response = fetch('https://exp.host/--/api/v2/push/send', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				to: `${this.state.deviceToken}`,
+				sound: 'default',
+				title: 'Booking confirmation',
+				priority: 'high',
+				body: `Thank you for booking with TFW. An email confirmation will be sent to you shortly`, // insert service number, pickup location
+				sound: 'default', // android 7.0 , 6, 5 , 4
+				channelId: 'reminders', // android 8.0 later
+				icon: '../../assets/images/Notification_Icon_3.png'
+			})
+		});
 	};
 
 	navigateTo = () => {

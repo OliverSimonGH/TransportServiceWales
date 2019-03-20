@@ -161,7 +161,7 @@ export default class Geofence extends Component {
 		let driverMarker = null;
 		if (this.state.isDriverOnTheWay) {
 			driverMarker = (
-				<Marker coordinate={this.state.driverLocation} title={'Service XX'} description={'Bus Location'}>
+				<Marker coordinate={this.state.driverLocation} title={'Service 43'} description={'Bus Location'}>
 					<Image source={require('../../assets/images/bus-icon.png')} style={{ width: 40, height: 40 }} />
 				</Marker>
 			);
@@ -186,9 +186,9 @@ export default class Geofence extends Component {
 				<View style={styles.calloutView}>
 					<Button
 						onPress={() => {
-							this.sendPushNotification();
+							this.props.navigation.navigate('Ticket');
 						}}
-						title="Press Me"
+						title="Tickets"
 					/>
 				</View>
 			</View>

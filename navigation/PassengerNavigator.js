@@ -20,11 +20,10 @@ const JourneyStack = createStackNavigator(
 		Home: JourneyScreen,
 		Summary: SummaryScreen,
 		RecentFav: RecentFavScreen,
-		Confirmation: ConfirmationScreen,
-		Trial: Geofence
+		Confirmation: ConfirmationScreen
 	},
 	{
-		initialRouteName: 'Trial'
+		initialRouteName: 'Home'
 	}
 );
 
@@ -38,6 +37,7 @@ const TicketsStack = createStackNavigator(
 		Ticket: TicketsScreen,
 		Details: TicketDetail,
 		Amend: AmendTicket,
+		Track: Geofence
 	},
 	{
 		initialRouteName: 'Ticket'

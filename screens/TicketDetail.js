@@ -110,6 +110,10 @@ class TicketDetail extends React.Component {
 		this.props.navigation.navigate('Ticket');
 	};
 
+	navigateToTrack = () => {
+		this.props.navigation.navigate('Track');
+	};
+
 	render() {
 		const ticket = this.props.navigation.state.params.ticket;
 		return (
@@ -193,7 +197,9 @@ class TicketDetail extends React.Component {
 								<Button
 									danger
 									style={[ styles.button, { backgroundColor: '#ff0000' } ]}
-									// onPress={}
+									onPress={() => {
+										this.navigateToTrack();
+									}}
 								>
 									<Text style={styles.buttonText}>TRACK VEHICLE</Text>
 								</Button>

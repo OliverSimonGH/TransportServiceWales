@@ -16,7 +16,7 @@ const MyScheduleStack = createStackNavigator(
 		Login: LoginScreen
 	},
 	{
-		initialRouteName: 'Route'
+		initialRouteName: 'DailySchedule'
 	}
 );
 
