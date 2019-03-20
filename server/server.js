@@ -449,6 +449,22 @@ app.get('/userDetails', function(req, res) {
 	});
 });
 
+app.post('/userChangeDetails', function(req, res) {
+	const forename = req.body.forename;
+	const surname = req.body.surname;
+	const email = req.body.email;
+	const phone_number = req.body.phone_number;
+
+	connection.query('UPDATE USER SET forename = ?, SET surname = ?, SET email = ?, SET phone_number = ? WHERE user_id = ?',
+	[forename, surname, email, phone_number,localStorage.getItem('userId') ],
+	 function(error, rows, fields) {
+		if (error) throw error;
+
+		res.send({ status: 10 });
+	});
+});
+
+
 app.get('/tickets', function(req, res) {
 	connection.query('SELECT ticket_id FROM ticket WHERE expired = 0', function(error, rows, fields) {
 		if (error) throw error;
