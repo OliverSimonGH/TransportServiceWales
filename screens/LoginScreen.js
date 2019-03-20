@@ -6,7 +6,7 @@ import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 
 import { connect } from 'react-redux';
-import { addUser } from '../actions/userAction';
+import { addUser } from '../redux/actions/userAction';
 
 class loginScreen extends Component {
 	state = {

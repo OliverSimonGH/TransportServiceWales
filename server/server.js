@@ -21,9 +21,18 @@ app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
 
+const validatorOptions = {
+	customValidators: {
+		greaterThan: (input, minValue) => {
+			return input <= minValue;
+		}
+	}
+};
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use(expressValidator(validatorOptions));
 
 if (typeof localStorage === 'undefined' || localStorage === null) {
 	var LocalStorage = require('node-localstorage').LocalStorage;
@@ -440,6 +449,51 @@ app.post('/user/addTransaction', (req, res) => {
 	);
 });
 
+app.post('/user/cancelTicket', (req, res) => {
+	const userId = localStorage.getItem('userId');
+	const ticketId = req.body.ticketId;
+	const amount = req.body.amount;
+	const cancellationFeeApplied = req.body.cancellationFeeApplied;
+
+	connection.beginTransaction((err) => {
+		if (err) throw error;
+
+		connection.query(
+			'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1, t.expired = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
+			[ userId, ticketId ],
+			(error, row, fields) => {
+				if (error) {
+					return connection.rollback(function() {
+						throw error;
+					});
+				}
+			}
+		);
+
+		if (cancellationFeeApplied) {
+			connection.query(
+				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
+				[ amount, userId ],
+				(error, row, fields) => {
+					if (error) {
+						return connection.rollback(function() {
+							throw error;
+						});
+					}
+				}
+			);
+		}
+
+		connection.commit((err) => {
+			if (err) {
+				return connection.rollback(() => {
+					throw err;
+				});
+			}
+		});
+	});
+});
+
 app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });
@@ -475,6 +529,17 @@ app.get('/ticketsQuery', function(req, res) {
 	);
 });
 
+app.get('/user/tickets', function(req, res) {
+	connection.query(
+		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.no_of_passengers, t.no_of_wheelchairs, t.cancelled, t.date_of_journey, t.time_of_journey, uj.completed, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id ORDER BY t.date_of_journey ASC',
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ ticket: rows });
+		}
+	);
+});
+
 app.get('/ticketsQuery1', function(req, res) {
 	const id = req.query.id;
 
@@ -485,6 +550,53 @@ app.get('/ticketsQuery1', function(req, res) {
 			if (error) throw error;
 
 			res.send({ ticket: rows });
+		}
+	);
+});
+
+app.post('/toggleFavourite', (req, res) => {
+	const ticketId = req.body.ticketId;
+	const favourited = req.body.favourited;
+
+	connection.query(
+		`UPDATE user_journey SET favourited = ?
+		WHERE fk_ticket_id = ?`,
+		[ favourited, ticketId ],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
+			}
+		}
+	);
+});
+
+app.post('/amendTicket', (req, res) => {
+	req.checkBody('numWheelchair', 'Please enter a numeric value for wheelchairs.').isNumeric();
+	req
+		.checkBody('numWheelchair', 'The number of wheelchairs exceeds the number of passengers.')
+		.greaterThan(req.body.numPassenger);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+	const date = req.body.date;
+	const time = req.body.time;
+	const numWheelchair = req.body.numWheelchair;
+	const ticketId = req.body.ticketId;
+
+	connection.query(
+		`UPDATE ticket SET date_of_journey = ?, time_of_journey = ?, no_of_wheelchairs = ?
+		WHERE ticket_id = ?`,
+		[ date, time, numWheelchair, ticketId ],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
+			}
 		}
 	);
 });
