@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { Platform, Text, View, StyleSheet, Button, Image, Dimensions, Alert } from 'react-native';
-import { Constants, Location, Permissions, TaskManager } from 'expo';
-import GlobalHeader from '../../components/GlobalHeader';
+import { Platform, View, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { Location, Permissions, Notifications } from 'expo';
 import MapView, { Polyline, Marker } from 'react-native-maps';
-import PolyLine from '@mapbox/polyline';
-import _ from 'lodash';
-import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
@@ -21,23 +17,81 @@ export default class Geofence extends Component {
 	};
 	state = {
 		locationResult: null,
-		// Cardiff Bay
 		lat: null,
 		long: null,
 		withinRadius: '',
 		Distance: '',
-		check: '',
 		driverLocation: null,
 		mapCoords: null,
 		isDriverOnTheWay: false,
-		hasData: false,
-		pointCoords: []
+		pointCoords: [],
+		deviceToken: '',
+		pickupLocation: '55 Mary Street'
 	};
 
 	componentDidMount() {
 		this._getLocationAsync();
 		this.checkDriver();
+		// Channel for popup notifications
+		if (Platform.OS === 'android') {
+			Expo.Notifications.createChannelAndroidAsync('reminders', {
+				name: 'Reminders',
+				priority: 'max',
+				vibrate: [ 0, 250, 250, 250 ]
+			});
+		}
 	}
+
+	async componentWillMount() {
+		await this.registerForPushNotificationsAsync();
+	}
+
+	registerForPushNotificationsAsync = async () => {
+		const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		let finalStatus = existingStatus;
+
+		// only ask if permissions have not already been determined, because
+		// iOS won't necessarily prompt the user a second time.
+		if (existingStatus !== 'granted') {
+			// Android remote notification permissions are granted during the app
+			// install, so this will only ask on iOS
+			const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+			finalStatus = status;
+		}
+
+		// Stop here if the user did not grant permissions
+		if (finalStatus !== 'granted') {
+			return;
+		}
+
+		// Get the token that uniquely identifies this device
+		let token = await Notifications.getExpoPushTokenAsync();
+		this.setState({
+			deviceToken: token
+		});
+		console.log(token);
+	};
+
+	sendPushNotification = () => {
+		let response = fetch('https://exp.host/--/api/v2/push/send', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				to: `${this.state.deviceToken}`,
+				sound: 'default',
+				title: 'Your transport is nearby!',
+				priority: 'high',
+				body: `Service 43 will be at ${this.state.pickupLocation} in ${this.state.Distance} meters`, // insert service number, pickup location
+				sound: 'default', // android 7.0 , 6, 5 , 4
+				channelId: 'reminders', // android 8.0 later
+				icon: '../../assets/images/Notification_Icon_3.png'
+			})
+		});
+		console.log(response);
+	};
 
 	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
 	// Retrieving data from the driver side via the driver to passenger socket
@@ -50,9 +104,7 @@ export default class Geofence extends Component {
 
 		socket.on('driverLocation', (driverLocation) => {
 			const pointCoords = [ ...this.state.pointCoords, driverLocation ];
-
 			this.setState({
-				check: 'Yes you are getting data from driver side',
 				isDriverOnTheWay: true,
 				driverLocation: driverLocation
 			});
@@ -68,7 +120,7 @@ export default class Geofence extends Component {
 			);
 			// If if it's true or false, set state and distance
 			if (isNearby === true) {
-				let c = geolib.getDistance(
+				let distance = geolib.getDistance(
 					// User Position
 					{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
 					// Point Position
@@ -76,13 +128,10 @@ export default class Geofence extends Component {
 				);
 				this.setState({
 					withinRadius: 'Yes',
-					Distance: c
+					Distance: distance
 				});
-
-				Alert.alert(`Driver is ${c} metre's away`);
-				console.log('ENTERED REGION', c);
-
-				// insert send text-notifcation
+				console.log('ENTERED REGION', distance);
+				this.sendPushNotification();
 			} else {
 				this.setState({
 					withinRadius: 'No',
@@ -105,18 +154,12 @@ export default class Geofence extends Component {
 		this.setState({
 			locationResult: location,
 			lat: location.coords.latitude,
-			long: location.coords.longitude,
-			hasData: true
+			long: location.coords.longitude
 		});
 	};
 
 	render() {
-		// Check content of the data before rendereing
-		//if (this.state.lat == null) return null;
-
-		let marker = null;
 		let driverMarker = null;
-
 		if (this.state.isDriverOnTheWay) {
 			driverMarker = (
 				<Marker coordinate={this.state.driverLocation} title={'Service XX'} description={'Bus Location'}>
@@ -125,12 +168,12 @@ export default class Geofence extends Component {
 			);
 		}
 		return (
-			<View style={styles.container}>
+			<View style={StyleSheet.absoluteFill}>
 				<MapView
 					ref={(map) => {
 						this.map = map;
 					}}
-					style={styles.map}
+					style={StyleSheet.absoluteFill}
 					initialRegion={{
 						latitude: this.state.lat,
 						longitude: this.state.long,
@@ -141,47 +184,38 @@ export default class Geofence extends Component {
 				>
 					{driverMarker}
 				</MapView>
+				<View style={styles.calloutView}>
+					<Button
+						onPress={() => {
+							this.sendPushNotification();
+						}}
+						title="Press Me"
+					/>
+				</View>
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	findDriver: {
-		backgroundColor: 'black',
-		marginTop: 'auto',
-		margin: 20,
-		padding: 15,
-		paddingLeft: 30,
-		paddingRight: 30,
-		alignSelf: 'center'
-	},
-	findDriverText: {
-		fontSize: 20,
-		color: 'white',
-		fontWeight: '600'
-	},
-	suggestions: {
-		backgroundColor: 'white',
-		padding: 5,
-		fontSize: 18,
-		borderWidth: 0.5,
-		marginLeft: 5,
-		marginRight: 5
-	},
-	destinationInput: {
-		height: 40,
-		borderWidth: 0.5,
-		marginTop: 50,
-		marginLeft: 5,
-		marginRight: 5,
-		padding: 5,
-		backgroundColor: 'white'
-	},
 	container: {
 		...StyleSheet.absoluteFillObject
 	},
 	map: {
 		...StyleSheet.absoluteFillObject
+	},
+	journeyInfo: {
+		color: 'black'
+	},
+	journeyInfoContainer: {
+		backgroundColor: 'white',
+		borderColor: 'rgba(46, 49, 50, 0.5)',
+
+		borderWidth: 1
+	},
+	calloutView: {
+		flexDirection: 'row',
+		marginLeft: '5%',
+		marginTop: 50
 	}
 });
