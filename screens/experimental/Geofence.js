@@ -90,7 +90,6 @@ export default class Geofence extends Component {
 				icon: '../../assets/images/Notification_Icon_3.png'
 			})
 		});
-		console.log(response);
 	};
 
 	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
