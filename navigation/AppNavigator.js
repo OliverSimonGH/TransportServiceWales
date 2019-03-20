@@ -5,6 +5,7 @@ import PassengerNavigator from './PassengerNavigator';
 import DriverNavigator from './DriverNavigator';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegistrationScreen';
+import ContactScreen from '../screens/passenger/ContactScreen';
 
 export default createAppContainer(
 	createSwitchNavigator({
@@ -14,6 +15,7 @@ export default createAppContainer(
 		Login: LoginScreen,
 		Register: RegisterScreen,
 		Passenger: PassengerNavigator,
-		Driver: DriverNavigator
+		Driver: DriverNavigator,
+		Contact: ContactScreen
 	})
 );
