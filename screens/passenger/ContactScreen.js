@@ -26,6 +26,10 @@ const dataArray = [
 export default class AccountsScreen extends Component {
 	static navigationOptions = {
 		header: null
+    };
+    
+    navigateTo = () => {
+		this.props.navigation.navigate('');
 	};
 
 
@@ -75,7 +79,8 @@ const styles = StyleSheet.create({
 	},
 	secondaryButtonContainer: {
 		flexDirection: 'row',
-		marginTop: 25
+        marginTop: 25,
+        marginBottom: 25
 	},
 	secondaryButton: {
 		width: '100%',

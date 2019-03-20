@@ -14,18 +14,34 @@ import {
 	Accordion
 } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
-const dataArray = [
-	{title: "My Details", content: "User Details will be shown here"},
-	{title: "Settings", content: "Settings will be shown here"},
-	{title: "My Theme", content: "Theme will be shown here"},
-	{title: "Emergency Contacts", content: "Emergency Contact"},
-];
+import ip from '../../ipstore';
+
 
 
 
 export default class AccountsScreen extends Component {
 	static navigationOptions = {
 		header: null
+	};
+
+	state = {
+		userDetails: []
+	};
+	
+	componentDidMount() {
+		const id = this.props.userId;
+		fetch(`http://${ip}:3000/userDetails?id=${id}`).then((response) => response.json()).then((response) => {
+			console.log(response);
+			this.setState({
+				userDetails: response.details
+			});
+		});
+
+	
+	}
+
+	contact = () => {
+		this.props.navigation.navigate('Contact');
 	};
 
 	logout = () => {
@@ -37,27 +53,27 @@ export default class AccountsScreen extends Component {
 	};
 
 
+
 	render() {
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 			<Content style={styles.contentContainer}>
-					{/* <Accordion 
-					dataArray={dataArray}
-					icon="add"
-					expandedIcon="remove"
-					iconStyle={{ color: "green" }}
-					expandedIconStyle={{ color: "red" }}
-					headerStyle={{backgroundColor: "#fe0b1b"}}
-					contentStyle={{ backgroundColor: "#e5dddd" }}
-					/>	 */}
+				
 					<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>My Details</Text>
 								</Button>
 							</View>		
+							<View>
+							<Text>
+											Forename:
+											{this.state.userDetails.forename}
+										</Text>
+							</View>
+
 							<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.contact}>
 									<Text style={styles.secondaryButtontext}>Emergency Contacts</Text>
 								</Button>
 							</View>	
