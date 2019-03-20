@@ -191,7 +191,7 @@ app.post('/book', (req, res) => {
 		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: email, // receiver address
+			to: 'vuilleumierl@cardiff.ac.uk', // receiver address
 			subject: 'Your booking details', // Subject line
 			text: 'Hello world?', // plain text body
 			html: output // html body
