@@ -14,6 +14,7 @@ import {
 	Accordion
 } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../ipstore';
 
 
 

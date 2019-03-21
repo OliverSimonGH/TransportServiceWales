@@ -52,6 +52,9 @@ export default class AccountsScreen extends Component {
 		this.props.navigation.navigate('');
 	};
 
+	details = () => {
+		this.props.navigation.navigate('ChangeDetails');
+	};
 
 
 	render() {
@@ -61,7 +64,7 @@ export default class AccountsScreen extends Component {
 			<Content style={styles.contentContainer}>
 				
 					<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.details}>
 									<Text style={styles.secondaryButtontext}>My Details</Text>
 								</Button>
 							</View>		
