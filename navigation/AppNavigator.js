@@ -7,6 +7,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegistrationScreen';
 import ContactScreen from '../screens/passenger/ContactScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
+import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
 
 
 export default createAppContainer(
@@ -19,6 +20,7 @@ export default createAppContainer(
 		Passenger: PassengerNavigator,
 		Driver: DriverNavigator,
 		Contact: ContactScreen,
-		Settings: AccountsScreen
+		Settings: AccountsScreen,
+		ChangeDetails: ChangeDetailsScreen
 	})
 );
