@@ -65,12 +65,21 @@ export default class AccountsScreen extends Component {
 									<Text style={styles.secondaryButtontext}>My Details</Text>
 								</Button>
 							</View>		
-							<View>
-							<Text>
-											Forename:
-											{this.state.userDetails.forename}
-										</Text>
-							</View>
+							{this.state.userDetails.length >= 1 && (
+								<View style={styles.container}>
+									<React.Fragment>
+									<Text>
+										Forename: {this.state.userDetails[0].forename}
+									</Text>
+									<Text>
+										Surname: {this.state.userDetails[0].surname}
+									</Text>
+									<Text>
+										Email: {this.state.userDetails[0].email}
+									</Text>
+									</React.Fragment>
+								</View>
+							)}
 
 							<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton} onPress={this.contact}>
