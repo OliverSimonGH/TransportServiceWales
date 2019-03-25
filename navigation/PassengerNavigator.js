@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import colors from '../constants/Colors';
 
 import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/passenger/JourneyScreen';
@@ -84,10 +85,10 @@ export default createBottomTabNavigator(
 	},
 	{
 		tabBarOptions: {
-			activeTintColor: 'white',
-			inactiveTintColor: '#a30000',
+			activeTintColor: colors.tabIconSelected,
+			inactiveTintColor: colors.tabIconDefault,
 			style: {
-				backgroundColor: '#ff0000'
+				backgroundColor: colors.brandColor
 			}
 		}
 	}

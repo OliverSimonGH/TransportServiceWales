@@ -370,9 +370,8 @@ class JourneyScreen extends Component {
 										onFocus={() => { this.setState({ fromFocused: true }) }}
 										onBlur={() => { this.setState({ fromFocused: false }) }}
 									/>
-									{locationPredictions}
 								</View>
-
+								{locationPredictions}
 
 								{/* Destination field */}
 								<View style={[styles.inputContainer, {
