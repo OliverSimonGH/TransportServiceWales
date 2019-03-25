@@ -1,5 +1,6 @@
 import { FETCH_TRANSACTIONS, ADD_TRANSACTION } from './types'
 import ip from '../../ipstore'
+import { getRequestAuthorized } from '../../API' 
 
 export function addTransaction(transaction){
     return {
@@ -10,8 +11,7 @@ export function addTransaction(transaction){
 
 export function fetchTransactions() {
     return function(dispatch) {
-        fetch(`http://${ip}:3000/user/transactions`)
-		.then((response) => response.json())
+        getRequestAuthorized(`http://${ip}:3000/user/transactions`)
 		.then((response) => {
             dispatch({
                 type: FETCH_TRANSACTIONS,

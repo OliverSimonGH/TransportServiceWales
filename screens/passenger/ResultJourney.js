@@ -3,6 +3,7 @@ import { Text, View, TouchableOpacity } from 'react-native'
 import ip from '../../ipstore'
 import key from '../../google_api_key'
 import moment from 'moment';
+import { getRequestAuthorized } from '../../API' 
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -22,8 +23,7 @@ export default class ResultJourney extends Component {
   componentDidMount() {
     const { id, lat, lng } = this.props;
 
-    fetch(`http://${ip}:3000/journey?journeyId=${id}`)
-      .then(response => response.json())
+    getRequestAuthorized(`http://${ip}:3000/journey?journeyId=${id}`)
       .then(response => {
         var start = '', end = '', waypoints = [{ latitude: lat, longitude: lng }]
 
@@ -70,6 +70,7 @@ export default class ResultJourney extends Component {
 
             var duration = moment.duration(moment(endDate).diff(startDate))
             var departDuration = moment.duration(moment(endDate).diff(nowDate))
+            console.log(departDuration.asSeconds())
 
             var totalHours = parseInt(duration.asHours());
             var totalMinutes = parseInt(duration.asMinutes()) % 60;
@@ -81,7 +82,7 @@ export default class ResultJourney extends Component {
 
             var newTotalTime = parseInt(this.state.newTotalTime / 60);
 
-            if (newTotalTime >= totalTotalMinutes) {
+            if (newTotalTime >= totalTotalMinutes || departDuration.asSeconds() <= 0) {
               this.props.remove()
             }
             else {

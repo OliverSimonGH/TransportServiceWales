@@ -6,6 +6,7 @@ import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
+import { getRequestAuthorized } from '../../API' 
 
 export default class DriverSchedule extends React.Component {
 	static navigationOptions = {
@@ -17,10 +18,8 @@ export default class DriverSchedule extends React.Component {
 	};
 
 	componentDidMount() {
-		fetch(`http://${ip}:3000/driver/journeys`)
-			.then((response) => response.json())
+		getRequestAuthorized(`http://${ip}:3000/driver/journeys`)
 			.then((response) => {
-
 				let journey = {}
 				for (let i = 0; i < response.length; i++) {
 					const element = response[i];

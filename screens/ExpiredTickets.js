@@ -8,6 +8,7 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import tickets from './data';
 import ip from '../ipstore';
+import { getRequestAuthorized } from '../../API' 
 
 import TicketLayout from './TicketLayout';
 import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
@@ -25,7 +26,8 @@ export default class TicketsScreen extends React.Component {
 	};
 
 	componentDidMount() {
-		fetch(`http://${ip}:3000/ticketsExpired`).then((response) => response.json()).then((response) => {
+		getRequestAuthorized(`http://${ip}:3000/ticketsExpired`)
+		.then((response) => {
 			this.setState({
 				ticketData: response.ticketExpired
 			});

@@ -1,16 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Accordion, Button, Container, Content, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, TextInput, View } from 'react-native';
+import { Dimensions, StyleSheet, TextInput, View, AsyncStorage } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
+import {postRequestNotAuthorized} from '../API'
 
 import { connect } from 'react-redux';
 import { addUser } from '../redux/actions/userAction';
 
 class loginScreen extends Component {
 	state = {
-		email: 'JonesA@hotmail.comm',
+		email: 'JonesA@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};
@@ -23,30 +24,23 @@ class loginScreen extends Component {
 			password: this.state.password
 		};
 
-		fetch(`http://${ip}:3000/login`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then((response) => response.json())
-			.then((responseJSON) => {
+		postRequestNotAuthorized(`http://${ip}:3000/login`, data)
+
+			.then(async (responseJSON) => {
 				if (responseJSON.status != 10) {
 					return this.setState({ errors: message });
 				}
 
 				switch (responseJSON.content.fk_user_type_id) {
 					case 1:
+						await AsyncStorage.setItem('tfwJWT', responseJSON.token);
 						this.props.onAddUser(responseJSON.content);
-						this.props.navigation.navigate('Passenger');
-						break;
+						return this.props.navigation.navigate('Passenger');
 
 					case 2:
+						await AsyncStorage.setItem('tfwJWT', responseJSON.token);
 						this.props.onAddUser(responseJSON.content);
-						this.props.navigation.navigate('Driver');
-						break;
+						return this.props.navigation.navigate('Driver');
 				}
 			})
 			.catch((error) => console.log(error));

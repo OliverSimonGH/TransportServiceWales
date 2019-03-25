@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Dimensions, Picker, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
+import { postRequestNotAuthorized } from '../API'
 
 class RegistrationScreen extends Component {
 	state = {
@@ -29,15 +30,7 @@ class RegistrationScreen extends Component {
 			type: this.state.type
 		};
 
-		fetch(`http://${ip}:3000/register`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then((response) => response.json())
+		postRequestNotAuthorized(`http://${ip}:3000/register`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
 					//Success

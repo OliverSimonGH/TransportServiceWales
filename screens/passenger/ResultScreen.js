@@ -3,6 +3,7 @@ import { Text, View } from 'react-native'
 import { Container, Content } from 'native-base';
 import Icon from 'react-native-vector-icons/Entypo';
 import ip from '../../ipstore'
+import { getRequestAuthorized } from '../../API' 
 
 import GlobalHeader from '../../components/GlobalHeader';
 import ResultJourney from './ResultJourney'
@@ -30,8 +31,7 @@ class ResultScreen extends Component {
     componentDidMount(){
         const { lat, lng, endCity, endStreet, numPassenger } = this.props.navigation.state.params;
 
-        fetch(`http://${ip}:3000/journeyResults?street=${endStreet}&city=${endCity}`)
-        .then(response => response.json())
+        getRequestAuthorized(`http://${ip}:3000/journeyResults?street=${endStreet}&city=${endCity}`)
         .then(response => {
             if  (response.results.length < 1) return;
             for (let i = 0; i < response.results.length; i++) {

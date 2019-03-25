@@ -8,6 +8,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
 import uuid from 'uuid/v4';
+import { getRequestAuthorized } from '../../API' 
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -36,8 +37,7 @@ class RouteScreen extends Component {
 	}
 
 	fetchData = async () => {
-		const response = await fetch(`http://${ip}:3000/driver/schedule?id=${this.props.navigation.state.params.id}`);
-		const coordinate = await response.json();
+		const coordinate = await getRequestAuthorized(`http://${ip}:3000/driver/schedule?id=${this.props.navigation.state.params.id}`);
 
 		for (let i = 0; i < coordinate.length; i++) {
 			const element = coordinate[i];

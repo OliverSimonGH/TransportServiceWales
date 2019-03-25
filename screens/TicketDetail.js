@@ -15,6 +15,8 @@ import { connect } from 'react-redux';
 import { addTransaction } from '../redux/actions/transactionAction';
 import { userPayForTicket } from '../redux/actions/userAction';
 import { cancelTicket, fetchTickets } from '../redux/actions/ticketAction';
+import { postRequestAuthorized } from '../API'
+
 
 class TicketDetail extends React.Component {
 	static navigationOptions = {
@@ -95,15 +97,7 @@ class TicketDetail extends React.Component {
 			cancellationFeeApplied: cancellationFeeApplied
 		};
 
-		return fetch(`http://${ip}:3000/user/cancelTicket`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-		.catch(err => {})
+		return postRequestAuthorized(`http://${ip}:3000/user/cancelTicket`, data)
 	}
 
 	navigateTo = () => {

@@ -6,6 +6,7 @@ import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
+import { getRequestAuthorized } from '../../API' 
 
 export default class MySchedule extends React.Component {
 	static navigationOptions = {
@@ -26,7 +27,7 @@ export default class MySchedule extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch(`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`);
+		const response = await getRequestAuthorized(`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`);
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};

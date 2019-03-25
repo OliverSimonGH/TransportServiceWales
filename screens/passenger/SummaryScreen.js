@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';
 import { addTicket } from '../../redux/actions/ticketAction';
+import { postRequestAuthorized } from '../../API'
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -49,15 +50,7 @@ class SummaryScreen extends React.Component {
 			date: moment(date).format('MMMM Do YYYY')
 		};
 
-		fetch(`http://${ip}:3000/book`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then((response) => response.json())
+		postRequestAuthorized(`http://${ip}:3000/book`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
 					//Success
@@ -76,15 +69,7 @@ class SummaryScreen extends React.Component {
 
 	bookJourney = () => {
 		const bookingData = this.props.navigation.state.params;
-		fetch(`http://${ip}:3000/booking/temp`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(bookingData)
-		})
-			.catch((error) => console.log(error));
+		postRequestAuthorized(`http://${ip}:3000/booking/temp`, bookingData)
 	};
 
 	componentDidMount() {
@@ -108,15 +93,7 @@ class SummaryScreen extends React.Component {
 			fk_transaction_type_id: 1
 		};
 
-		fetch(`http://${ip}:3000/user/addTransaction`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then((reponse) => reponse.json())
+		postRequestAuthorized(`http://${ip}:3000/user/addTransaction`, data)
 			.then((response) => {
 				if (response.status !== 10) return;
 
@@ -175,15 +152,7 @@ class SummaryScreen extends React.Component {
 			fk_transaction_type_id: 3
 		};
 
-		fetch(`http://${ip}:3000/user/addTransaction`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then((reponse) => reponse.json())
+		postRequestAuthorized(`http://${ip}:3000/user/addTransaction`, data)
 			.then((response) => {
 				if (response.status !== 10) return;
 

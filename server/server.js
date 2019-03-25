@@ -5,18 +5,18 @@ var mysql = require('mysql');
 var app = express();
 
 var bcrypt = require('bcryptjs');
+var JWTAuth = require('./JWTAuth');
 var saltRounds = 10;
 
 var engines = require('consolidate');
 var paypal = require('paypal-rest-sdk');
+var config = require('./config')
 var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
 app.engine('ejs', engines.ejs);
-app.set('views', '../views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
-
-const { PORT = 3000 } = process.env;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -46,6 +46,15 @@ paypal.configure({
 	client_id: paypalApiKey.client_id,
 	client_secret: paypalApiKey.client_secret
 });
+
+app.all('*', (req, res, next) => {
+	config.excludedRoutes.map(route => {
+		if (route === req.path) {
+			return next()
+		}
+	})
+	return JWTAuth.verifyJWTRESTRequest(req, res, next)
+})
 
 app.get('/journey', (req, res) => {
 	const journeyId = req.query.journeyId;
@@ -131,8 +140,9 @@ app.post('/login', (req, res) => {
 			if (error) throw error;
 			if (!success) return res.send({ status: 0 });
 			else {
-				localStorage.setItem('userId', rows[0].user_id);
-				return res.send({ content: rows[0], status: 10 });
+				var token = JWTAuth.createJWTToken(rows[0].user_id)
+				// console.log(token)
+				return res.send({ content: rows[0], status: 10 , token: token});
 			}
 		});
 	});
@@ -567,4 +577,4 @@ app.get('/journeyResults', (req, res) => {
 // })
 
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(config.port, () => console.log(`Server running on port ${config.port}`));

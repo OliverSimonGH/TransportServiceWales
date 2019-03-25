@@ -1,5 +1,6 @@
 import { FETCH_TICKETS, CANCEL_TICKET, ADD_TICKET} from './types'
 import ip from '../../ipstore'
+import { getRequestAuthorized } from '../../API'
 
 export function cancelTicket(ticketId){
     return {
@@ -18,8 +19,7 @@ export function addTicket(ticket){
 
 export function fetchTickets() {
     return function(dispatch) {
-        fetch(`http://${ip}:3000/user/tickets`)
-		.then((response) => response.json())
+        getRequestAuthorized(`http://${ip}:3000/user/tickets`)
 		.then((response) => {
             dispatch({
                 type: FETCH_TICKETS,
