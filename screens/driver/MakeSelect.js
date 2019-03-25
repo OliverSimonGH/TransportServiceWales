@@ -3,9 +3,11 @@ import React from 'react';
 import { StyleSheet, View, FlatList, Text } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
+import { connect } from 'react-redux';
+import { addMake } from './../../redux/actions/vehicleAction';
 
 
-export default class MakeSelect extends React.Component {
+class MakeSelect extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -49,7 +51,8 @@ export default class MakeSelect extends React.Component {
 			make: this.state.make
 		}
 		console.log(data);
-		this.props.navigation.navigate('AddVehicle', data);
+		this.props.addMake(data);
+		this.props.navigation.navigate('AddVehicle');
 	}
 
 	render() {
@@ -104,3 +107,11 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-end",
 	},
 });
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		addMake: (data) => dispatch(addMake(data))
+	};
+};
+
+export default connect(null, mapDispatchToProps)(MakeSelect);

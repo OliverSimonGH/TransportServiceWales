@@ -1,20 +1,13 @@
-import _ from 'lodash';
-import moment from 'moment';
-import { Button, Container, Content, Text, ListItem, CheckBox, Body, Input, Item, Label } from 'native-base';
+import { Button, Container, Content, Text, ListItem, CheckBox, Body } from 'native-base';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView } from 'react-native';
-import Collapsible from 'react-native-collapsible';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
 var vehicleData = require('../../vehicleData.json');
 
 import { connect } from 'react-redux';
-import VehicleSearch from './VehicleSearch';
-import VehicleSearchResults from './VehicleSearchResults';
 
-export default class AddVehicle extends React.Component {
+class AddVehicle extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -47,8 +40,10 @@ export default class AddVehicle extends React.Component {
 		this.props.navigation.navigate('MakeSelect', vehicleData.car_makes);
 	};
 
+	componentDidMount() {
+	}
+
 	render() {
-		const data = this.props.navigation.state.params;
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateToMake} />
@@ -59,31 +54,22 @@ export default class AddVehicle extends React.Component {
 								{/* Car make */}
 								<TouchableOpacity
 									onPress={this.navigateToMake}
-									style={[styles.inputContainer, {borderBottomColor: colors.lightBorder}]}
+									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder }]}
 								>
 									<Text style={[styles.input, { color: colors.bodyTextColor }]}>
-										{data ? data.make : 'Make'}
+										{this.props.make.make ? this.props.make.make : 'Make'}
 									</Text>
 								</TouchableOpacity>
 
 								{/* Car model */}
-								<View style={[styles.inputContainer, {
-									borderBottomColor: this.state.modelFocused ? colors.brandColor : colors.lightBorder
-								}]}>
-									<TextInput
-										placeholder="Model"
-										placeholderTextColor={this.state.modelFocused ? colors.emphasisTextColor : colors.bodyTextColor}
-										style={[styles.input, {
-											color: this.state.modelFocused ? colors.emphasisTextColor : colors.bodyTextColor
-										}]}
-										onChangeText={(model) => {
-											this.setState({ model });
-										}}
-										value={this.state.model ? this.state.model.toString() : null}
-										onFocus={() => { this.setState({ modelFocused: true }) }}
-										onBlur={() => { this.setState({ modelFocused: false }) }}
-									/>
-								</View>
+								<TouchableOpacity
+									onPress={this.navigateToMake}
+									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder }]}
+								>
+									<Text style={[styles.input, { color: colors.bodyTextColor }]}>
+										{this.props.model.model ? this.props.make.model : 'Model'}
+									</Text>
+								</TouchableOpacity>
 
 								{/* Car year */}
 								<View style={[styles.inputContainer, {
@@ -195,7 +181,6 @@ export default class AddVehicle extends React.Component {
 										danger
 										style={styles.button}
 										onPress={() => {
-											this.onSubmit();
 										}}
 									>
 										<Text>Add Vehicle</Text>
@@ -279,3 +264,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 	}
 });
+
+const mapStateToProps = (state) => ({
+	make: state.vehicleReducer.make,
+	model: state.vehicleReducer.model,
+});
+
+export default connect(mapStateToProps)(AddVehicle);
