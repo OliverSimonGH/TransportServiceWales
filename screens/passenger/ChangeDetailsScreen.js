@@ -6,15 +6,12 @@ import {
 	Text,
 	Header,
 	Content,
-	List,
-	ListItem,
 	Left,
 	Right,
-	Icon,
-	Accordion
 } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
+import { Icon } from 'react-native-elements';
 
 
 
@@ -61,19 +58,38 @@ export default class AccountsScreen extends Component {
                             {this.state.userDetails.length >= 1 && (
 								<View style={styles.container}>
 									<React.Fragment>
-									<Text>
+								<View style={styles.forenameContainer}>
+									<Text style={styles.detailView}> 
 										Forename: {this.state.userDetails[0].forename}
 									</Text>
-									<Text>
-										Surname: {this.state.userDetails[0].surname}
+									<Icon 
+									name= 'update'
+									style={styles.updateIcon}>
+									</Icon>
+									</View>	
+									<View style={styles.forenameContainer}>
+									<Text style={styles.detailView}> 
+									Surname: {this.state.userDetails[0].surname}
 									</Text>
-									<Text>
-										Email: {this.state.userDetails[0].email}
+									<Icon 
+									name= 'update'
+									style={styles.updateIcon}>
+									</Icon>
+									</View>	
+									<View style={styles.forenameContainer}>
+									<Text style={styles.detailView}> 
+									Email: {this.state.userDetails[0].email}
 									</Text>
-									</React.Fragment>
+									<Icon 
+									name= 'update'
+									style={styles.updateIcon}>
+									</Icon>
+									</View>	
+								</React.Fragment>
 								</View>
+								
 							)}
-                   
+
 										
 					
 					</Content>
@@ -108,5 +124,20 @@ const styles = StyleSheet.create({
 	},
 	secondaryButtontext: {
 		color: '#ff0000'
-	}
+	},
+	forenameContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		width: window.width * 0.75,
+		margin: 15
+	},
+	detailView: {
+		flex: 1,
+		paddingLeft: 10,
+		fontSize: 16
+	},
+	updateIcon: {
+		padding: 6,
+		color: 'gray'
+	},
 });
