@@ -21,6 +21,6 @@ export default createAppContainer(
 		Driver: DriverNavigator,
 		Contact: ContactScreen,
 		Settings: AccountsScreen,
-		ChangeDetails: ChangeDetailsScreen
+		ChangeDetails: ChangeDetailsScreen,
 	})
 );

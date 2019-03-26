@@ -56,6 +56,10 @@ export default class AccountsScreen extends Component {
 		this.props.navigation.navigate('ChangeDetails');
 	};
 
+	theme = () => {
+		this.props.navigation.navigate('SetTheme');
+	};
+
 
 	render() {
 		return (
@@ -90,7 +94,7 @@ export default class AccountsScreen extends Component {
 								</Button>
 							</View>	
 							<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.theme}>
 									<Text style={styles.secondaryButtontext}>My Theme</Text>
 								</Button>
 							</View>	
