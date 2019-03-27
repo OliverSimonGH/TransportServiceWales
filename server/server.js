@@ -48,11 +48,12 @@ paypal.configure({
 });
 
 app.all('*', (req, res, next) => {
-	config.excludedRoutes.map(route => {
-		if (route === req.path) {
-			return next()
-		}
-	})
+	let JWTConfirmed = false;
+	config.excludedRoutes.map(route => { 
+		if (route === req.path) JWTConfirmed = true;
+	 })
+
+	if (JWTConfirmed) return next();
 	return JWTAuth.verifyJWTRESTRequest(req, res, next)
 })
 
@@ -248,7 +249,6 @@ app.post('/booking/temp', (req, res) => {
 	const numWheelchair = req.body.jData.numWheelchair;
 
 	const journeyId = req.body.jId;
-	const userId = localStorage.getItem('userId');
 	
 	connection.query(
 		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -258,7 +258,7 @@ app.post('/booking/temp', (req, res) => {
 
 			connection.query(
 				'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
-				[journeyId, userId, row1.insertId, 1],
+				[journeyId, req.userId, row1.insertId, 1],
 				(errors, rows, fields) => {
 					if (errors) throw errors;
 				}
@@ -327,7 +327,7 @@ app.get('/paypal', (req, res) => {
 app.get('/user/amount', (req, res) => [
 	connection.query(
 		'select funds from user where user_id = ?',
-		[ localStorage.getItem('userId') ],
+		[ req.userId ],
 		(error, rows, fields) => {
 			if (error) throw error;
 			else {
@@ -340,7 +340,7 @@ app.get('/user/amount', (req, res) => [
 app.get('/user/transactions', (req, res) => [
 	connection.query(
 		'SELECT t.*, tt.type FROM transaction t JOIN transaction_type tt ON tt.transaction_type_id = t.fk_transaction_type_id WHERE fk_user_id = ? ORDER BY date DESC',
-		[ localStorage.getItem('userId') ],
+		[ req.userId ],
 		(error, rows, fields) => {
 			if (error) throw error;
 			else {
@@ -422,11 +422,10 @@ app.post('/user/addTransaction', (req, res) => {
 	const current_funds = req.body.current_funds;
 	const spent_funds = req.body.spent_funds;
 	const fk_transaction_type_id = req.body.fk_transaction_type_id;
-	const userId = localStorage.getItem('userId');
 
 	connection.query(
 		'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
-		[ current_funds, spent_funds, new Date(), fk_transaction_type_id, userId, userId ],
+		[ current_funds, spent_funds, new Date(), fk_transaction_type_id, req.userId, req.userId ],
 		(error, row, fields) => {
 			if (error) throw error;
 			connection.query(
@@ -444,7 +443,6 @@ app.post('/user/addTransaction', (req, res) => {
 });
 
 app.post('/user/cancelTicket', (req, res) => {
-	const userId = localStorage.getItem('userId');
 	const ticketId = req.body.ticketId;
 	const amount = req.body.amount;
 	const cancellationFeeApplied = req.body.cancellationFeeApplied;
@@ -454,7 +452,7 @@ app.post('/user/cancelTicket', (req, res) => {
 
 		connection.query(
 			'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1, t.expired = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
-			[userId, ticketId],
+			[req.userId, ticketId],
 			(error, row, fields) => {
 				if (error) {
 					return connection.rollback(function () {
@@ -552,7 +550,6 @@ app.get('/journeyResults', (req, res) => {
 	const street = req.query.street;
 	const city = req.query.city;
 
-
 	connection.query(
 		'SELECT j.journey_id FROM coordinate c JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.street = ? AND c.city = ? AND c.fk_coordinate_type_id = 2',
 		[street, city],
@@ -561,20 +558,5 @@ app.get('/journeyResults', (req, res) => {
 			res.send({ results: rows });
 		})
 })
-
-// app.get('/journeyResults', (req, res) => {
-// 	const street = req.query.street;
-// 	const city = req.query.city;
-
-
-// 	connection.query(
-// 		'SELECT * FROM coordinate WHERE fk_journey_id IN (SELECT j.journey_id FROM coordinate c JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.street = ? AND c.city = ? AND c.fk_coordinate_type_id = 2)',
-// 		[street, city],
-// 		(error, rows, fields) => {
-// 			if (error) throw error;
-// 			res.send({ results: rows });
-// 		})
-// })
-
 
 app.listen(config.port, () => console.log(`Server running on port ${config.port}`));
