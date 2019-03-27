@@ -92,14 +92,11 @@ class ResultScreen extends Component {
 
                                     var newTotalTime = parseInt(newTotalTime / 60);
 
-                                    if (newTotalTime >= totalTotalMinutes || departDuration.asSeconds() <= 0) {
-                                        return;
-                                    }
-                                    else {
+                                    if (newTotalTime <= totalTotalMinutes || departDuration.asSeconds() >= 0) {
                                         this.setState({
                                             journey: [...this.state.journey, <ResultJourney key={id} departDays={departDays} departHours={departHours} departMinutes={departMinutes} totalHours={totalHours} totalMinutes={totalMinutes} startDate={startDate} endDate={endDate} onClick={() => this.onJourneyPress(id)} passengers={numPassenger} />]
                                         })
-                                    }
+                                    }           
                                 })
                         })
                 }
