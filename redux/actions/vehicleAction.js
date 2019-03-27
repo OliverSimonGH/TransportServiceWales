@@ -1,19 +1,5 @@
-import { ADD_MAKE, ADD_MODEL, ADD_VEHICLE, FETCH_VEHICLES} from './types'
+import { ADD_VEHICLE, FETCH_VEHICLES } from './types'
 import ip from '../../ipstore'
-
-export function addMake(data) {
-    return {
-        type: ADD_MAKE,
-        payload: data
-    }
-}
-
-export function addModel(data) {
-    return {
-        type: ADD_MODEL,
-        payload: data
-    }
-}
 
 export function addVehicle(vehicle) {
     return {
@@ -21,7 +7,6 @@ export function addVehicle(vehicle) {
         payload: vehicle
     }
 }
-
 
 export function fetchVehicles() {
     return function (dispatch) {

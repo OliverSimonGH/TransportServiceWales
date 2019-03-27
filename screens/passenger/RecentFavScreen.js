@@ -92,8 +92,9 @@ class RecentFavScreen extends Component {
         return (
             <Container>
                 <GlobalHeader
-                    type={1}
+                    type={3}
                     navigateTo={this.navigateTo}
+                    header="Recent and Favourites"
                     isBackButtonActive={1}
                 />
                 <Content>
@@ -107,8 +108,8 @@ class RecentFavScreen extends Component {
                                 return (
                                     <View style={styles.journeyContainer} key={uuid()}>
                                         <View style={styles.coordinateContainer}>
-                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>FROM:</Text><Text style={styles.coordinate}>{ticket.toStreet}, {ticket.toCity}</Text></View>
-                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>TO:</Text><Text style={styles.coordinate}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>FROM:</Text><Text style={styles.coordinate}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>TO:</Text><Text style={styles.coordinate}>{ticket.toStreet}, {ticket.toCity}</Text></View>
                                         </View>
                                         <TouchableOpacity onPress={() => {
                                             this.setState({ favourited: 0, ticketId: ticket.id }, () => {
@@ -133,8 +134,8 @@ class RecentFavScreen extends Component {
                                 return (
                                     <View style={styles.journeyContainer} key={uuid()}>
                                         <View style={styles.coordinateContainer}>
-                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>FROM:</Text><Text style={styles.coordinate}>{ticket.toStreet}, {ticket.toCity}</Text></View>
-                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>TO:</Text><Text style={styles.coordinate}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>FROM:</Text><Text style={styles.coordinate}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>TO:</Text><Text style={styles.coordinate}>{ticket.toStreet}, {ticket.toCity}</Text></View>
                                         </View>
                                         <TouchableOpacity onPress={() => {
                                             this.setState({ favourited: 1, ticketId: ticket.id }, () => {

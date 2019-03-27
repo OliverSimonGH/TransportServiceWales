@@ -9,7 +9,5 @@ export const FETCH_TICKETS = 'FETCH TICKETS';
 export const ADD_TICKET = 'ADD TICKET';
 export const FAVOURITE_TICKET = 'FAVOURITE TICKET';
 export const REMOVE_FAVOURITE_TICKET = 'REMOVE_FAVOURITE TICKET';
-export const ADD_MAKE = 'ADD MAKE';
-export const ADD_MODEL = 'ADD MODEL';
 export const ADD_VEHICLE = 'ADD VEHICLE';
 export const FETCH_VEHICLES = 'FETCH VEHICLES';

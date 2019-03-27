@@ -440,7 +440,7 @@ class JourneyScreen extends Component {
 								/>
 
 								{/* Return journey option */}
-								<ListItem style={{ marginLeft: 0 }}>
+								<ListItem style={{ marginLeft: 0, borderBottomWidth: 0.75, borderBottomColor: colors.lightBorder }}>
 									<CheckBox
 										checked={this.state.returnTicket}
 										onPress={() => this.setState({ returnTicket: !this.state.returnTicket })}

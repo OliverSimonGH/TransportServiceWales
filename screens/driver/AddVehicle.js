@@ -5,13 +5,13 @@ import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
 var vehicleData = require('../../vehicleData.json');
 
-import { connect } from 'react-redux';
 
-class AddVehicle extends React.Component {
+export default class AddVehicle extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
 	state = {
+		makeId: null,
 		make: null,
 		model: null,
 		year: null,
@@ -30,44 +30,93 @@ class AddVehicle extends React.Component {
 		wheelchairAccessFocused: false,
 		currentlyDrivenFocused: false,
 		vehicleTypeFocused: false,
+
+		models: []
 	};
+
+	onMakeSelect = (itemId, itemMake) => {
+		this.setState({
+			makeId: itemId,
+			make: itemMake,
+		})
+		this.props.navigation.navigate('AddVehicle');
+	}
+
+	onModelSelect = (itemModel) => {
+		this.setState({
+			model: itemModel,
+		})
+		this.setState({ models: [] });
+		this.props.navigation.navigate('AddVehicle');
+	}
+
+	navigateToMakeSelect = () => {
+		this.setState({ makeId: null, model: null, models: [] });
+		const data = {
+			vehicleData: vehicleData.car_makes,
+			selectType: "make",
+			header: "Select a Make",
+			dividers: true,
+		}
+		this.props.navigation.navigate('MakeSelect', { onMakeSelect: this.onMakeSelect, onNavigateBack: this.onNavigateBack, data: data });
+	};
+
+	navigateToModelSelect = () => {
+		this.determineModels();
+		const data = {
+			vehicleData: this.state.models,
+			selectType: "model",
+			header: "Select a Model",
+			dividers: false,
+			makeId: this.state.makeId
+		}
+		this.props.navigation.navigate('MakeSelect', { onModelSelect: this.onModelSelect, onNavigateBack: this.onNavigateBack, data: data });
+	};
+
+	determineModels = () => {
+		vehicleData.car_models.forEach(item => {
+			if (this.state.makeId === item.make_id) {
+				this.setState({
+					models: this.state.models.push(item)
+				})
+			}
+		});
+	}
+
+	onNavigateBack = () => {
+		this.setState({ models: [] });
+		this.props.navigation.navigate('AddVehicle');
+	}
 
 	navigateTo = () => {
 		this.props.navigation.navigate('');
 	};
 
-	navigateToMake = () => {
-		this.props.navigation.navigate('MakeSelect', vehicleData.car_makes);
-	};
-
-	componentDidMount() {
-	}
-
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateToMake} />
+				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<Content>
 					<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
 						<Content style={styles.content}>
 							<View style={styles.contentContainer}>
 								{/* Car make */}
 								<TouchableOpacity
-									onPress={this.navigateToMake}
+									onPress={this.navigateToMakeSelect}
 									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder }]}
 								>
 									<Text style={[styles.input, { color: colors.bodyTextColor }]}>
-										{this.props.make.make ? this.props.make.make : 'Make'}
+										{this.state.make ? this.state.make : 'Make'}
 									</Text>
 								</TouchableOpacity>
 
 								{/* Car model */}
 								<TouchableOpacity
-									onPress={this.navigateToMake}
+									onPress={this.navigateToModelSelect}
 									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder }]}
 								>
 									<Text style={[styles.input, { color: colors.bodyTextColor }]}>
-										{this.props.model.model ? this.props.make.model : 'Model'}
+										{this.state.model ? this.state.model : 'Model'}
 									</Text>
 								</TouchableOpacity>
 
@@ -264,10 +313,3 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 	}
 });
-
-const mapStateToProps = (state) => ({
-	make: state.vehicleReducer.make,
-	model: state.vehicleReducer.model,
-});
-
-export default connect(mapStateToProps)(AddVehicle);

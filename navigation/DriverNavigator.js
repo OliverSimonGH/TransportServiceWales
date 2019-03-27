@@ -10,7 +10,7 @@ import DriverSchedule from '../screens/driver/DriverSchedule';
 import VehiclesScreen from './../screens/driver/VehiclesScreen';
 import AccountsScreen from './../screens/driver/AccountsScreen';
 import AddVehicle from './../screens/driver/AddVehicle';
-import MakeSelect from './../screens/driver/MakeSelect';
+import MakeSelect from '../screens/driver/MakeModelSelect';
 
 const MyScheduleStack = createStackNavigator(
 	{
