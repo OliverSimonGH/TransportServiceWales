@@ -1,8 +1,9 @@
 import { Button, Container, Content, Text, ListItem, CheckBox, Body } from 'native-base';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView, Picker } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
+import ip from '../../ipstore';
 var vehicleData = require('../../vehicleData.json');
 
 
@@ -14,7 +15,6 @@ export default class AddVehicle extends React.Component {
 		makeId: null,
 		make: null,
 		model: null,
-		year: null,
 		registration: null,
 		numSeats: null,
 		wheelchairAccess: false,
@@ -22,17 +22,50 @@ export default class AddVehicle extends React.Component {
 		currentlyDriven: null,
 		vehicleType: null,
 
-		makeFocused: false,
-		modelFocused: false,
-		yearFocused: false,
 		registrationFocused: false,
 		numSeatsFocused: false,
-		wheelchairAccessFocused: false,
-		currentlyDrivenFocused: false,
 		vehicleTypeFocused: false,
 
 		models: []
 	};
+
+	onSubmit = () => {
+		const { make, model, registration, numSeats, numWheelchairs, vehicleType } = this.state;
+		const data = {
+			make: make,
+			model: model,
+			registration: registration.toUpperCase(),
+			numSeats: numSeats,
+			numWheelchairs: numWheelchairs,
+			currentlyDriven: 0,
+			vehicleType: vehicleType
+		};
+		fetch(`http://${ip}:3000/driver/vehicles/addVehicle`, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then((response) => response.json())
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						// this.props.addVehicle(data)
+						// this.props.navigation.navigate('Ticket');
+						break;
+					//Input Validation Failed
+					case 0:
+						this.setState({
+							errors: this.parseErrors(responseJSON.errors)
+						});
+						break;
+				}
+			})
+			.catch((error) => console.log(error));
+	}
 
 	onMakeSelect = (itemId, itemMake) => {
 		this.setState({
@@ -51,7 +84,7 @@ export default class AddVehicle extends React.Component {
 	}
 
 	navigateToMakeSelect = () => {
-		this.setState({ makeId: null, model: null, models: [] });
+		this.setState({ model: null, models: [] });
 		const data = {
 			vehicleData: vehicleData.car_makes,
 			selectType: "make",
@@ -103,41 +136,23 @@ export default class AddVehicle extends React.Component {
 								{/* Car make */}
 								<TouchableOpacity
 									onPress={this.navigateToMakeSelect}
-									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder }]}
+									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}
 								>
-									<Text style={[styles.input, { color: colors.bodyTextColor }]}>
+									<Text style={styles.text}>
 										{this.state.make ? this.state.make : 'Make'}
 									</Text>
 								</TouchableOpacity>
 
 								{/* Car model */}
 								<TouchableOpacity
+									disabled={this.state.makeId ? false : true}
 									onPress={this.navigateToModelSelect}
-									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder }]}
+									style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}
 								>
-									<Text style={[styles.input, { color: colors.bodyTextColor }]}>
+									<Text style={[styles.text, { color: this.state.makeId ? colors.bodyTextColor : colors.lightBorder }]}>
 										{this.state.model ? this.state.model : 'Model'}
 									</Text>
 								</TouchableOpacity>
-
-								{/* Car year */}
-								<View style={[styles.inputContainer, {
-									borderBottomColor: this.state.yearFocused ? colors.brandColor : colors.lightBorder
-								}]}>
-									<TextInput
-										placeholder="Year"
-										placeholderTextColor={this.state.yearFocused ? colors.emphasisTextColor : colors.bodyTextColor}
-										style={[styles.input, {
-											color: this.state.yearFocused ? colors.emphasisTextColor : colors.bodyTextColor
-										}]}
-										onChangeText={(year) => {
-											this.setState({ year });
-										}}
-										value={this.state.year ? this.state.year.toString() : null}
-										onFocus={() => { this.setState({ yearFocused: true }) }}
-										onBlur={() => { this.setState({ yearFocused: false }) }}
-									/>
-								</View>
 
 								{/* Car registration */}
 								<View style={[styles.inputContainer, {
@@ -163,7 +178,7 @@ export default class AddVehicle extends React.Component {
 									borderBottomColor: this.state.numSeatsFocused ? colors.brandColor : colors.lightBorder
 								}]}>
 									<TextInput
-										placeholder="No. of seats"
+										placeholder="No. of passenger seats"
 										placeholderTextColor={this.state.numSeatsFocused ? colors.emphasisTextColor : colors.bodyTextColor}
 										style={[styles.input, {
 											color: this.state.numSeatsFocused ? colors.emphasisTextColor : colors.bodyTextColor
@@ -178,7 +193,7 @@ export default class AddVehicle extends React.Component {
 								</View>
 
 								{/* Return journey option */}
-								<ListItem style={{ marginLeft: 5 }}>
+								<ListItem style={{ marginLeft: 5, borderBottomWidth: 0.75, borderBottomColor: colors.lightBorder }}>
 									<CheckBox
 										checked={this.state.wheelchairAccess}
 										onPress={() => this.setState({ wheelchairAccess: !this.state.wheelchairAccess })}
@@ -212,25 +227,28 @@ export default class AddVehicle extends React.Component {
 									: null
 								}
 
-								{/* Return set as active vehicle option */}
-								<ListItem style={{ marginLeft: 5 }}>
-									<CheckBox
-										checked={this.state.currentlyDriven}
-										onPress={() => this.setState({ currentlyDriven: !this.state.currentlyDriven })}
-										color={colors.bodyTextColor}
-									/>
-									<Body>
-										<Text style={styles.body}>Set as active vehicle?</Text>
-									</Body>
-								</ListItem>
+								<View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]} >
+									<Picker
+										name="type"
+										style={styles.inputPicker}
+										itemStyle={{ color: colors.bodyTextColor }}
+										selectedValue={this.state.vehicleType}
+										onValueChange={(itemValue, itemIndex) => this.setState({ vehicleType: itemValue })}
+									>
+										<Picker.Item color={colors.bodyTextColor} size={5} label="Select a vehicle type" value="0" />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Bus" value="1" />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Mini Bus" value="2" />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Taxi" value="3" />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Car" value="4" />
+									</Picker>
+								</View>
 
 								{/* Add vehicle */}
 								<View style={styles.buttonContainer}>
 									<Button
 										danger
 										style={styles.button}
-										onPress={() => {
-										}}
+										onPress={() => this.onSubmit()}
 									>
 										<Text>Add Vehicle</Text>
 									</Button>
@@ -263,6 +281,10 @@ const styles = StyleSheet.create({
 		padding: 10,
 		color: colors.bodyTextColor
 	},
+	inputPicker: {
+		height: 50,
+		width: 350
+	},
 	locationSuggestion: {
 		color: colors.emphasisTextColor,
 		backgroundColor: 'white',
@@ -286,6 +308,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignSelf: 'center',
 		alignItems: 'center',
+		marginTop: 20,
 		marginBottom: 15,
 	},
 	button: {
@@ -311,5 +334,10 @@ const styles = StyleSheet.create({
 	},
 	checkboxContainer: {
 		justifyContent: 'flex-start',
-	}
+	},
+	text: {
+		fontSize: 14,
+		color: colors.bodyTextColor,
+		padding: 10,
+	},
 });

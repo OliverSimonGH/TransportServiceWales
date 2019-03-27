@@ -229,6 +229,34 @@ WHERE c.fk_coordinate_type_id = 1;`,
 	);
 });
 
+app.post('/driver/vehicles/addVehicle', (req, res) => {
+	const make = req.body.make;
+	const model = req.body.model;
+	const registration = req.body.registration;
+	const numseats = req.body.numSeats;
+	const numWheelchairs = req.body.numWheelchairs;
+	const vehicleType = req.body.vehicleType;
+
+
+	const userId = localStorage.getItem('userId');
+
+	connection.query(
+		'INSERT INTO vehicle (make, model, registration, passenger_seats, wheelchair_spaces, currently_driven, fk_vehicle_type_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+		[ make, model, registration, numseats, numWheelchairs, 0, vehicleType ],
+		(error, row, fields) => {
+			if (error) throw error;
+
+			connection.query(
+				'INSERT INTO user_vehicle (fk_user_id, fk_vehicle_id) VALUES (?, ?)',
+				[ userId, row.insertId ],
+				(error, row, fields) => {
+					if (error) throw error;
+				}
+			);
+		}
+	);
+});
+
 app.get('/journey', function(req, res) {
 	connection.query(
 		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs

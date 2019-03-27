@@ -247,13 +247,12 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `transport`.`vehicle`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `transport`.`vehicle` (
-  `vehicle_id` INT(11) NOT NULL,
+  `vehicle_id` INT(11) NOT NULL AUTO_INCREMENT,
   `registration` VARCHAR(45) NOT NULL,
   `make` VARCHAR(45) NOT NULL,
   `model` VARCHAR(45) NOT NULL,
-  `year` INT(11) NOT NULL,
   `passenger_seats` INT(11) NOT NULL,
-  `wheelchair_paces` INT(11) NOT NULL,
+  `wheelchair_spaces` INT(11) NOT NULL,
   `currently_driven` TINYINT(4) NOT NULL DEFAULT '0',
   `fk_vehicle_type_id` INT(11) NOT NULL,
   PRIMARY KEY (`vehicle_id`, `fk_vehicle_type_id`),
