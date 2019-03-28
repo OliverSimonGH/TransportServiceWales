@@ -1,11 +1,16 @@
-import { Card, CardItem, Container, Content, H1, Right, Text } from 'native-base';
+import { Container, Text } from 'native-base';
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import { FloatingAction } from 'react-native-floating-action';
+import colors from '../../constants/Colors';
+import addIcon from '../../assets/images/add.png';
+import uuid from 'uuid/v4';
 
-export default class VehiclesScreen extends React.Component {
+import { connect } from 'react-redux';
+import VehicleItem from './VehicleItem';
+
+class VehiclesScreen extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -13,22 +18,92 @@ export default class VehiclesScreen extends React.Component {
 
 	};
 
+	navigateToAddVehicle = () => {
+		this.props.navigation.navigate('AddVehicle');
+	};
+
 	navigateTo = () => {
 		this.props.navigation.navigate('');
 	};
 
+	selectedVehicle = () => {
+		var selectedVehicle;
+		if (this.props.vehicles.length > 0) {
+			this.props.vehicles.forEach(vehicle => {
+				if (vehicle.currently_driven === 1) {
+					selectedVehicle = vehicle;
+				}
+			})
+		}
+		return selectedVehicle;
+	}
+
 	render() {
+		const actions = [{
+			icon: addIcon,
+			name: 'add_vehicle',
+			position: 1
+		}];
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
-				<Content>
-					
-				</Content>
+				<ScrollView style={styles.container}>
+					<View style={{
+						borderBottomColor: this.selectedVehicle() && colors.lightBorder,
+						borderBottomWidth: this.selectedVehicle() && 0.75
+					}}>
+						<Text style={styles.header}>CURRENTLY DRIVING</Text>
+					</View>
+					{this.selectedVehicle() ?
+						<VehicleItem vehicle={this.selectedVehicle()} /> :
+						<Text style={styles.body}>No vehicle currently selected</Text>
+					}
+					<View style={{
+						borderBottomColor: this.props.vehicles && colors.lightBorder,
+						borderBottomWidth: this.props.vehicles && 0.75
+					}}>
+						<Text style={styles.header}>YOUR VEHICLES</Text>
+					</View>
+					{(this.props.vehicles && this.props.vehicles.length > 0) ?
+						this.props.vehicles.map((vehicle) => {
+							return (
+								<VehicleItem vehicle={vehicle} key={uuid()} />
+							)
+						}) :
+						<Text style={styles.body}>No saved vehicles to show</Text>
+					}
+				</ScrollView>
+				<FloatingAction
+					actions={actions}
+					overrideWithAction={true}
+					listenKeyboard={true}
+					onPressItem={this.navigateToAddVehicle}
+					color={colors.brandColor}
+				/>
 			</Container>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	
+	container: {
+		flex: 1
+	},
+	header: {
+		width: '100%',
+		marginBottom: 10,
+		marginTop: 20,
+		paddingLeft: 25,
+		color: colors.emphasisTextColor
+	},
+	body: {
+		marginLeft: 25,
+		color: colors.bodyTextColor,
+	},
 });
+
+const mapStateToProps = state => ({
+	vehicles: state.vehicleReducer.vehicles,
+});
+
+export default connect(mapStateToProps)(VehiclesScreen);

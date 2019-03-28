@@ -1,4 +1,4 @@
-import { Button, Container, Content, Text, ListItem, CheckBox, Body } from 'native-base';
+import { Accordion, Button, Container, Content, Text, ListItem, CheckBox, Body } from 'native-base';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView, Picker } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
@@ -6,8 +6,10 @@ import colors from '../../constants/Colors';
 import ip from '../../ipstore';
 var vehicleData = require('../../vehicleData.json');
 
+import { connect } from 'react-redux';
+import { addVehicle } from './../../redux/actions/vehicleAction';
 
-export default class AddVehicle extends React.Component {
+class AddVehicle extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -35,8 +37,8 @@ export default class AddVehicle extends React.Component {
 			make: make,
 			model: model,
 			registration: registration.toUpperCase(),
-			numSeats: numSeats,
-			numWheelchairs: numWheelchairs,
+			numPassengers: numSeats,
+			numWheelchairs: numWheelchairs ? numWheelchairs : 0,
 			currentlyDriven: 0,
 			vehicleType: vehicleType
 		};
@@ -53,8 +55,9 @@ export default class AddVehicle extends React.Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						// this.props.addVehicle(data)
-						// this.props.navigation.navigate('Ticket');
+						console.log(data.vehicleType)
+						this.props.addVehicle(data)
+						this.navigateTo();
 						break;
 					//Input Validation Failed
 					case 0:
@@ -66,6 +69,19 @@ export default class AddVehicle extends React.Component {
 			})
 			.catch((error) => console.log(error));
 	}
+
+	parseErrors = (errorList) => {
+		var errors = {
+			title: 'Errors',
+			content: ''
+		};
+
+		for (var i = 0; i < errorList.length; i++) {
+			errors.content += errorList[i].msg + '\n';
+		}
+
+		return [errors];
+	};
 
 	onMakeSelect = (itemId, itemMake) => {
 		this.setState({
@@ -122,14 +138,33 @@ export default class AddVehicle extends React.Component {
 	}
 
 	navigateTo = () => {
-		this.props.navigation.navigate('');
+		this.props.navigation.navigate('MyVehicles');
 	};
 
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateTo} />
+				<GlobalHeader type={3} navigateTo={this.navigateTo} header="Add a vehicle" isBackButtonActive={1} />
 				<Content>
+					{this.state.errors &&
+						!!this.state.errors.length && (
+							<Accordion
+								dataArray={this.state.errors}
+								icon="add"
+								expandedIcon="remove"
+								contentStyle={styles.errorStyle}
+								expanded={0}
+							/>
+						)}
+					{this.state.error && (
+						<Accordion
+							dataArray={this.state.error}
+							icon="add"
+							expandedIcon="remove"
+							contentStyle={styles.errorStyle}
+							expanded={0}
+						/>
+					)}
 					<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
 						<Content style={styles.content}>
 							<View style={styles.contentContainer}>
@@ -192,7 +227,7 @@ export default class AddVehicle extends React.Component {
 									/>
 								</View>
 
-								{/* Return journey option */}
+								{/* Wheelchair spaces option */}
 								<ListItem style={{ marginLeft: 5, borderBottomWidth: 0.75, borderBottomColor: colors.lightBorder }}>
 									<CheckBox
 										checked={this.state.wheelchairAccess}
@@ -235,11 +270,11 @@ export default class AddVehicle extends React.Component {
 										selectedValue={this.state.vehicleType}
 										onValueChange={(itemValue, itemIndex) => this.setState({ vehicleType: itemValue })}
 									>
-										<Picker.Item color={colors.bodyTextColor} size={5} label="Select a vehicle type" value="0" />
-										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Bus" value="1" />
-										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Mini Bus" value="2" />
-										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Taxi" value="3" />
-										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Car" value="4" />
+										<Picker.Item color={colors.bodyTextColor} size={5} label="Select a vehicle type" value={0} />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Bus" value={1} />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Mini Bus" value={2} />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Taxi" value={3} />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Car" value={4} />
 									</Picker>
 								</View>
 
@@ -341,3 +376,11 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 });
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		addVehicle: (vehicle) => dispatch(addVehicle(vehicle))
+	};
+};
+
+export default connect(null, mapDispatchToProps)(AddVehicle);

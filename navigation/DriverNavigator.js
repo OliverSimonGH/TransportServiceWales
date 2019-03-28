@@ -35,7 +35,7 @@ const VehiclesStack = createStackNavigator(
 		MakeSelect: MakeSelect,
 	},
 	{
-		initialRouteName: 'AddVehicle'
+		initialRouteName: 'MyVehicles'
 	}
 );
 

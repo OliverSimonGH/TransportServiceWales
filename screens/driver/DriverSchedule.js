@@ -7,13 +7,18 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
 
-export default class DriverSchedule extends React.Component {
+import { connect } from 'react-redux';
+import { fetchVehicles } from '../../redux/actions/vehicleAction';
+
+class DriverSchedule extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
 	state = {};
 
-	componentDidMount() {}
+	componentDidMount() {
+		this.props.fetchVehicles();
+	}
 
 	TestStates = () => {
 		const data = {
@@ -126,3 +131,5 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(49, 46, 50, 0.1)'
 	}
 });
+
+export default connect(null, { fetchVehicles })(DriverSchedule);

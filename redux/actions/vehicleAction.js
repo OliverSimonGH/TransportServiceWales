@@ -10,7 +10,7 @@ export function addVehicle(vehicle) {
 
 export function fetchVehicles() {
     return function (dispatch) {
-        fetch(`http://${ip}:3000/user/vehicles`)
+        fetch(`http://${ip}:3000/driver/vehicles/getVehicles`)
             .then((response) => response.json())
             .then((response) => {
                 dispatch({

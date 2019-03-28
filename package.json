@@ -36,6 +36,7 @@
 		"react": "16.5.0",
 		"react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
 		"react-native-collapsible": "^1.4.0",
+		"react-native-floating-action": "^1.14.2",
 		"react-native-maps": "^0.23.0",
 		"react-native-maps-directions": "^1.6.0",
 		"react-native-modal-datetime-picker": "^6.0.0",
