@@ -11,6 +11,10 @@ import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
+import ChangePassword from '../screens/passenger/ChangePassword';
+import ContactScreen from '../screens/passenger/ContactScreen';
+import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
+
 
 const JourneyStack = createStackNavigator(
 	{
@@ -59,8 +63,14 @@ WalletStack.navigationOptions = {
 };
 
 const AccountStack = createStackNavigator({
-	Account: AccountsScreen
-});
+	Account: AccountsScreen,
+	Contact: ContactScreen,
+	Settings: AccountsScreen,
+	ChangeDetails: ChangeDetailsScreen,
+	ChangePassword: ChangePassword
+},
+{ initialRouteName: 'Account' }
+);
 
 AccountStack.navigationOptions = {
 	tabBarLabel: 'Settings',
