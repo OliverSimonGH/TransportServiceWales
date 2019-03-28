@@ -1,4 +1,4 @@
-import { FETCH_VEHICLES, ADD_VEHICLE } from '../actions/types'
+import { FETCH_VEHICLES, ADD_VEHICLE, REMOVE_VEHICLE } from '../actions/types'
 
 const initialState = {
     vehicles: [],
@@ -34,6 +34,22 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 vehicles: [...state.vehicles, action.payload],
+            }
+
+        case REMOVE_VEHICLE:
+            const vehicles = state.vehicles;
+            const vehicleId = action.payload;
+
+            for (i = 0; i < vehicles.length; i++) {
+                const vehicle = vehicles[i];
+                if (vehicleId === vehicle.id) {
+                    vehicles.splice(i, 1);
+                }
+            }
+
+            return {
+                ...state,
+                vehicles: vehicles,
             }
 
         default:

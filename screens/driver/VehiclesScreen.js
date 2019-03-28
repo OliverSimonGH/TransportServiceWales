@@ -8,7 +8,8 @@ import addIcon from '../../assets/images/add.png';
 import uuid from 'uuid/v4';
 
 import { connect } from 'react-redux';
-import VehicleItem from './VehicleItem';
+import VehicleRow from './VehicleRow';
+import { fetchVehicles } from '../../redux/actions/vehicleAction';
 
 class VehiclesScreen extends React.Component {
 	static navigationOptions = {
@@ -38,6 +39,10 @@ class VehiclesScreen extends React.Component {
 		return selectedVehicle;
 	}
 
+	onDelete = () => {
+		this.props.fetchVehicles();
+	}
+
 	render() {
 		const actions = [{
 			icon: addIcon,
@@ -55,7 +60,7 @@ class VehiclesScreen extends React.Component {
 						<Text style={styles.header}>CURRENTLY DRIVING</Text>
 					</View>
 					{this.selectedVehicle() ?
-						<VehicleItem vehicle={this.selectedVehicle()} /> :
+						<VehicleRow vehicle={this.selectedVehicle()} /> :
 						<Text style={styles.body}>No vehicle currently selected</Text>
 					}
 					<View style={{
@@ -67,7 +72,7 @@ class VehiclesScreen extends React.Component {
 					{(this.props.vehicles && this.props.vehicles.length > 0) ?
 						this.props.vehicles.map((vehicle) => {
 							return (
-								<VehicleItem vehicle={vehicle} key={uuid()} />
+								<VehicleRow vehicle={vehicle} key={uuid()} onDelete={this.onDelete}/>
 							)
 						}) :
 						<Text style={styles.body}>No saved vehicles to show</Text>
@@ -106,4 +111,10 @@ const mapStateToProps = state => ({
 	vehicles: state.vehicleReducer.vehicles,
 });
 
-export default connect(mapStateToProps)(VehiclesScreen);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		fetchVehicles: () => dispatch(fetchVehicles()),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(VehiclesScreen);

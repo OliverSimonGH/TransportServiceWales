@@ -300,6 +300,25 @@ app.post('/driver/vehicles/addVehicle', (req, res) => {
 	);
 });
 
+app.post('/driver/vehicles/removeVehicle', (req, res) => {
+	const vehicleId = req.body.id;
+
+	connection.query(
+		`DELETE user_vehicle, vehicle
+		FROM user_vehicle
+		INNER JOIN vehicle
+		ON user_vehicle.fk_vehicle_id = vehicle.vehicle_id
+		WHERE vehicle.vehicle_id = ?`,
+		[vehicleId],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
+			}
+		}
+	);
+});
+
 app.post('/booking/book', (req, res) => {
 	const startPlaceId = req.body.place_id;
 	const startStreet = req.body.street;

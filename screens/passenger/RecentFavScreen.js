@@ -51,12 +51,6 @@ class RecentFavScreen extends Component {
                             this.props.removeFavourite(this.state.ticketId);
                         }
                         break;
-                    //User Exists
-                    case 1:
-                        this.setState({
-                            errors: [{ title: 'Errors', content: 'There was an error when favouriting this ticket' }]
-                        });
-                        break;
                 }
             })
             .catch((error) => console.log(error));

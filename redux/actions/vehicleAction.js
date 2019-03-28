@@ -1,10 +1,17 @@
-import { ADD_VEHICLE, FETCH_VEHICLES } from './types'
+import { ADD_VEHICLE, REMOVE_VEHICLE, FETCH_VEHICLES } from './types'
 import ip from '../../ipstore'
 
 export function addVehicle(vehicle) {
     return {
         type: ADD_VEHICLE,
         payload: vehicle
+    }
+}
+
+export function removeVehicle(vehicleIndex) {
+    return {
+        type: REMOVE_VEHICLE,
+        payload: vehicleIndex
     }
 }
 

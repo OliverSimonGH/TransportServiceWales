@@ -8,6 +8,7 @@ var vehicleData = require('../../vehicleData.json');
 
 import { connect } from 'react-redux';
 import { addVehicle } from './../../redux/actions/vehicleAction';
+import { fetchVehicles } from '../../redux/actions/vehicleAction';
 
 class AddVehicle extends React.Component {
 	static navigationOptions = {
@@ -55,7 +56,6 @@ class AddVehicle extends React.Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						console.log(data.vehicleType)
 						this.props.addVehicle(data)
 						this.navigateTo();
 						break;
@@ -83,6 +83,10 @@ class AddVehicle extends React.Component {
 		return [errors];
 	};
 
+	componentDidUpdate() {
+		this.props.fetchVehicles();
+	}
+
 	onMakeSelect = (itemId, itemMake) => {
 		this.setState({
 			makeId: itemId,
@@ -107,7 +111,7 @@ class AddVehicle extends React.Component {
 			header: "Select a Make",
 			dividers: true,
 		}
-		this.props.navigation.navigate('MakeSelect', { onMakeSelect: this.onMakeSelect, onNavigateBack: this.onNavigateBack, data: data });
+		this.props.navigation.navigate('MakeModelSelect', { onMakeSelect: this.onMakeSelect, onNavigateBack: this.onNavigateBack, data: data });
 	};
 
 	navigateToModelSelect = () => {
@@ -119,7 +123,7 @@ class AddVehicle extends React.Component {
 			dividers: false,
 			makeId: this.state.makeId
 		}
-		this.props.navigation.navigate('MakeSelect', { onModelSelect: this.onModelSelect, onNavigateBack: this.onNavigateBack, data: data });
+		this.props.navigation.navigate('MakeModelSelect', { onModelSelect: this.onModelSelect, onNavigateBack: this.onNavigateBack, data: data });
 	};
 
 	determineModels = () => {
@@ -379,7 +383,8 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		addVehicle: (vehicle) => dispatch(addVehicle(vehicle))
+		addVehicle: (vehicle) => dispatch(addVehicle(vehicle)),
+		fetchVehicles: () => dispatch(fetchVehicles()),
 	};
 };
 
