@@ -445,22 +445,59 @@ app.get('/userDetails', function(req, res) {
 	connection.query('SELECT forename, surname, email, phone_number FROM user', function(error, rows, fields) {
 		if (error) throw error;
 
-		res.send({ details: rows });
+		res.send({ details: rows[0] });
 	});
 });
 
 app.post('/userChangeDetails', function(req, res) {
-	const forename = req.body.forename;
-	const surname = req.body.surname;
-	const email = req.body.email;
-	const phone_number = req.body.phone_number;
+	const {forename, surname, email, phoneNumber} = req.body;
 
-	connection.query('UPDATE USER SET forename = ?, SET surname = ?, SET email = ?, SET phone_number = ? WHERE user_id = ?',
-	[forename, surname, email, phone_number,localStorage.getItem('userId') ],
+	connection.query('SELECT * FROM user WHERE email = ? ',
+	[ email ],
 	 function(error, rows, fields) {
 		if (error) throw error;
+		if (rows.length > 0) return res.send({status: 1})
 
-		res.send({ status: 10 });
+		connection.query('UPDATE user SET forename = ?,  surname = ?,  email = ?,  phone_number = ? WHERE user_id = ?',
+		[forename, surname, email, phoneNumber,localStorage.getItem('userId') ],
+		 function(error, rows, fields) {
+			if (error) throw error;
+	
+			res.send({ status: 10 });
+		});
+	});
+});
+
+app.post('/userUpdatePassword', function(req, res) {
+	const {currentPassword, newPassword, confirmPassword} = req.body;
+	req.checkBody('confirmPassword', 'Passwords must match').equals(newPassword);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+connection.query('SELECT * FROM user WHERE user_id = ? LIMIT 1', [ localStorage.getItem('userId') ], (error, rows, fields) => {
+		if (error) throw error;
+		if (rows.length < 1) return res.send({ status: 0 });
+
+		bcrypt.compare(currentPassword, rows[0].password, (error, success) => {
+			if (error) throw error;
+			if (!success) return res.send({ status: 0 });
+			else {
+			bcrypt.hash(newPassword, saltRounds, (error, hash) => {
+				connection.query(
+					'UPDATE user SET password = ? WHERE user_id = ?',
+					[ hash, localStorage.getItem('userId') ],
+					(error, rows, fields) => {
+						if (error) throw error;
+						return res.send({ status: 10 });
+					}
+				);
+			});
+			}
+		});
 	});
 });
 
@@ -495,6 +532,8 @@ app.get('/ticketsQuery', function(req, res) {
 		}
 	);
 });
+
+
 
 app.get('/ticketsQuery1', function(req, res) {
 	const id = req.query.id;
