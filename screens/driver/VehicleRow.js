@@ -61,6 +61,7 @@ class VehicleRow extends React.Component {
 					case 10:
 						this.props.removeVehicle(id);
 						this.hideDeleteConfirmDialog();
+						this.props.onReRender();
 				}
 			})
 			.catch((error) => console.log(error));

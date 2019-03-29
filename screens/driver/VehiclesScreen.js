@@ -43,6 +43,10 @@ class VehiclesScreen extends React.Component {
 		this.props.fetchVehicles();
 	}
 
+	reRender = () => {
+		this.setState(this.state);
+	}
+
 	render() {
 		const actions = [{
 			icon: addIcon,
@@ -64,15 +68,15 @@ class VehiclesScreen extends React.Component {
 						<Text style={styles.body}>No vehicle currently selected</Text>
 					}
 					<View style={{
-						borderBottomColor: this.props.vehicles && colors.lightBorder,
-						borderBottomWidth: this.props.vehicles && 0.75
+						borderBottomColor: (this.props.vehicles.length > 0) ? colors.lightBorder : '#fff',
+						borderBottomWidth: (this.props.vehicles.length > 0) ? 0.75 : 0
 					}}>
 						<Text style={styles.header}>YOUR VEHICLES</Text>
 					</View>
 					{(this.props.vehicles && this.props.vehicles.length > 0) ?
 						this.props.vehicles.map((vehicle) => {
 							return (
-								<VehicleRow vehicle={vehicle} key={uuid()} onDelete={this.onDelete}/>
+								<VehicleRow vehicle={vehicle} key={uuid()} onDelete={this.onDelete} onReRender={this.reRender} />
 							)
 						}) :
 						<Text style={styles.body}>No saved vehicles to show</Text>
