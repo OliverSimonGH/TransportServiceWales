@@ -561,6 +561,10 @@ app.post('/addAddress', function(req, res) {
 
 app.post('/userUpdatePassword', function(req, res) {
 	const {currentPassword, newPassword, confirmPassword} = req.body;
+	req
+	.checkBody('newPassword', 'Password must include 8 characters, 1 upper case and 1 lower case')
+	.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
+	.trim();
 	req.checkBody('confirmPassword', 'Passwords must match').equals(newPassword);
 
 	//Send errors back to client
