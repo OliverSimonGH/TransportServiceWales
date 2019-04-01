@@ -442,7 +442,9 @@ app.get('/cancel', (req, res) => {
 });
 
 app.get('/userDetails', function(req, res) {
-	connection.query('SELECT forename, surname, email, phone_number FROM user', function(error, rows, fields) {
+	connection.query('SELECT forename, surname, email, phone_number FROM user WHERE user_id = ?', 
+	[ localStorage.getItem('userId')],
+	function(error, rows, fields) {
 		if (error) throw error;
 
 		res.send({ details: rows[0] });
@@ -452,7 +454,7 @@ app.get('/userDetails', function(req, res) {
 app.post('/userChangeForename', function(req, res) {
 	const forename = req.body.forename;
 
-		connection.query('UPDATE user SET forename = ?',
+		connection.query('UPDATE user SET forename = ? WHERE user_id=?',
 		[forename, localStorage.getItem('userId') ],
 		 function(error, rows, fields) {
 			if (error) throw error;
@@ -464,7 +466,7 @@ app.post('/userChangeForename', function(req, res) {
 app.post('/userChangeSurname', function(req, res) {
 	const surname = req.body.surname;
 
-		connection.query('UPDATE user SET surname = ?',
+		connection.query('UPDATE user SET surname = ? WHERE user_id=?',
 		[surname, localStorage.getItem('userId') ],
 		 function(error, rows, fields) {
 			if (error) throw error;
@@ -476,7 +478,7 @@ app.post('/userChangeSurname', function(req, res) {
 app.post('/userChangePhoneNumber', function(req, res) {
 	const phoneNumber = req.body.phoneNumber;
 
-		connection.query('UPDATE user SET forename = ?',
+		connection.query('UPDATE user SET phone_number = ? WHERE user_id=?',
 		[phoneNumber, localStorage.getItem('userId') ],
 		 function(error, rows, fields) {
 			if (error) throw error;
@@ -489,13 +491,13 @@ app.post('/userChangePhoneNumber', function(req, res) {
 app.post('/userChangeEmail', function(req, res) {
 	const email = req.body.email
 
-	connection.query('SELECT * FROM user WHERE email = ? ',
+	connection.query('SELECT * FROM user WHERE email=?',
 	[ email ],
 	 function(error, rows, fields) {
 		if (error) throw error;
 		if (rows.length > 0) return res.send({status: 1})
 
-		connection.query('UPDATE user SET email = ?',
+		connection.query('UPDATE user SET email = ? WHERE user_id=?',
 		[email, localStorage.getItem('userId') ],
 		 function(error, rows, fields) {
 			if (error) throw error;
@@ -513,7 +515,7 @@ app.post('/addAddress', function(req, res) {
 	const userId = localStorage.getItem('userId');
 
 	connection.query(
-		'SELECT fk_address_id FROM user WHERE user_id = ?',
+		'SELECT fk_address_id FROM user WHERE user_id=?',
 		[userId],
 		(error, row, fields) => {
 			if (error) throw error;
