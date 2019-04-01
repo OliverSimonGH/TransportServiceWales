@@ -314,6 +314,8 @@ class SummaryScreen extends React.Component {
 	};
 
 	sendPushNotification = () => {
+		const { date, street } = this.props.navigation.state.params;
+
 		let response = fetch('https://exp.host/--/api/v2/push/send', {
 			method: 'POST',
 			headers: {
@@ -325,7 +327,9 @@ class SummaryScreen extends React.Component {
 				sound: 'default',
 				title: 'Booking confirmation',
 				priority: 'high',
-				body: `Thank you for booking with TFW. An email confirmation will be sent to you shortly`, // insert service number, pickup location
+				body: `Thank you for booking with TFW. The bus will pick you up from ${street} on ${moment(date).format(
+					'MMMM Do YYYY'
+				)}. You will receive a time-slot confirmation prior to the bus departing. Please view your email for further information `, // insert service number, pickup location
 				sound: 'default', // android 7.0 , 6, 5 , 4
 				channelId: 'reminders', // android 8.0 later
 				icon: '../../assets/images/Notification_Icon_3.png'

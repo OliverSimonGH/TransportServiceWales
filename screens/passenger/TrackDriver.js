@@ -11,7 +11,7 @@ const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-export default class Geofence extends Component {
+export default class TrackDriver extends Component {
 	static navigationOptions = {
 		header: null
 	};

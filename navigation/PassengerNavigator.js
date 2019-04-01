@@ -10,7 +10,7 @@ import TicketsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
-import Geofence from '../screens/experimental/Geofence';
+import TrackDriver from '../screens/passenger/TrackDriver';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 import RecentFavScreen from '../screens/passenger/RecentFavScreen';
 import AmendTicket from './../screens/AmendTicket';
@@ -37,7 +37,7 @@ const TicketsStack = createStackNavigator(
 		Ticket: TicketsScreen,
 		Details: TicketDetail,
 		Amend: AmendTicket,
-		Track: Geofence
+		Track: TrackDriver
 	},
 	{
 		initialRouteName: 'Ticket'
