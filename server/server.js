@@ -68,7 +68,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: 'comsc'
+	password: ''
 });
 
 connection.connect((error) => {
@@ -167,7 +167,7 @@ app.post('/booking/sendEmail', (req, res) => {
 		<ul>
 			<li>Date: ${date}</li>
 			<li>Time: ${time}</li>
-			<li>Ticket type: ${returnTicket === 1 ? "RETURN" : "SINGLE"}</li>
+			<li>Ticket type: ${returnTicket === 1 ? 'RETURN' : 'SINGLE'}</li>
 			<li>From: ${data.startLocation}</li>
 			<li>To: ${data.endLocation}</li>
 			<li>Number of passengers: ${data.passenger}</li>
@@ -184,11 +184,11 @@ app.post('/booking/sendEmail', (req, res) => {
 			port: 465,
 			secure: true, // true for 465, false for other ports
 			auth: {
-				type: "OAuth2",
+				type: 'OAuth2',
 				user: 'tfwirt.test@gmail.com',
 				clientId: nodemailerOauth2Key.clientId,
 				clientSecret: nodemailerOauth2Key.clientSecret,
-				refreshToken: nodemailerOauth2Key.refreshToken,
+				refreshToken: nodemailerOauth2Key.refreshToken
 			}
 		});
 
@@ -209,7 +209,6 @@ app.post('/booking/sendEmail', (req, res) => {
 
 	main().catch(console.error);
 });
-
 
 app.get('/driver/schedule', function(req, res) {
 	connection.query(

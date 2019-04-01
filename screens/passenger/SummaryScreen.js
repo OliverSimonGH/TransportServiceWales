@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';
 import { addTicket } from '../../redux/actions/ticketAction';
-import colors from '../../constants/Colors'
+import colors from '../../constants/Colors';
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -29,7 +29,19 @@ class SummaryScreen extends React.Component {
 		date: new Date(),
 		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
 		total: 0.0,
-		deviceToken: ''
+		deviceToken: '',
+		locationResult: ''
+	};
+
+	// Asking & Checking location Permissions
+	_getLocationPermissionAsync = async () => {
+		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+		if (status !== 'granted') {
+			this.setState({
+				locationResult: 'Permission to access location was denied'
+			});
+			console.log(locationResult);
+		}
 	};
 
 	sendEmail = () => {
@@ -81,11 +93,12 @@ class SummaryScreen extends React.Component {
 	};
 
 	componentDidMount() {
+		this._getLocationPermissionAsync();
 		const { numPassenger, returnTicket } = this.props.navigation.state.params;
 		if (returnTicket === 1) {
 			this.setState({
 				total: parseInt(numPassenger * (3 * 2))
-			})
+			});
 		} else {
 			this.setState({
 				total: parseInt(numPassenger * 3)
@@ -97,7 +110,7 @@ class SummaryScreen extends React.Component {
 			Expo.Notifications.createChannelAndroidAsync('reminders', {
 				name: 'Reminders',
 				priority: 'max',
-				vibrate: [0, 250, 250, 250]
+				vibrate: [ 0, 250, 250, 250 ]
 			});
 		}
 	}
@@ -330,7 +343,12 @@ class SummaryScreen extends React.Component {
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
 					<Content>
-						<GlobalHeader type={3} header='Journey Summary' navigateTo={this.navigateTo} isBackButtonActive={1} />
+						<GlobalHeader
+							type={3}
+							header="Journey Summary"
+							navigateTo={this.navigateTo}
+							isBackButtonActive={1}
+						/>
 						<View>
 							{/* Page header and introductory text */}
 							<View style={styles.introduction}>
@@ -359,9 +377,7 @@ class SummaryScreen extends React.Component {
 										</View>
 										<View style={styles.icon}>
 											<MaterialIcon name="access-time" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{moment(data.time).format('LT')}
-											</Text>
+											<Text style={styles.cardBody}>{moment(data.time).format('LT')}</Text>
 										</View>
 										<View style={styles.icon}>
 											<MaterialIcon name="my-location" size={20} color={colors.bodyTextColor} />
@@ -387,7 +403,11 @@ class SummaryScreen extends React.Component {
 										</View>
 										{data.numWheelchair > 0 ? (
 											<View style={styles.icon}>
-												<MaterialIcon name="accessible" size={20} color={colors.bodyTextColor} />
+												<MaterialIcon
+													name="accessible"
+													size={20}
+													color={colors.bodyTextColor}
+												/>
 												<Text style={styles.cardBody}>
 													{data.numWheelchair}
 													{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
@@ -408,8 +428,8 @@ class SummaryScreen extends React.Component {
 									<Text style={styles.paymentText}>Total</Text>
 									<Text style={styles.ticketBreakdown}>
 										{data.numPassenger} x
-										{data.returnTicket === 1 ? " RETURN" : " SINGLE"}
-										{data.numPassenger > 1 ? " tickets" : " ticket"}
+										{data.returnTicket === 1 ? ' RETURN' : ' SINGLE'}
+										{data.numPassenger > 1 ? ' tickets' : ' ticket'}
 									</Text>
 									<Text style={styles.paymentText}>£{this.state.total}.00</Text>
 								</View>
@@ -421,7 +441,7 @@ class SummaryScreen extends React.Component {
 										<View style={styles.buttonContainer}>
 											<Button
 												danger
-												style={[styles.button, { backgroundColor: colors.brandColor }]}
+												style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 												onPress={this.payForTicket}
 											>
 												<Text>Pay</Text>
@@ -444,7 +464,7 @@ class SummaryScreen extends React.Component {
 											<View style={styles.buttonContainer}>
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: colors.brandColor }]}
+													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 													onPress={this.payForTicket}
 												>
 													<Text style={styles.buttonText}>Pay</Text>
@@ -452,7 +472,7 @@ class SummaryScreen extends React.Component {
 
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: colors.brandColor }]}
+													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 													onPress={() => {
 														this.props.navigation.navigate('AddFunds');
 													}}
@@ -461,7 +481,7 @@ class SummaryScreen extends React.Component {
 												</Button>
 											</View>
 											<View
-												style={[styles.buttonContainer, { marginTop: -5, marginBottom: 25 }]}
+												style={[ styles.buttonContainer, { marginTop: -5, marginBottom: 25 } ]}
 											>
 												<Button
 													bordered
@@ -479,7 +499,7 @@ class SummaryScreen extends React.Component {
 						</View>
 					</Content>
 				</Container>
-			</StyleProvider >
+			</StyleProvider>
 		);
 	}
 }
@@ -510,7 +530,7 @@ const styles = StyleSheet.create({
 		shadowColor: 'black',
 		shadowOpacity: 1,
 		elevation: 5,
-		backgroundColor: colors.backgroundColor,
+		backgroundColor: colors.backgroundColor
 	},
 	details: {
 		width: '90%'
@@ -591,7 +611,7 @@ const styles = StyleSheet.create({
 	ticketTypeContainer: {
 		width: '10%',
 		marginRight: 10,
-		flexDirection: 'row',
+		flexDirection: 'row'
 	},
 	ticketType: {
 		backgroundColor: colors.brandColor,
@@ -604,13 +624,13 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 5,
 		borderBottomRightRadius: 5,
 		paddingTop: 2,
-		paddingBottom: 3,
+		paddingBottom: 3
 	},
 	ticketTypeText: {
 		color: colors.backgroundColor,
 		fontWeight: 'bold',
 		fontSize: 14
-	},
+	}
 });
 
 const mapDispatchToProps = (dispatch) => {
