@@ -107,12 +107,24 @@ class TicketDetail extends React.Component {
 		}).catch((err) => {});
 	};
 
+	_getPickupLocation = () => {
+		return fetch(`http://${ip}:3000/ticket/pickup?id=${this.props.navigation.state.params.ticket.id}`)
+			.then((response) => response.json())
+			.then((response) => {
+				return Promise.resolve(response);
+			})
+			.then((coords) => {
+				this.navigateToTrack(coords);
+			})
+			.catch((error) => console.log(error));
+	};
+
 	navigateTo = () => {
 		this.props.navigation.navigate('Ticket');
 	};
 
-	navigateToTrack = () => {
-		this.props.navigation.navigate('Track');
+	navigateToTrack = (startCoords) => {
+		this.props.navigation.navigate('Track', startCoords);
 	};
 
 	render() {
@@ -202,7 +214,7 @@ class TicketDetail extends React.Component {
 									danger
 									style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 									onPress={() => {
-										this.navigateToTrack();
+										this._getPickupLocation();
 									}}
 								>
 									<Text style={styles.buttonText}>TRACK VEHICLE</Text>

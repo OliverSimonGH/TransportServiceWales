@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, View, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { Platform, View, StyleSheet, Button, Image, Dimensions, Text } from 'react-native';
 import { Location, Permissions, Notifications } from 'expo';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import ip from '../../ipstore';
@@ -23,6 +23,7 @@ export default class TrackDriver extends Component {
 		locationResult: null,
 		lat: null,
 		long: null,
+		loaded: false,
 		withinRadius: '',
 		Distance: '',
 		driverLocation: null,
@@ -107,6 +108,7 @@ export default class TrackDriver extends Component {
 
 		socket.on('driverLocation', (driverLocation) => {
 			const pointCoords = [ ...this.state.pointCoords, driverLocation ];
+			const { latitude, longitude } = this.props.navigation.state.params;
 			this.setState({
 				isDriverOnTheWay: true,
 				driverLocation: driverLocation
@@ -127,7 +129,7 @@ export default class TrackDriver extends Component {
 					// User Position
 					{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
 					// Point Position
-					{ latitude: this.state.lat, longitude: this.state.long }
+					{ latitude, longitude }
 				);
 				this.setState({
 					withinRadius: 'Yes',
@@ -157,11 +159,14 @@ export default class TrackDriver extends Component {
 		this.setState({
 			locationResult: location,
 			lat: location.coords.latitude,
-			long: location.coords.longitude
+			long: location.coords.longitude,
+			loaded: true
 		});
+		console.log(location.coords.latitude);
 	};
 
 	render() {
+		const pickupLocation = this.props.navigation.state.params;
 		let driverMarker = null;
 		if (this.state.isDriverOnTheWay) {
 			driverMarker = (
@@ -170,9 +175,9 @@ export default class TrackDriver extends Component {
 				</Marker>
 			);
 		}
-		return (
-			<View style={StyleSheet.absoluteFill}>
-				{this.state.lat >= 1 && (
+		try {
+			return (
+				<View style={StyleSheet.absoluteFill}>
 					<MapView
 						ref={(map) => {
 							this.map = map;
@@ -186,19 +191,27 @@ export default class TrackDriver extends Component {
 						}}
 						showsUserLocation={true}
 					>
+						<Marker
+							pinColor={'pink'}
+							coordinate={{ latitude: pickupLocation.latitude, longitude: pickupLocation.longitude }}
+							title={pickupLocation.street}
+							description={'Your Pickup Location'}
+						/>
+
 						{driverMarker}
 					</MapView>
-				)}
-				<View style={styles.calloutView}>
-					<Button
-						onPress={() => {
-							this.props.navigation.navigate('Ticket');
-						}}
-						title="Tickets"
-					/>
+
+					<View style={styles.calloutView}>
+						<Button
+							onPress={() => {
+								this.props.navigation.navigate('Ticket');
+							}}
+							title="Tickets"
+						/>
+					</View>
 				</View>
-			</View>
-		);
+			);
+		} catch (error) {}
 	}
 }
 

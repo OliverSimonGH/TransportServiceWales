@@ -129,6 +129,7 @@ class RouteScreen extends Component {
 				} else {
 					//log error
 				}
+				console.log(loc);
 			}
 		);
 		this.setState({

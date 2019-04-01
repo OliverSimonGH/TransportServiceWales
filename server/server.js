@@ -16,7 +16,7 @@ const nodemailer = require('nodemailer');
 const nodemailerOauth2Key = require('../nodemailer_oauth2_key');
 
 app.engine('ejs', engines.ejs);
-app.set('views', './views');
+app.set('views', '../views');
 app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
@@ -223,6 +223,20 @@ WHERE c.fk_coordinate_type_id = 1;`,
 			if (error) console.log(error);
 			else {
 				res.send(rows);
+			}
+		}
+	);
+});
+
+app.get('/ticket/pickup', function(req, res) {
+	const { id } = req.query;
+	connection.query(
+		'SELECT c.latitude, c.longitude, c.street, t.no_of_passengers FROM coordinate c JOIN journey J ON j.journey_id = c.fk_journey_id JOIN user_journey uj ON uj.fk_journey_id = j.journey_id JOIN ticket t ON uj.fk_ticket_id= t.ticket_id WHERE t.ticket_id = ? AND c.fk_coordinate_type_id = 1',
+		[ id ],
+		(error, rows, fields) => {
+			if (error) console.log(error);
+			else {
+				res.send(rows[0]);
 			}
 		}
 	);
