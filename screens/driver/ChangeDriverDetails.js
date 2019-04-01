@@ -50,7 +50,7 @@ export default class ChangeDriverDetails extends Component {
 
 
 	onChangePassword = () => {
-		this.props.navigation.navigate('ChangePassword')
+		this.props.navigation.navigate('DriverPassword')
     }
     
     onChangeForename = () => {
