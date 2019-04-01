@@ -9,8 +9,8 @@ import DriverSchedule from '../screens/driver/DriverSchedule';
 import LoginScreen from '../screens/LoginScreen';
 import AccountsScreen from '../screens/driver/DriverAccount';
 import EmergencyContact from '../screens/driver/EmergencyContact';
-import ChangeDetails from '../screens/driver/ChangeDriverDetails';
 import ChangeDriverDetails from '../screens/driver/ChangeDriverDetails';
+import DriverPassword from '../screens/driver/DriverPassword';
 
 
 const MyScheduleStack = createStackNavigator(
@@ -28,7 +28,8 @@ const MyScheduleStack = createStackNavigator(
 const AccountStack = createStackNavigator({
 	Account: AccountsScreen,
 	EmergencyContact: EmergencyContact,
-	ChangeDetails: ChangeDriverDetails
+	ChangeDetails: ChangeDriverDetails,
+	DriverPassword: DriverPassword,
 },
 { initialRouteName: 'Account' }
 );
