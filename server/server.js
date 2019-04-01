@@ -449,8 +449,45 @@ app.get('/userDetails', function(req, res) {
 	});
 });
 
-app.post('/userChangeDetails', function(req, res) {
-	const {forename, surname, email, phoneNumber} = req.body;
+app.post('/userChangeForename', function(req, res) {
+	const forename = req.body.forename;
+
+		connection.query('UPDATE user SET forename = ?',
+		[forename, localStorage.getItem('userId') ],
+		 function(error, rows, fields) {
+			if (error) throw error;
+	
+			res.send({ status: 10 });
+		});
+	});
+
+app.post('/userChangeSurname', function(req, res) {
+	const surname = req.body.surname;
+
+		connection.query('UPDATE user SET surname = ?',
+		[surname, localStorage.getItem('userId') ],
+		 function(error, rows, fields) {
+			if (error) throw error;
+		
+			res.send({ status: 10 });
+		 });
+	});	
+	
+app.post('/userChangePhoneNumber', function(req, res) {
+	const phoneNumber = req.body.phoneNumber;
+
+		connection.query('UPDATE user SET forename = ?',
+		[phoneNumber, localStorage.getItem('userId') ],
+		 function(error, rows, fields) {
+			if (error) throw error;
+	
+			res.send({ status: 10 });
+		});
+	});
+
+
+app.post('/userChangeEmail', function(req, res) {
+	const email = req.body.email
 
 	connection.query('SELECT * FROM user WHERE email = ? ',
 	[ email ],
@@ -458,14 +495,66 @@ app.post('/userChangeDetails', function(req, res) {
 		if (error) throw error;
 		if (rows.length > 0) return res.send({status: 1})
 
-		connection.query('UPDATE user SET forename = ?,  surname = ?,  email = ?,  phone_number = ? WHERE user_id = ?',
-		[forename, surname, email, phoneNumber,localStorage.getItem('userId') ],
+		connection.query('UPDATE user SET email = ?',
+		[email, localStorage.getItem('userId') ],
 		 function(error, rows, fields) {
 			if (error) throw error;
 	
 			res.send({ status: 10 });
 		});
 	});
+});
+
+app.post('/addAddress', function(req, res) {
+	const city = req.body.city;
+	const street = req.body.street;
+	const house_number = req.body.house_number;
+	const postcode = req.body.postcode;
+	const userId = localStorage.getItem('userId');
+
+	connection.query(
+		'SELECT fk_address_id FROM user WHERE user_id = ?',
+		[userId],
+		(error, row, fields) => {
+			if (error) throw error;
+			if (row[0].fk_address_id === null){
+				connection.query(
+					'INSERT INTO address (city, street, house_number, postcode) VALUES (?, ?, ?, ?)',
+					[city, street, house_number, postcode],
+					(error, row, fields) => {
+						if (error) throw error;
+			
+						connection.query(
+							'UPDATE user SET fk_address_id = ? WHERE user_id = ?',
+							[row.insertId, userId],
+							(error, row, fields) => {
+								if (error) throw error;
+								return res.send({ status: 10 });
+							}
+						);
+					}
+				);		
+			}
+			else{
+				connection.query(
+					'UPDATE address SET city = ?, street = ?, house_number = ?, postcode = ? WHERE address_id = ?',
+					[city, street, house_number, postcode, row[0].fk_address_id],
+					(error, row1, fields) => {
+						if (error) throw error;
+			
+						connection.query(
+							'UPDATE user SET fk_address_id = ? WHERE user_id = ?',
+							[row[0].fk_address_id, userId],
+							(error, row2, fields) => {
+								if (error) throw error;
+								return res.send({ status: 10 });
+							}
+						);
+					}
+				);	
+			}
+		}
+	);
 });
 
 app.post('/userUpdatePassword', function(req, res) {
