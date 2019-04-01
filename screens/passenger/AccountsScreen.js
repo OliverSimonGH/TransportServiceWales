@@ -52,6 +52,10 @@ export default class AccountsScreen extends Component {
 		this.props.navigation.navigate('Login');
 	};
 
+	scanner = () => {
+		this.props.navigation.navigate('FingerScanner');
+	};
+
 	navigateTo = () => {
 		this.props.navigation.navigate('');
 	};
@@ -138,6 +142,11 @@ export default class AccountsScreen extends Component {
 							<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton} onPress={this.contact}>
 									<Text style={styles.secondaryButtontext}>Emergency Contacts</Text>
+								</Button>
+							</View>	
+							<View style={styles.secondaryButtonContainer}>
+								<Button bordered danger style={styles.button} onPress={this.scanner}>
+									<Text style={styles.buttonText}>Enable Finger Scanner</Text>
 								</Button>
 							</View>	
 							<View style={styles.secondaryButtonContainer}>

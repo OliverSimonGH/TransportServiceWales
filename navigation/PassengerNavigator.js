@@ -15,6 +15,7 @@ import ChangePassword from '../screens/passenger/ChangePassword';
 import ContactScreen from '../screens/passenger/ContactScreen';
 import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
 import AddressScreen from '../screens/passenger/AddressScreen';
+import FingerScanner from '../screens/passenger/FingerScanner';
 
 const JourneyStack = createStackNavigator(
 	{
@@ -68,7 +69,8 @@ const AccountStack = createStackNavigator({
 	Settings: AccountsScreen,
 	ChangeDetails: ChangeDetailsScreen,
 	ChangePassword: ChangePassword,
-	AddAddress: AddressScreen
+	AddAddress: AddressScreen,
+	FingerScanner: FingerScanner
 },
 { initialRouteName: 'Account' }
 );
