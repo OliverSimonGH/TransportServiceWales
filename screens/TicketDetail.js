@@ -11,6 +11,7 @@ import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import uuid from 'uuid/v4';
 import colors from '../constants/Colors';
+import { Location, Permissions, Notifications } from 'expo';
 
 import { connect } from 'react-redux';
 import { addTransaction } from '../redux/actions/transactionAction';

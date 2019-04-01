@@ -7,7 +7,8 @@ import geolib from 'geolib';
 import socketIO from 'socket.io-client';
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings([
-	'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
+	'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?',
+	'Failed prop type: The prop `initialRegion.latitude` is marked as required in `MapView`, but its value is `null`.'
 ]);
 
 let { width, height } = Dimensions.get('window');
@@ -30,12 +31,10 @@ export default class TrackDriver extends Component {
 		mapCoords: null,
 		isDriverOnTheWay: false,
 		pointCoords: [],
-		deviceToken: '',
-		pickupLocation: '55 Mary Street'
+		deviceToken: ''
 	};
 
 	componentDidMount() {
-		this._getLocationAsync();
 		this.checkDriver();
 		// Channel for popup notifications
 		if (Platform.OS === 'android') {
@@ -48,6 +47,7 @@ export default class TrackDriver extends Component {
 	}
 
 	async componentWillMount() {
+		await this._getLocationAsync();
 		await this.registerForPushNotificationsAsync();
 	}
 
@@ -156,12 +156,15 @@ export default class TrackDriver extends Component {
 		}
 		// Get user's location
 		let location = await Location.getCurrentPositionAsync({});
-		this.setState({
-			locationResult: location,
-			lat: location.coords.latitude,
-			long: location.coords.longitude,
-			loaded: true
-		});
+		this.setState(
+			{
+				locationResult: location,
+				lat: location.coords.latitude,
+				long: location.coords.longitude,
+				loaded: true
+			},
+			() => console.log(this.state.lat, this.state.long)
+		);
 		console.log(location.coords.latitude);
 	};
 
@@ -175,43 +178,42 @@ export default class TrackDriver extends Component {
 				</Marker>
 			);
 		}
-		try {
-			return (
-				<View style={StyleSheet.absoluteFill}>
-					<MapView
-						ref={(map) => {
-							this.map = map;
-						}}
-						style={StyleSheet.absoluteFill}
-						initialRegion={{
-							latitude: this.state.lat,
-							longitude: this.state.long,
-							latitudeDelta: LATITUDE_DELTA,
-							longitudeDelta: LONGITUDE_DELTA
-						}}
-						showsUserLocation={true}
-					>
-						<Marker
-							pinColor={'pink'}
-							coordinate={{ latitude: pickupLocation.latitude, longitude: pickupLocation.longitude }}
-							title={pickupLocation.street}
-							description={'Your Pickup Location'}
-						/>
 
-						{driverMarker}
-					</MapView>
+		return (
+			<View style={StyleSheet.absoluteFill}>
+				<MapView
+					ref={(map) => {
+						this.map = map;
+					}}
+					style={StyleSheet.absoluteFill}
+					initialRegion={{
+						latitude: this.state.lat,
+						longitude: this.state.long,
+						latitudeDelta: LATITUDE_DELTA,
+						longitudeDelta: LONGITUDE_DELTA
+					}}
+					showsUserLocation={true}
+				>
+					<Marker
+						pinColor={'pink'}
+						coordinate={{ latitude: pickupLocation.latitude, longitude: pickupLocation.longitude }}
+						title={pickupLocation.street}
+						description={'Your Pickup Location'}
+					/>
 
-					<View style={styles.calloutView}>
-						<Button
-							onPress={() => {
-								this.props.navigation.navigate('Ticket');
-							}}
-							title="Tickets"
-						/>
-					</View>
+					{driverMarker}
+				</MapView>
+
+				<View style={styles.calloutView}>
+					<Button
+						onPress={() => {
+							this.props.navigation.navigate('Ticket');
+						}}
+						title="Tickets"
+					/>
 				</View>
-			);
-		} catch (error) {}
+			</View>
+		);
 	}
 }
 
