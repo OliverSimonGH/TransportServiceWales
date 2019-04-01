@@ -11,8 +11,8 @@ import {
 } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
-import { Icon } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 
 
@@ -56,16 +56,79 @@ export default class AccountsScreen extends Component {
 		this.props.navigation.navigate('ChangePassword')
 	}
 
-	onSubmit = () => {
-		const {forename, surname, email, phoneNumber} = this.state;
-		console.log("1")
-		fetch(`http://${ip}:3000/userChangeDetails`, {
+	addAddress = () => {
+		this.props.navigation.navigate('AddAddress');
+	};
+
+	onChangeForename = () => {
+		const {forename} = this.state;
+		fetch(`http://${ip}:3000/userChangeForename`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({forename, surname, email, phoneNumber})
+			body: JSON.stringify({forename})
+		}).then((response) => response.json())
+		.then((responseJSON) => {
+			switch (responseJSON.status) {
+				//Success
+				case 10:
+					alert('Updated forename')
+					break;
+				//If email exist
+					case 1:
+					alert('Could not update')
+					break;
+			}
+		})
+			.catch(err => {
+				console.log(err)
+
+			})
+	};
+	
+
+	
+	onChangeSurname = () => {
+		const {surname} = this.state;
+		fetch(`http://${ip}:3000/userChangeSurname`, {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({surname})
+		}).then((response) => response.json())
+		.then((responseJSON) => {
+			switch (responseJSON.status) {
+				//Success
+				case 10:
+					alert('Updated Surname')
+					break;
+				//If email exist
+					case 1:
+					alert('Could not update')
+					break;
+			}
+		})
+			.catch(err => {
+				console.log(err)
+
+			})
+	};
+	
+
+
+	onChangeEmail = () => {
+		const {email} = this.state;
+		fetch(`http://${ip}:3000/userChangeEmail`, {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({email})
 		}).then((response) => response.json())
 		.then((responseJSON) => {
 			switch (responseJSON.status) {
@@ -85,73 +148,77 @@ export default class AccountsScreen extends Component {
 			})
 	};
 
+
+	onChangeNumber = () => {
+		const {phoneNumber} = this.state;
+		fetch(`http://${ip}:3000/userChangePhoneNumber`, {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({phoneNumber})
+		}).then((response) => response.json())
+		.then((responseJSON) => {
+			switch (responseJSON.status) {
+				//Success
+				case 10:
+					alert('Updated')
+					break;
+				//If email exist
+					case 1:
+					alert('Could not update as email already exist')
+					break;
+			}
+		})
+			.catch(err => {
+				console.log(err)
+
+			})
+	};
+
+	// onSubmit = () => {
+	// 	const {forename, surname, email, phoneNumber} = this.state;
+	// 	console.log("1")
+	// 	fetch(`http://${ip}:3000/userChangeDetails`, {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'Accept': 'application/json',
+	// 			'Content-Type': 'application/json'
+	// 		},
+	// 		body: JSON.stringify({forename, surname, email, phoneNumber})
+	// 	}).then((response) => response.json())
+	// 	.then((responseJSON) => {
+	// 		switch (responseJSON.status) {
+	// 			//Success
+	// 			case 10:
+	// 				alert('Updated')
+	// 				break;
+	// 			//If email exist
+	// 				case 1:
+	// 				alert('Could not update as email already exist')
+	// 				break;
+	// 		}
+	// 	})
+	// 		.catch(err => {
+	// 			console.log(err)
+
+	// 		})
+	// };
+
 	render() {
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<Content style={styles.contentContainer} padder>
-				<View style={styles.buttonContainer}>
-						<Button danger style={styles.button} onPress={this.onChangePassword}>
-							<Text>UPDATE</Text>
-						</Button>
-					</View>
+			
 					<View style={styles.secondaryButtonContainer}>
 						<Button bordered danger style={styles.secondaryButton} onPress={this.settings}>
 							<Text style={styles.secondaryButtontext}>Settings</Text>
 						</Button>
 					</View>
 
-					<View>
-						<Text style={styles.title}>
-							Current details
-								</Text>
-					</View>
-					{this.state.userDetails !== null && (
-						<View style={styles.container}>
-							<React.Fragment>
-								<View style={styles.forenameContainer}>
-									<Text style={styles.detailView}>
-										Forename: {this.state.userDetails.forename}
-									</Text>
-									<TouchableOpacity onPress={this.forename}>
-										<Icon
-											name='update'
-											style={styles.updateIcon}>
-										</Icon>
-									</TouchableOpacity>
-								</View>
-								<View style={styles.forenameContainer}>
-									<Text style={styles.detailView}>
-										Surname: {this.state.userDetails.surname}
-									</Text>
-									<Icon
-										name='update'
-										style={styles.updateIcon}>
-									</Icon>
-								</View>
-								<View style={styles.forenameContainer}>
-									<Text style={styles.detailView}>
-										Email: {this.state.userDetails.email}
-									</Text>
-									<Icon
-										name='update'
-										style={styles.updateIcon}>
-									</Icon>
-								</View>
-								<View style={styles.forenameContainer}>
-									<Text style={styles.detailView}>
-										Phone Number: {this.state.userDetails.phone_number}
-									</Text>
-									<Icon
-										name='update'
-										style={styles.updateIcon}>
-									</Icon>
-								</View>
-							</React.Fragment>
-						</View>
-
-					)}
-
+				
 					<View>
 						<Text style={styles.title}>
 							Update Details
@@ -160,47 +227,76 @@ export default class AccountsScreen extends Component {
 					{this.state.userDetails !== null && (
 					<React.Fragment>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-person" size={32} style={styles.inputIcons} />
+						<Icon name="person" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({forename: text})}
 							placeholder="First Name"
 							style={styles.input}
 							value={this.state.forename}
 						/>
+						<TouchableOpacity onPress={this.onChangeForename}>
+								<Icon
+									name='update'
+									style={styles.updateIcon}>
+								</Icon>
+						</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-person" size={32} style={styles.inputIcons} />
+						<Icon name="person" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({surname: text})}
 							placeholder="Last Name"
 							style={styles.input}
 							value={this.state.surname}
 						/>
+							<TouchableOpacity onPress={this.onChangeSurname}>
+								<Icon
+									name='update'
+									style={styles.updateIcon}>
+								</Icon>
+								</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-mail" size={32} style={styles.inputIcons} />
+						<Icon name="mail" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({email: text})}
 							placeholder="Email"
 							style={styles.input}
 							value={this.state.email}
 						/>
+						<TouchableOpacity onPress={this.onChangeEmail}>
+								<Icon
+									name='update'
+									style={styles.updateIcon}>
+								</Icon>
+								</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-phone-portrait" size={32} style={styles.inputIcons} />
+						<Icon name="person" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({phoneNumber: text})}
 							placeholder="Phone Number"
 							style={styles.input}
 							value={this.state.phoneNumber}
 						/>
+						<TouchableOpacity onPress={this.onChangeNumber}>
+								<Icon
+									name='update'
+									style={styles.updateIcon}>
+								</Icon>
+								</TouchableOpacity>
 					</View>
 					</React.Fragment>
 					)}
 					
-					<View style={styles.buttonContainer}>
-						<Button danger style={styles.button} onPress={this.onSubmit}>
-							<Text>UPDATE</Text>
+					<View style={styles.secondaryButtonContainer}>
+						<Button bordered danger style={styles.button} onPress={this.addAddress}>
+							<Text style={styles.buttonText}>Add Address</Text>
+						</Button>
+					</View>
+					<View style={styles.secondaryButtonContainer}>
+						<Button bordered danger style={styles.button} onPress={this.onChangePassword}>
+							<Text style={styles.buttonText}>Update Password</Text>
 						</Button>
 					</View>
 					
@@ -230,12 +326,12 @@ const styles = StyleSheet.create({
 
 	},
 	button: {
-		width: '40%',
+		width: '100%',
 		justifyContent: 'center',
 		backgroundColor: '#ff0000'
 	},
-	buttontext: {
-		color: '#000000'
+	buttonText: {
+		color: 'white'
 	},
 	input: {
 		flex: 1,
