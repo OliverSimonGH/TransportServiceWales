@@ -155,7 +155,7 @@ buttonContainer: {
 
 },
 button: {
-	width: '40%',
+	width: '100%',
 	justifyContent: 'center',
 	backgroundColor: '#ff0000'
 },
