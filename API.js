@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native';
 
-export const postRequestAuthorized = async function (url = '', data = {}) {
+export const postRequestAuthorized = async function (url, data) {
     const jwt = await AsyncStorage.getItem('tfwJWT');
     return fetch(url, {
         method: 'POST',
@@ -13,9 +13,10 @@ export const postRequestAuthorized = async function (url = '', data = {}) {
     })
         .then(response => response.json())
         .catch(error => console.log(error));
+
 }
 
-export const getRequestAuthorized = async function (url = '') {
+export const getRequestAuthorized = async function (url) {
     const jwt = await AsyncStorage.getItem('tfwJWT');
     return fetch(url, {
         method: 'GET',
@@ -24,10 +25,9 @@ export const getRequestAuthorized = async function (url = '') {
         }
     })
         .then(response => response.json())
-        .catch(error => console.log(error));
 }
 
-export const postRequestNotAuthorized = function (url = '', data = {}) {
+export const postRequestNotAuthorized = function (url, data) {
     return fetch(url, {
         method: 'POST',
         headers: {
@@ -40,7 +40,7 @@ export const postRequestNotAuthorized = function (url = '', data = {}) {
         .catch(error => console.log(error));
 }
 
-export const getRequestNotAuthorized = function (url = '') {
+export const getRequestNotAuthorized = function (url) {
     return fetch(url)
         .then(response => response.json())
         .catch(error => console.log(error));

@@ -10,7 +10,8 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema transport
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `transport`;
+DROP SCHEMA IF EXISTS `transport` ;
+
 -- -----------------------------------------------------
 -- Schema transport
 -- -----------------------------------------------------
@@ -52,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`coordinate_type` (
   `type` VARCHAR(10) NOT NULL,
   PRIMARY KEY (`coordinate_type_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`journey` (
   `end_time` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`journey_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 14
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -80,6 +81,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`coordinate` (
   `country` VARCHAR(100) NULL DEFAULT NULL,
   `latitude` FLOAT NULL DEFAULT NULL,
   `longitude` FLOAT NULL DEFAULT NULL,
+  `removed` TINYINT NULL DEFAULT 0,
   `fk_coordinate_type_id` INT(11) NOT NULL,
   `fk_journey_id` INT(11) NOT NULL,
   PRIMARY KEY (`coordinate_id`),
@@ -92,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`coordinate` (
     FOREIGN KEY (`fk_journey_id`)
     REFERENCES `transport`.`journey` (`journey_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 27
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -110,9 +112,16 @@ CREATE TABLE IF NOT EXISTS `transport`.`ticket` (
   `no_of_wheelchairs` INT(11) NOT NULL,
   `date_of_journey` DATETIME NOT NULL,
   `time_of_journey` DATETIME NOT NULL,
-  PRIMARY KEY (`ticket_id`))
+  `fk_coordinate_id` INT(11) NOT NULL,
+  PRIMARY KEY (`ticket_id`),
+  INDEX `fk_ticket_coordinate1_idx` (`fk_coordinate_id` ASC) ,
+  CONSTRAINT `fk_ticket_coordinate1`
+    FOREIGN KEY (`fk_coordinate_id`)
+    REFERENCES `transport`.`coordinate` (`coordinate_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 14
+AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -199,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`transaction` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 14
+AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -211,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`user_journey` (
   `fk_ticket_id` INT(11) NOT NULL,
   `fk_user_id` INT(11) NOT NULL,
   `paid` TINYINT(4) NOT NULL DEFAULT '0',
-  `completed` TINYINT(4) NOT NULL DEFAULT 0,
+  `completed` TINYINT(4) NOT NULL DEFAULT '0',
   INDEX `fk_journey_has_user_journey1_idx` (`fk_journey_id` ASC) ,
   INDEX `fk_user_journey_ticket1_idx` (`fk_ticket_id` ASC) ,
   INDEX `fk_user_journey_user1_idx` (`fk_user_id` ASC) ,

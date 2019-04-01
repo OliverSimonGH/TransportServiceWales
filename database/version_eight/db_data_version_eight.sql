@@ -15,6 +15,7 @@ truncate vehicle;
 truncate vehicle_type;
 truncate transaction;
 truncate transaction_type;
+truncate user_journey;
 SET foreign_key_checks = 1;
 
 INSERT INTO user_type VALUES (1, "Passenger");

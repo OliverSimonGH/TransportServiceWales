@@ -26,22 +26,10 @@ export default class MySchedule extends React.Component {
 		}
 	};
 
-	fetchData = async () => {
-		const response = await getRequestAuthorized(`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`);
-		const coordinate = await response.json();
-		this.setState({ data: coordinate });
-	};
-
 	componentDidMount() {
-		this.fetchData();
+		getRequestAuthorized(`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`)
+		.then((coordinate) => this.setState({ data: coordinate }));
 	}
-
-	TestStates = () => {
-		const data = {
-			coordsArray: this.state.data
-		};
-		console.log(data);
-	};
 
 	navigateTo = () => {
 		this.props.navigation.navigate('DailySchedule');

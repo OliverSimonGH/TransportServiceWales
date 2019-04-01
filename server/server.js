@@ -30,7 +30,7 @@ if (typeof localStorage === 'undefined' || localStorage === null) {
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
 var connection = mysql.createConnection({
-	host: 'localhost',
+	host: '127.0.0.1',
 	user: 'root',
 	database: 'transport',
 	password: ''
@@ -49,9 +49,9 @@ paypal.configure({
 
 app.all('*', (req, res, next) => {
 	let JWTConfirmed = false;
-	config.excludedRoutes.map(route => { 
+	config.excludedRoutes.map(route => {
 		if (route === req.path) JWTConfirmed = true;
-	 })
+	})
 
 	if (JWTConfirmed) return next();
 	return JWTAuth.verifyJWTRESTRequest(req, res, next)
@@ -61,7 +61,7 @@ app.get('/journey', (req, res) => {
 	const journeyId = req.query.journeyId;
 
 	connection.query(
-		'SELECT * FROM coordinate WHERE fk_journey_id = ?',
+		'SELECT * FROM coordinate WHERE fk_journey_id = ? AND removed = 0',
 		[journeyId],
 		(error, rows, fields) => {
 			if (error) throw error;
@@ -71,8 +71,8 @@ app.get('/journey', (req, res) => {
 				[journeyId],
 				(error, row, fields) => {
 					if (error) throw error;
-					
-					res.send({ results: rows, start_time: row[0].start_time, end_time: row[0].end_time});
+
+					res.send({ results: rows, start_time: row[0].start_time, end_time: row[0].end_time });
 				})
 		})
 })
@@ -104,7 +104,7 @@ app.post('/register', (req, res) => {
 	const type = req.body.type;
 
 	//Check if user exists
-	connection.query('SELECT * FROM user WHERE email = ?', [ email ], (error, rows, fields) => {
+	connection.query('SELECT * FROM user WHERE email = ?', [email], (error, rows, fields) => {
 		//if user exists, return and throw error
 		if (error) throw error;
 		if (rows.length >= 1) return res.send({ status: 1 });
@@ -113,7 +113,7 @@ app.post('/register', (req, res) => {
 			bcrypt.hash(password, saltRounds, (error, hash) => {
 				connection.query(
 					'INSERT INTO user (email, password, forename, surname, phone_number, date_created, fk_user_type_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-					[ email, hash, firstName, lastName, phoneNumber, new Date(), type ],
+					[email, hash, firstName, lastName, phoneNumber, new Date(), type],
 					(error, rows, fields) => {
 						if (error) throw error;
 						return res.send({ status: 10 });
@@ -133,7 +133,7 @@ app.post('/login', (req, res) => {
 		return res.send({ status: 0 });
 	}
 
-	connection.query('SELECT * FROM user WHERE email = ? LIMIT 1', [ req.body.email ], (error, rows, fields) => {
+	connection.query('SELECT * FROM user WHERE email = ? LIMIT 1', [req.body.email], (error, rows, fields) => {
 		if (error) throw error;
 		if (rows.length < 1) return res.send({ status: 0 });
 
@@ -142,8 +142,7 @@ app.post('/login', (req, res) => {
 			if (!success) return res.send({ status: 0 });
 			else {
 				var token = JWTAuth.createJWTToken(rows[0].user_id)
-				// console.log(token)
-				return res.send({ content: rows[0], status: 10 , token: token});
+				return res.send({ content: rows[0], status: 10, token: token });
 			}
 		});
 	});
@@ -151,62 +150,57 @@ app.post('/login', (req, res) => {
 
 app.post('/book', (req, res) => {
 	//Get form fields
-	const data = req.body.data;
-	const date = req.body.date;
+	// const { data, date } = req.body;
 
-	// startLocation: `${street}, ${city}`,
-	// 			endLocation: `${endStreet}, ${endCity}`,
-	// 			passenger: numPassenger,
-	// 			Wheelchair: numWheelchair
-	const output = `
-		<h1> Your confirmed booking</h1>
-		<p> Thank you for your recent booking with us. Here is a reminder of your journey details:</p>
-		<ul>
-			<li>Date: ${date}</li>
-			<li>From: ${data.startLocation}</li>
-			<li>To: ${data.endLocation}</li>
-			<li>Number of passengers: ${data.passenger}</li>
-			<li>Number of wheelchairs: ${data.wheelchair}</li>
-		</ul>
-	`;
+	// const output = `
+	// 	<h1> Your confirmed booking</h1>
+	// 	<p> Thank you for your recent booking with us. Here is a reminder of your journey details:</p>
+	// 	<ul>
+	// 		<li>Date: ${date}</li>
+	// 		<li>From: ${data.startLocation}</li>
+	// 		<li>To: ${data.endLocation}</li>
+	// 		<li>Number of passengers: ${data.passenger}</li>
+	// 		<li>Number of wheelchairs: ${data.wheelchair}</li>
+	// 	</ul>
+	// `;
 
-	('use strict');
-	const nodemailer = require('nodemailer');
+	// ('use strict');
+	// const nodemailer = require('nodemailer');
 
-	async function main() {
-		let transporter = nodemailer.createTransport({
-			host: 'smtp.gmail.com',
-			port: 587,
-			secure: false, // true for 465, false for other ports
-			auth: {
-				user: 'tfwirt.test@gmail.com',
-				pass: 'TfwTest123'
-			}
-		});
+	// async function main() {
+	// 	let transporter = nodemailer.createTransport({
+	// 		host: 'smtp.gmail.com',
+	// 		port: 587,
+	// 		secure: false, // true for 465, false for other ports
+	// 		auth: {
+	// 			user: 'tfwirt.test@gmail.com',
+	// 			pass: 'TfwTest123'
+	// 		}
+	// 	});
 
-		// setup email data
-		let mailOptions = {
-			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: 'alsaaba@cardiff.ac.uk', // list of receivers
-			subject: 'Your booking details', // Subject line
-			text: 'Hello world?', // plain text body
-			html: output // html body
-		};
+	// 	// setup email data
+	// 	let mailOptions = {
+	// 		from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
+	// 		to: 'alsaaba@cardiff.ac.uk', // list of receivers
+	// 		subject: 'Your booking details', // Subject line
+	// 		text: 'Hello world?', // plain text body
+	// 		html: output // html body
+	// 	};
 
-		// send mail with defined transport object
-		let info = await transporter.sendMail(mailOptions);
+	// 	// send mail with defined transport object
+	// 	let info = await transporter.sendMail(mailOptions);
 
-		console.log('Message sent: %s', info.messageId);
-	}
+	// 	// console.log('Message sent: %s', info.messageId);
+	// }
 
 	res.send({ status: 10 });
-	main().catch(console.error);
+	// main().catch(console.error);
 });
 
-app.get('/driver/schedule', function(req, res) {
+app.get('/driver/schedule', function (req, res) {
 	const journeyId = req.query.id;
 	connection.query(
-		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, c.longitude, c.latitude, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
+		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, c.longitude, c.latitude, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND c.removed = 0 ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
 		[journeyId],
 		(error, rows, fields) => {
 			if (error) console.log(error);
@@ -217,7 +211,22 @@ app.get('/driver/schedule', function(req, res) {
 	);
 });
 
-app.get('/journey', function(req, res) {
+app.get('/user/cancelTicket/journey', function (req, res) {
+	const { ticketId } = req.query;
+	connection.query(
+		`SELECT DISTINCT j.end_time FROM ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON c.fk_journey_id = j.journey_id WHERE t.ticket_id = ? LIMIT 1`,
+		[ticketId],
+		(error, rows, fields) => {
+			if (error) console.log(error);
+			else {
+				res.send(rows[0].end_time);
+			}
+		}
+	);
+});
+
+
+app.get('/journey', function (req, res) {
 	connection.query(
 		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
 		FROM ticket t
@@ -225,7 +234,7 @@ app.get('/journey', function(req, res) {
 		JOIN journey j ON uj.fk_journey_id = j.journey_id 
 		JOIN coordinate c ON j.journey_id = c.fk_journey_id
 		ORDER BY j.journey_id DESC LIMIT 2`,
-		function(error, rows, fields) {
+		function (error, rows, fields) {
 			if (error) console.log(error);
 			else {
 				res.send(rows);
@@ -235,46 +244,92 @@ app.get('/journey', function(req, res) {
 });
 
 app.post('/booking/temp', (req, res) => {
-	const startPlaceId = req.body.jData.place_id;
-	const startStreet = req.body.jData.street;
-	const startCity = req.body.jData.city;
-	const startCountry = req.body.jData.country;
-	const startLat = req.body.jData.lat;
-	const startLng = req.body.jData.lng;
-	const startType = req.body.jData.startType;
+	const { place_id, street, city, country, lat, lng, startType, date, time, numPassenger, numWheelchair } = req.body.jData;
+	const { jId } = req.body;
 
-	const date = req.body.jData.date;
-	const time = req.body.jData.time;
-	const numPassenger = req.body.jData.numPassenger;
-	const numWheelchair = req.body.jData.numWheelchair;
+	connection.beginTransaction((err) => {
+		if (err) throw error
 
-	const journeyId = req.body.jId;
-	
-	connection.query(
-		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
-		[numPassenger, numWheelchair, 0, 0, date, time, new Date()],
-		(error, row1, fields) => {
-			if (error) throw error;
-
-			connection.query(
-				'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
-				[journeyId, req.userId, row1.insertId, 1],
-				(errors, rows, fields) => {
-					if (errors) throw errors;
+		connection.query(
+			'SELECT * FROM coordinate WHERE fk_journey_id = ? AND place_id = ?',
+			[jId, place_id],
+			(error, row, fields) => {
+				if (error) {
+					return connection.rollback(function () {
+						throw error;
+					});
 				}
-			);
 
-			connection.query(
-				'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-				[startPlaceId, startStreet, startCity, startCountry, startLat, startLng, startType, journeyId],
-				(error, row, fields) => {
-					if (error) throw error;
-				}
-			);
+				new Promise((resolve, reject) => {
+					if (row.length >= 1) {
+						if(row[0].removed === 1){
+							connection.query(
+								'UPDATE coordinate SET removed = 0 WHERE coordinate_id = ?',
+								[row[0].coordinate_id],
+								(error, row1, fields) => {
+									if (error) {
+										return connection.rollback(function () {
+											throw error;
+										});
+									}
+									return resolve(row[0].coordinate_id)
+								}
+							);
+						}
+						else return resolve(row[0].coordinate_id)
+					}
+					else {
+						connection.query(
+							'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+							[place_id, street, city, country, lat, lng, startType, jId],
+							(error, row1, fields) => {
+								if (error) {
+									return connection.rollback(function () {
+										throw error;
+									});
+								}
+								return resolve(row1.insertId)
+							}
+						);
+					}
+				})
+					.then(id => {
+						connection.query(
+							'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created, fk_coordinate_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+							[numPassenger, numWheelchair, 0, 0, date, time, new Date(), id],
+							(error, row2, fields) => {
+								if (error) {
+									return connection.rollback(function () {
+										throw error;
+									});
+								}
 
+								connection.query(
+									'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
+									[jId, req.userId, row2.insertId, 1],
+									(error, row3, fields) => {
+										if (error) {
+											return connection.rollback(function () {
+												throw error;
+											});
+										}
 
-		}
-	);
+										connection.commit((err) => {
+											if (err) {
+												return connection.rollback(() => {
+													throw err;
+												});
+											}
+										});
+									}
+								);
+
+							}
+						);
+					})
+					.catch(error => { throw error })
+			})
+	});
 }
 );
 
@@ -316,7 +371,7 @@ app.get('/paypal', (req, res) => {
 		]
 	};
 
-	paypal.payment.create(create_payment_json, function(error, payment) {
+	paypal.payment.create(create_payment_json, function (error, payment) {
 		if (error) throw error;
 		else {
 			res.redirect(payment.links[1].href);
@@ -326,8 +381,8 @@ app.get('/paypal', (req, res) => {
 
 app.get('/user/amount', (req, res) => [
 	connection.query(
-		'select funds from user where user_id = ?',
-		[ req.userId ],
+		'SELECT funds FROM user WHERE user_id = ?',
+		[req.userId],
 		(error, rows, fields) => {
 			if (error) throw error;
 			else {
@@ -340,7 +395,7 @@ app.get('/user/amount', (req, res) => [
 app.get('/user/transactions', (req, res) => [
 	connection.query(
 		'SELECT t.*, tt.type FROM transaction t JOIN transaction_type tt ON tt.transaction_type_id = t.fk_transaction_type_id WHERE fk_user_id = ? ORDER BY date DESC',
-		[ req.userId ],
+		[req.userId],
 		(error, rows, fields) => {
 			if (error) throw error;
 			else {
@@ -352,8 +407,8 @@ app.get('/user/transactions', (req, res) => [
 
 app.get('/driver/journeys', (req, res) => {
 	connection.query(
-		`SELECT j.*, c.* FROM journey j JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_coordinate_type_id = 1 OR c.fk_coordinate_type_id = 2`,
-		function(error, rows, fields) {
+		`SELECT j.*, c.* FROM journey j JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_coordinate_type_id = 1 OR c.fk_coordinate_type_id = 2 AND c.removed = 0`,
+		function (error, rows, fields) {
 			if (error) throw error;
 			else {
 				res.send(rows);
@@ -362,10 +417,10 @@ app.get('/driver/journeys', (req, res) => {
 	);
 })
 
-app.get('/driver/stops', function(req, res) {
+app.get('/driver/stops', function (req, res) {
 	const journeyId = req.query.id
 	connection.query(
-		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
+		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND c.removed = 0 ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
 		[journeyId],
 		(error, rows, fields) => {
 			if (error) throw error;
@@ -391,7 +446,7 @@ app.get('/success', (req, res) => {
 		]
 	};
 
-	paypal.payment.execute(paymentId, execute_payment_json, function(error, payment) {
+	paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
 		if (error) {
 			throw error;
 		} else {
@@ -400,7 +455,7 @@ app.get('/success', (req, res) => {
 
 			connection.query(
 				'UPDATE user SET funds = funds + ? WHERE user_id = ?',
-				[ paypalAmount, userId ],
+				[paypalAmount, userId],
 				(error, row, fields) => {
 					if (error) throw error;
 				}
@@ -408,7 +463,7 @@ app.get('/success', (req, res) => {
 
 			connection.query(
 				'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) SELECT user.funds, ?, ?, ?, ? from user WHERE user_id = ?',
-				[ paypalAmount, new Date(), 2, userId, userId ],
+				[paypalAmount, new Date(), 2, userId, userId],
 				(error, row, fields) => {
 					if (error) throw error;
 				}
@@ -425,12 +480,12 @@ app.post('/user/addTransaction', (req, res) => {
 
 	connection.query(
 		'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
-		[ current_funds, spent_funds, new Date(), fk_transaction_type_id, req.userId, req.userId ],
+		[current_funds, spent_funds, new Date(), fk_transaction_type_id, req.userId],
 		(error, row, fields) => {
 			if (error) throw error;
 			connection.query(
 				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
-				[ spent_funds, userId ],
+				[spent_funds, req.userId],
 				(error, row, fields) => {
 					if (error) throw error;
 					else {
@@ -443,29 +498,54 @@ app.post('/user/addTransaction', (req, res) => {
 });
 
 app.post('/user/cancelTicket', (req, res) => {
-	const ticketId = req.body.ticketId;
-	const amount = req.body.amount;
-	const cancellationFeeApplied = req.body.cancellationFeeApplied;
+	const { ticketId, amount, cancellationFeeApplied } = req.body;
 
 	connection.beginTransaction((err) => {
 		if (err) throw error
 
 		connection.query(
-			'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1, t.expired = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
-			[req.userId, ticketId],
+			'SELECT COUNT(*) AS count FROM ticket WHERE cancelled = 0 AND expired = 0 AND fk_coordinate_id = (SELECT fk_coordinate_id FROM ticket WHERE ticket_id = ?)',
+			[ticketId],
 			(error, row, fields) => {
 				if (error) {
 					return connection.rollback(function () {
 						throw error;
 					});
 				}
+
+				connection.query(
+					'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1, t.expired = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
+					[req.userId, ticketId],
+					(error, row1, fields) => {
+						if (error) {
+							return connection.rollback(function () {
+								throw error;
+							});
+						}
+
+						console.log(row[0].count)
+						//Remove coordinate if it connected to only 1 ticket, before the ticket gets cancelled/expired (only remove if its a virtual bus stop (fk_coordinate_type_id = 3))
+						if (row[0].count === 1) {
+							connection.query(
+								'UPDATE coordinate SET removed = 1 WHERE coordinate_id = (SELECT fk_coordinate_id FROM ticket WHERE ticket_id = ?) AND fk_coordinate_type_id = 3',
+								[ticketId],
+								(error, row, fields) => {
+									if (error) {
+										return connection.rollback(function () {
+											throw error;
+										});
+									}
+								});
+						}
+					});
 			}
+
 		);
 
 		if (cancellationFeeApplied) {
 			connection.query(
 				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
-				[amount, userId],
+				[amount, req.userId],
 				(error, row, fields) => {
 					if (error) {
 						return connection.rollback(function () {
@@ -490,55 +570,26 @@ app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });
 
-app.get('/tickets', function(req, res) {
-	connection.query('SELECT ticket_id FROM ticket WHERE expired = 0', function(error, rows, fields) {
+app.get('/tickets', function (req, res) {
+	connection.query('SELECT ticket_id FROM ticket WHERE expired = 0', function (error, rows, fields) {
 		if (error) throw error;
 
 		res.send({ ticket: rows });
 	});
 });
 
-app.get('/ticketsExpired', function(req, res) {
-	connection.query('SELECT ticket_id FROM ticket WHERE expired = 1', function(error, rows, fields) {
+app.get('/ticketsExpired', function (req, res) {
+	connection.query('SELECT ticket_id FROM ticket WHERE expired = 1', function (error, rows, fields) {
 		if (error) throw error;
 
 		res.send({ ticket: rows });
 	});
 });
 
-app.get('/ticketsQuery', function(req, res) {
-	const id = req.query.id;
-	const expired = req.query.expired;
-
-	connection.query(
-		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE t.ticket_id = ? AND t.expired = ?',
-		[ id, expired ],
-		function(error, rows, fields) {
-			if (error) throw error;
-
-			res.send({ ticket: rows });
-		}
-	);
-});
-
-app.get('/user/tickets', function(req, res) {
+app.get('/user/tickets', function (req, res) {
 	connection.query(
 		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.cancelled, uj.completed, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id',
-		function(error, rows, fields) {
-			if (error) throw error;
-
-			res.send({ ticket: rows });
-		}
-	);
-});
-
-app.get('/ticketsQuery1', function(req, res) {
-	const id = req.query.id;
-
-	connection.query(
-		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE t.ticket_id = ?',
-		[ id ],
-		function(error, rows, fields) {
+		function (error, rows, fields) {
 			if (error) throw error;
 
 			res.send({ ticket: rows });
