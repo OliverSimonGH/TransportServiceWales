@@ -7,6 +7,8 @@ import MySchedule from '../screens/driver/MySchedule';
 import RouteScreen from '../screens/driver/RouteScreen';
 import DriverSchedule from '../screens/driver/DriverSchedule';
 import LoginScreen from '../screens/LoginScreen';
+import AccountsScreen from '../screens/driver/DriverAccount';
+
 
 const MyScheduleStack = createStackNavigator(
 	{
@@ -20,6 +22,20 @@ const MyScheduleStack = createStackNavigator(
 	}
 );
 
+const AccountStack = createStackNavigator({
+	Account: AccountsScreen,
+
+},
+{ initialRouteName: 'Account' }
+);
+
+AccountStack.navigationOptions = {
+	tabBarLabel: 'Settings',
+	tabBarIcon: ({ focused }) => (
+		<TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'} />
+	)
+};
+
 MyScheduleStack.navigationOptions = {
 	tabBarLabel: 'Schedule',
 	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-bus' : 'md-bus'} />
@@ -27,7 +43,8 @@ MyScheduleStack.navigationOptions = {
 
 export default createBottomTabNavigator(
 	{
-		MyScheduleStack
+		MyScheduleStack,
+		AccountStack
 	},
 	{
 		tabBarOptions: {
