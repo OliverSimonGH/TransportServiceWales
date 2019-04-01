@@ -70,6 +70,16 @@ class loginScreen extends Component {
 						/>
 					)}
 
+					{typeof(this.props.navigation.state.params) !== 'undefined' && this.props.navigation.state.params.success === 10 &&
+							<Accordion
+								dataArray={[{ title: 'Success', content: 'Acoount has been created' }]}
+								icon="add"
+								expandedIcon="remove"
+								contentStyle={styles.errorStyle}
+								expanded={0}
+							/>
+					}
+
 					<View style={styles.contentContainer}>
 						<View style={styles.titleContainer}>
 							<Text style={styles.title}>Login</Text>

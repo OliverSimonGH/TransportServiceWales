@@ -35,7 +35,7 @@ class RegistrationScreen extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						this.props.navigation.navigate('Login');
+						this.props.navigation.navigate('Login', { success: 10 });
 						break;
 					//User Exists
 					case 1:

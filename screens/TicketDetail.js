@@ -40,7 +40,8 @@ class TicketDetail extends React.Component {
 
 	cancelTicketPopupYes = (ticketDate) => {
 		// Cancellation fee applied
-		this.cancellationFeeApplied(ticketDate).then((cancellationFeeApplied) => {
+		this.cancellationFeeApplied(ticketDate)
+		.then((cancellationFeeApplied) => {
 			if (cancellationFeeApplied) {
 					this.ticketCancelledPost(1, 1)
 
