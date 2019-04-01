@@ -57,6 +57,7 @@ class AddVehicle extends React.Component {
 					//Success
 					case 10:
 						this.props.addVehicle(data)
+						this.props.navigation.state.params.onFetchNewVehicleId();
 						this.navigateTo();
 						break;
 					//Input Validation Failed

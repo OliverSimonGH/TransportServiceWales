@@ -1,4 +1,4 @@
-import { FETCH_VEHICLES, ADD_VEHICLE, REMOVE_VEHICLE } from '../actions/types'
+import { FETCH_VEHICLES, ADD_VEHICLE, REMOVE_VEHICLE, SELECT_VEHICLE } from '../actions/types'
 
 const initialState = {
     vehicles: [],
@@ -37,19 +37,42 @@ export default function (state = initialState, action) {
             }
 
         case REMOVE_VEHICLE:
-            const vehicles = state.vehicles;
             const vehicleId = action.payload;
-
-            for (i = 0; i < vehicles.length; i++) {
-                const vehicle = vehicles[i];
-                if (vehicleId === vehicle.id) {
-                    vehicles.splice(i, 1);
-                }
-            }
 
             return {
                 ...state,
-                vehicles: vehicles,
+                vehicles: state.vehicles.filter(vehicle => vehicle.id !== vehicleId)
+            }
+
+        case SELECT_VEHICLE:
+            const data = action.payload;
+
+            return {
+                ...state,
+                vehicles: state.vehicles.map(vehicle => {
+                    if (data.selectedVehicle) {
+                        if (vehicle.id === data.selectedVehicle.id) {
+                            return {
+                                ...vehicle,
+                                selectedVehicle: 0,
+                            }
+                        } else if (vehicle.id === data.vehicleToBeSelectedId) {
+                            return {
+                                ...vehicle,
+                                selectedVehicle: 1,
+                            }
+                        } else {
+                            return vehicle
+                        }
+                    } else if (vehicle.id === data.vehicleToBeSelectedId) {
+                        return {
+                            ...vehicle,
+                            selectedVehicle: 1,
+                        }
+                    } else {
+                        return vehicle
+                    }
+                })
             }
 
         default:

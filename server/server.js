@@ -319,6 +319,34 @@ app.post('/driver/vehicles/removeVehicle', (req, res) => {
 	);
 });
 
+app.post('/driver/vehicles/selectVehicle', (req, res) => {
+	const vehicleToBeSelectedId = req.body.vehicleToBeSelectedId;
+	const selectedVehicle = req.body.selectedVehicle;
+
+	if (selectedVehicle) {
+		const id = selectedVehicle.id;
+		connection.query(
+			`UPDATE vehicle SET currently_driven = ?
+			WHERE vehicle_id = ?`,
+			[0, id],
+			(error, row, fields) => {
+				if (error) throw error;
+			}
+		);
+	}
+	connection.query(
+		`UPDATE vehicle SET currently_driven = ?
+		WHERE vehicle_id = ?`,
+		[1, vehicleToBeSelectedId],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
+			}
+		}
+	);
+});
+
 app.post('/booking/book', (req, res) => {
 	const startPlaceId = req.body.place_id;
 	const startStreet = req.body.street;

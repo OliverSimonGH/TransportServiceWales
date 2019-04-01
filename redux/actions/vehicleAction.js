@@ -1,4 +1,4 @@
-import { ADD_VEHICLE, REMOVE_VEHICLE, FETCH_VEHICLES } from './types'
+import { ADD_VEHICLE, REMOVE_VEHICLE, FETCH_VEHICLES, SELECT_VEHICLE } from './types'
 import ip from '../../ipstore'
 
 export function addVehicle(vehicle) {
@@ -8,10 +8,17 @@ export function addVehicle(vehicle) {
     }
 }
 
-export function removeVehicle(vehicleIndex) {
+export function removeVehicle(vehicleId) {
     return {
         type: REMOVE_VEHICLE,
-        payload: vehicleIndex
+        payload: vehicleId
+    }
+}
+
+export function selectVehicle(data) {
+    return {
+        type: SELECT_VEHICLE,
+        payload: data
     }
 }
 

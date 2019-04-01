@@ -20,7 +20,7 @@ class VehiclesScreen extends React.Component {
 	};
 
 	navigateToAddVehicle = () => {
-		this.props.navigation.navigate('AddVehicle');
+		this.props.navigation.navigate('AddVehicle', { onFetchNewVehicleId: this.fetchNewVehicleId });
 	};
 
 	navigateTo = () => {
@@ -31,7 +31,7 @@ class VehiclesScreen extends React.Component {
 		var selectedVehicle;
 		if (this.props.vehicles.length > 0) {
 			this.props.vehicles.forEach(vehicle => {
-				if (vehicle.currently_driven === 1) {
+				if (vehicle.selectedVehicle === 1) {
 					selectedVehicle = vehicle;
 				}
 			})
@@ -39,12 +39,8 @@ class VehiclesScreen extends React.Component {
 		return selectedVehicle;
 	}
 
-	onDelete = () => {
+	fetchNewVehicleId = () => {
 		this.props.fetchVehicles();
-	}
-
-	reRender = () => {
-		this.setState(this.state);
 	}
 
 	render() {
@@ -64,7 +60,7 @@ class VehiclesScreen extends React.Component {
 						<Text style={styles.header}>CURRENTLY DRIVING</Text>
 					</View>
 					{this.selectedVehicle() ?
-						<VehicleRow vehicle={this.selectedVehicle()} /> :
+						<VehicleRow vehicle={this.selectedVehicle()} activeVehicle={true} /> :
 						<Text style={styles.body}>No vehicle currently selected</Text>
 					}
 					<View style={{
@@ -76,7 +72,7 @@ class VehiclesScreen extends React.Component {
 					{(this.props.vehicles && this.props.vehicles.length > 0) ?
 						this.props.vehicles.map((vehicle) => {
 							return (
-								<VehicleRow vehicle={vehicle} key={uuid()} onDelete={this.onDelete} onReRender={this.reRender} />
+								<VehicleRow vehicle={vehicle} key={uuid()} activeVehicle={false} selectedVehicle={this.selectedVehicle()} />
 							)
 						}) :
 						<Text style={styles.body}>No saved vehicles to show</Text>

@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ip from '../../ipstore';
 
 import { connect } from 'react-redux';
-import { removeVehicle } from '../../redux/actions/vehicleAction';
+import { removeVehicle, selectVehicle } from '../../redux/actions/vehicleAction';
 
 class VehicleRow extends React.Component {
 	static navigationOptions = {
@@ -16,6 +16,7 @@ class VehicleRow extends React.Component {
 
 	state = {
 		deleteDialog: false,
+		selectDialog: false,
 	};
 
 	getIconName = (vehicleType) => {
@@ -42,7 +43,7 @@ class VehicleRow extends React.Component {
 		});
 	};
 
-	async deleteVehicle (id) {
+	deleteVehicle = (id) => {
 		data = {
 			id: id,
 		}
@@ -60,8 +61,42 @@ class VehicleRow extends React.Component {
 					//Success
 					case 10:
 						this.props.removeVehicle(id);
-						this.hideDeleteConfirmDialog();
-						this.props.onReRender();
+				}
+			})
+			.catch((error) => console.log(error));
+	};
+
+	showSelectConfirmDialog = () => {
+		this.setState({
+			selectDialog: true
+		});
+	};
+
+	hideSelectConfirmDialog = () => {
+		this.setState({
+			selectDialog: false
+		});
+	};
+
+	selectVehicle = (id) => {
+		const data = {
+			selectedVehicle: this.props.selectedVehicle,
+			vehicleToBeSelectedId: id
+		}
+		fetch(`http://${ip}:3000/driver/vehicles/selectVehicle`, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then((response) => response.json())
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						this.props.selectVehicle(data);
 				}
 			})
 			.catch((error) => console.log(error));
@@ -81,9 +116,25 @@ class VehicleRow extends React.Component {
 					<Text style={{ color: colors.emphasisTextColor }}>{vehicle.make} {vehicle.model}</Text>
 					<Text style={{ color: colors.emphasisTextColor }}>Registration: <Text style={{ color: colors.bodyTextColor }}>{vehicle.registration}</Text></Text>
 				</View>
-				<TouchableOpacity style={styles.removeIcon} onPress={this.showDeleteConfirmDialog}>
-					<Icon name="delete" color={colors.bodyTextColor} size={25} />
-				</TouchableOpacity>
+				<View style={styles.actionIcons}>
+					<TouchableOpacity onPress={this.showDeleteConfirmDialog}>
+						{this.props.activeVehicle &&
+							<Icon name="check-circle" color={colors.success} size={25} />
+						}
+						{!this.props.activeVehicle &&
+							<>
+								<TouchableOpacity onPress={this.showSelectConfirmDialog}>
+									<Icon name="check-circle-outline" color={colors.bodyTextColor} size={25} />
+								</TouchableOpacity>
+								<TouchableOpacity onPress={this.showDeleteConfirmDialog}>
+									<Icon name="delete" color={colors.bodyTextColor} size={25} />
+								</TouchableOpacity>
+							</>
+						}
+					</TouchableOpacity>
+				</View>
+
+				{/* Delete confirmation dialogue */}
 				<Dialog
 					dialogAnimation={new SlideAnimation}
 					width={0.8}
@@ -96,10 +147,10 @@ class VehicleRow extends React.Component {
 							<DialogButton
 								textStyle={{ color: colors.brandColor }}
 								text="REMOVE"
-								onPress={async () => {
-									await this.props.onDelete;
+								onPress={() => {
 									this.deleteVehicle(vehicle.id);
-									}} />
+									this.hideDeleteConfirmDialog();
+								}} />
 							<DialogButton
 								textStyle={{ color: colors.bodyTextColor }}
 								text="CANCEL"
@@ -111,6 +162,37 @@ class VehicleRow extends React.Component {
 				>
 					<DialogContent>
 						<Text style={styles.body}>Are you sure you want to delete this vehicle? </Text>
+					</DialogContent>
+				</Dialog>
+
+				{/* Select confirmation dialogue */}
+				<Dialog
+					dialogAnimation={new SlideAnimation}
+					width={0.8}
+					visible={this.state.selectDialog}
+					dialogTitle={
+						<DialogTitle textStyle={styles.dialogTitle} color={colors.emphasisTextColor} title="SELECT VEHICLE" />
+					}
+					footer={
+						<DialogFooter>
+							<DialogButton
+								textStyle={{ color: colors.brandColor }}
+								text="YES"
+								onPress={() => {
+									this.selectVehicle(vehicle.id);
+									this.hideSelectConfirmDialog();
+								}} />
+							<DialogButton
+								textStyle={{ color: colors.bodyTextColor }}
+								text="CANCEL"
+								onPress={this.hideSelectConfirmDialog}
+							/>
+						</DialogFooter>
+					}
+					onTouchOutside={this.hideSelectConfirmDialog}
+				>
+					<DialogContent>
+						<Text style={styles.body}>Select this as your currently driven vehicle? </Text>
 					</DialogContent>
 				</Dialog>
 			</View>
@@ -137,8 +219,10 @@ const styles = StyleSheet.create({
 	details: {
 		width: '70%'
 	},
-	removeIcon: {
-		width: '10%'
+	actionIcons: {
+		flex: 1,
+		width: '10%',
+		justifyContent: 'space-between',
 	},
 	dialogTitle: {
 		color: colors.emphasisTextColor,
@@ -152,6 +236,7 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = (dispatch) => {
 	return {
 		removeVehicle: (vehicleId) => dispatch(removeVehicle(vehicleId)),
+		selectVehicle: (data) => dispatch(selectVehicle(data)),
 	};
 };
 
