@@ -5,6 +5,10 @@ import MapView, { Polyline, Marker } from 'react-native-maps';
 import ip from '../../ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings([
+	'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
+]);
 
 let { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -168,21 +172,23 @@ export default class TrackDriver extends Component {
 		}
 		return (
 			<View style={StyleSheet.absoluteFill}>
-				<MapView
-					ref={(map) => {
-						this.map = map;
-					}}
-					style={StyleSheet.absoluteFill}
-					initialRegion={{
-						latitude: this.state.lat,
-						longitude: this.state.long,
-						latitudeDelta: LATITUDE_DELTA,
-						longitudeDelta: LONGITUDE_DELTA
-					}}
-					showsUserLocation={true}
-				>
-					{driverMarker}
-				</MapView>
+				{this.state.lat >= 1 && (
+					<MapView
+						ref={(map) => {
+							this.map = map;
+						}}
+						style={StyleSheet.absoluteFill}
+						initialRegion={{
+							latitude: this.state.lat,
+							longitude: this.state.long,
+							latitudeDelta: LATITUDE_DELTA,
+							longitudeDelta: LONGITUDE_DELTA
+						}}
+						showsUserLocation={true}
+					>
+						{driverMarker}
+					</MapView>
+				)}
 				<View style={styles.calloutView}>
 					<Button
 						onPress={() => {
