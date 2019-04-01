@@ -33,7 +33,7 @@ export default class EmergencyContact extends Component {
 	};
 
     settings = () => {
-		this.props.navigation.navigate('Settings');
+		this.props.navigation.navigate('Account');
 	};
 
 	render() {
