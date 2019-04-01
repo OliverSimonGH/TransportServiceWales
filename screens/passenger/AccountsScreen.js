@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Dimensions} from 'react-native';
 import {
 	Button,
 	Container,
@@ -10,12 +10,11 @@ import {
 	ListItem,
 	Left,
 	Right,
-	Icon,
 	Accordion
 } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
-
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 
@@ -25,19 +24,24 @@ export default class AccountsScreen extends Component {
 	};
 
 	state = {
-		userDetails: []
+		userDetails: null,
+		forename: '',
+		surname:'',
+		email:'',
+		phoneNumber:''
 	};
 	
 	componentDidMount() {
 		const id = this.props.userId;
 		fetch(`http://${ip}:3000/userDetails?id=${id}`).then((response) => response.json()).then((response) => {
-			console.log(response);
-			this.setState({
-				userDetails: response.details
+		this.setState({
+				userDetails: response.details,
+				forename: response.details.forename,
+				surname: response.details.surname,
+				email: response.details.email,
+				phoneNumber: response.details.phone_number,
 			});
 		});
-
-	
 	}
 
 	contact = () => {
@@ -72,21 +76,64 @@ export default class AccountsScreen extends Component {
 									<Text style={styles.secondaryButtontext}>My Details</Text>
 								</Button>
 							</View>		
-							{this.state.userDetails.length >= 1 && (
-								<View style={styles.container}>
-									<React.Fragment>
-									<Text>
-										Forename: {this.state.userDetails[0].forename}
+
+					{this.state.userDetails !== null && (
+						<View style={styles.container}>
+							<React.Fragment>
+								<View style={styles.detailContainer}>
+								<Icon name="person" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>
+										Forename: {this.state.userDetails.forename}
 									</Text>
-									<Text>
-										Surname: {this.state.userDetails[0].surname}
-									</Text>
-									<Text>
-										Email: {this.state.userDetails[0].email}
-									</Text>
-									</React.Fragment>
+									<TouchableOpacity onPress={this.details}>
+								<Icon
+									name='update'
+									size={30}
+									style={styles.updateIcon}>
+								</Icon>
+						</TouchableOpacity>
 								</View>
-							)}
+								<View style={styles.detailContainer}>
+								<Icon name="person" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>
+										Surname: {this.state.userDetails.surname}
+									</Text>
+									<TouchableOpacity onPress={this.details}>
+									<Icon 
+									name="update" 
+									size={30} 
+									style={styles.updateIcon}/>
+									</TouchableOpacity>
+								</View>
+								<View style={styles.detailContainer}>
+								<Icon name="mail" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>
+										Email: {this.state.userDetails.email}
+									</Text>
+									<TouchableOpacity onPress={this.details}>
+									<Icon 
+									name="update"  
+									size={30}
+									style={styles.updateIcon}/>
+									</TouchableOpacity>
+								</View>
+								<View style={styles.detailContainer}>
+								<Icon name="phone-android" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>
+										Phone Number: {this.state.userDetails.phone_number}
+									</Text>
+									<TouchableOpacity onPress={this.details}>
+									<Icon 
+									name="update"  
+									size={30}
+									style={styles.updateIcon}/>
+									</TouchableOpacity>
+								</View>
+							</React.Fragment>
+						</View>
+
+					)}
+
 
 							<View style={styles.secondaryButtonContainer}>
 								<Button bordered danger style={styles.secondaryButton} onPress={this.contact}>
@@ -94,22 +141,27 @@ export default class AccountsScreen extends Component {
 								</Button>
 							</View>	
 							<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton} onPress={this.theme}>
-									<Text style={styles.secondaryButtontext}>My Theme</Text>
+								<Button bordered danger style={styles.button} onPress={this.logout}>
+									<Text style={styles.buttonText}>Log Out</Text>
 								</Button>
 							</View>	
 										
-					<Button style={styles.logoutButton} onPress={this.logout}>
-							<Text>Log Out</Text>
-						</Button>
 					</Content>
 
 			</Container>
 		);
 	}
 }
+const width = '100%';
+const window = Dimensions.get('window');
+
 
 const styles = StyleSheet.create({
+	button: {
+		width: '100%',
+		justifyContent: 'center',
+		backgroundColor: '#ff0000'
+	},
 	contentContainer: {
 		width: '80%',
 		flex: 1,
@@ -133,5 +185,25 @@ const styles = StyleSheet.create({
 	},
 	secondaryButtontext: {
 		color: '#ff0000'
-	}
+	},
+	buttonText: {
+		color: 'white'
+	},
+	detailContainer : {
+		flexDirection: 'row',
+		borderBottomWidth: 2,
+		borderBottomColor: '#ff0000',
+		width,
+		justifyContent: 'center'
+	},
+	detailView: {
+		flex: 1,
+		paddingLeft: 10,
+		fontSize: 16
+	},
+		inputIcons: {
+		width: 50,
+		padding: 10,
+		textAlign: 'center'
+	},
 });
