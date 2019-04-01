@@ -40,12 +40,12 @@ export default class DriverAccount extends Component {
 				surname: response.details.surname,
 				email: response.details.email,
 				phoneNumber: response.details.phone_number,
-			});
+			})
 		});
 	}
 
 	contact = () => {
-		this.props.navigation.navigate('Contact');
+		this.props.navigation.navigate('EmergencyContact');
 	};
 
 	logout = () => {
@@ -56,13 +56,11 @@ export default class DriverAccount extends Component {
 		this.props.navigation.navigate('');
 	};
 
-	details = () => {
+	changeDetails = () => {
 		this.props.navigation.navigate('ChangeDetails');
 	};
 
-	theme = () => {
-		this.props.navigation.navigate('SetTheme');
-	};
+
 
 
 	render() {
@@ -72,7 +70,7 @@ export default class DriverAccount extends Component {
 			<Content style={styles.contentContainer}>
 				
 					<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton} onPress={this.details}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.changeDetails}>
 									<Text style={styles.secondaryButtontext}>My Details</Text>
 								</Button>
 							</View>		
@@ -85,7 +83,7 @@ export default class DriverAccount extends Component {
 									<Text style={styles.detailView}>
 										Forename: {this.state.userDetails.forename}
 									</Text>
-									<TouchableOpacity onPress={this.details}>
+									<TouchableOpacity onPress={this.changeDetails}>
 								<Icon
 									name='update'
 									size={30}
@@ -98,7 +96,7 @@ export default class DriverAccount extends Component {
 									<Text style={styles.detailView}>
 										Surname: {this.state.userDetails.surname}
 									</Text>
-									<TouchableOpacity onPress={this.details}>
+									<TouchableOpacity onPress={this.changeDetails}>
 									<Icon 
 									name="update" 
 									size={30} 
@@ -110,7 +108,7 @@ export default class DriverAccount extends Component {
 									<Text style={styles.detailView}>
 										Email: {this.state.userDetails.email}
 									</Text>
-									<TouchableOpacity onPress={this.details}>
+									<TouchableOpacity onPress={this.changeDetails}>
 									<Icon 
 									name="update"  
 									size={30}
@@ -122,7 +120,7 @@ export default class DriverAccount extends Component {
 									<Text style={styles.detailView}>
 										Phone Number: {this.state.userDetails.phone_number}
 									</Text>
-									<TouchableOpacity onPress={this.details}>
+									<TouchableOpacity onPress={this.changeDetails}>
 									<Icon 
 									name="update"  
 									size={30}
