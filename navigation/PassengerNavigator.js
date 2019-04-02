@@ -16,6 +16,10 @@ import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 import RecentFavScreen from '../screens/passenger/RecentFavScreen';
 import AmendTicket from './../screens/AmendTicket';
 import ResultScreen from '../screens/passenger/ResultScreen';
+import ChangePassword from '../screens/passenger/ChangePassword';
+import ContactScreen from '../screens/passenger/ContactScreen';
+import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
+import AddressScreen from '../screens/passenger/AddressScreen';
 
 const JourneyStack = createStackNavigator(
 	{
@@ -67,9 +71,17 @@ WalletStack.navigationOptions = {
 	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'} />
 };
 
-const AccountStack = createStackNavigator({
-	Account: AccountsScreen
-});
+const AccountStack = createStackNavigator(
+	{
+		Account: AccountsScreen,
+		Contact: ContactScreen,
+		Settings: AccountsScreen,
+		ChangeDetails: ChangeDetailsScreen,
+		ChangePassword: ChangePassword,
+		AddAddress: AddressScreen
+	},
+	{ initialRouteName: 'Account' }
+);
 
 AccountStack.navigationOptions = {
 	tabBarLabel: 'Settings',

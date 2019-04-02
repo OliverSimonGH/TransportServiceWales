@@ -5,13 +5,14 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { Button, Content, Container, Text, StyleProvider } from 'native-base';
 import Dialog, { DialogFooter, DialogButton, DialogContent, DialogTitle } from 'react-native-popup-dialog';
+import _ from 'lodash';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import uuid from 'uuid/v4';
 import colors from '../constants/Colors';
-import { Location, Permissions, Notifications } from 'expo';
+import QRCode from 'react-native-qrcode';
 
 import { connect } from 'react-redux';
 import { addTransaction } from '../redux/actions/transactionAction';
@@ -250,14 +251,16 @@ class TicketDetail extends React.Component {
 								<Text style={styles.qrHeaderText}>TICKET QR CODE</Text>
 							</View>
 							<View style={styles.qrCode}>
-								<Image
-									source={require('../assets/images/qrcode.jpg')}
+								<QRCode
+									value={this.state.text}
 									style={{
 										width: 150,
-										height: 150,
+										height: 10,
 										borderRadius: 10,
 										alignSelf: 'center'
 									}}
+									bgColor="red"
+									fgColor="white"
 								/>
 							</View>
 						</View>

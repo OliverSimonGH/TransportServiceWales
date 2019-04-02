@@ -18,7 +18,7 @@ const nodemailer = require('nodemailer');
 const nodemailerOauth2Key = require('../nodemailer_oauth2_key');
 
 app.engine('ejs', engines.ejs);
-app.set('views', '../views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
 const validatorOptions = {
@@ -734,6 +734,167 @@ app.post('/user/cancelTicket', (req, res) => {
 
 app.get('/cancel', (req, res) => {
 	res.render('cancel');
+});
+
+app.get('/userDetails', function(req, res) {
+	connection.query(
+		'SELECT forename, surname, email, phone_number FROM user WHERE user_id = ?',
+		[ localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ details: rows[0] });
+		}
+	);
+});
+
+app.post('/userChangeForename', function(req, res) {
+	const forename = req.body.forename;
+
+	connection.query(
+		'UPDATE user SET forename = ? WHERE user_id=?',
+		[ forename, localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ status: 10 });
+		}
+	);
+});
+
+app.post('/userChangeSurname', function(req, res) {
+	const surname = req.body.surname;
+
+	connection.query(
+		'UPDATE user SET surname = ? WHERE user_id=?',
+		[ surname, localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ status: 10 });
+		}
+	);
+});
+
+app.post('/userChangePhoneNumber', function(req, res) {
+	const phoneNumber = req.body.phoneNumber;
+
+	connection.query(
+		'UPDATE user SET phone_number = ? WHERE user_id=?',
+		[ phoneNumber, localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ status: 10 });
+		}
+	);
+});
+
+app.post('/userChangeEmail', function(req, res) {
+	const email = req.body.email;
+
+	connection.query('SELECT * FROM user WHERE email=?', [ email ], function(error, rows, fields) {
+		if (error) throw error;
+		if (rows.length > 0) return res.send({ status: 1 });
+
+		connection.query(
+			'UPDATE user SET email = ? WHERE user_id=?',
+			[ email, localStorage.getItem('userId') ],
+			function(error, rows, fields) {
+				if (error) throw error;
+
+				res.send({ status: 10 });
+			}
+		);
+	});
+});
+
+app.post('/addAddress', function(req, res) {
+	const city = req.body.city;
+	const street = req.body.street;
+	const house_number = req.body.house_number;
+	const postcode = req.body.postcode;
+	const userId = localStorage.getItem('userId');
+
+	connection.query('SELECT fk_address_id FROM user WHERE user_id=?', [ userId ], (error, row, fields) => {
+		if (error) throw error;
+		if (row[0].fk_address_id === null) {
+			connection.query(
+				'INSERT INTO address (city, street, house_number, postcode) VALUES (?, ?, ?, ?)',
+				[ city, street, house_number, postcode ],
+				(error, row, fields) => {
+					if (error) throw error;
+
+					connection.query(
+						'UPDATE user SET fk_address_id = ? WHERE user_id = ?',
+						[ row.insertId, userId ],
+						(error, row, fields) => {
+							if (error) throw error;
+							return res.send({ status: 10 });
+						}
+					);
+				}
+			);
+		} else {
+			connection.query(
+				'UPDATE address SET city = ?, street = ?, house_number = ?, postcode = ? WHERE address_id = ?',
+				[ city, street, house_number, postcode, row[0].fk_address_id ],
+				(error, row1, fields) => {
+					if (error) throw error;
+
+					connection.query(
+						'UPDATE user SET fk_address_id = ? WHERE user_id = ?',
+						[ row[0].fk_address_id, userId ],
+						(error, row2, fields) => {
+							if (error) throw error;
+							return res.send({ status: 10 });
+						}
+					);
+				}
+			);
+		}
+	});
+});
+
+app.post('/userUpdatePassword', function(req, res) {
+	const { currentPassword, newPassword, confirmPassword } = req.body;
+	req
+		.checkBody('newPassword', 'Password must include 8 characters, 1 upper case and 1 lower case')
+		.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
+		.trim();
+	req.checkBody('confirmPassword', 'Passwords must match').equals(newPassword);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+	connection.query(
+		'SELECT * FROM user WHERE user_id = ? LIMIT 1',
+		[ localStorage.getItem('userId') ],
+		(error, rows, fields) => {
+			if (error) throw error;
+			if (rows.length < 1) return res.send({ status: 0 });
+
+			bcrypt.compare(currentPassword, rows[0].password, (error, success) => {
+				if (error) throw error;
+				if (!success) return res.send({ status: 0 });
+				else {
+					bcrypt.hash(newPassword, saltRounds, (error, hash) => {
+						connection.query(
+							'UPDATE user SET password = ? WHERE user_id = ?',
+							[ hash, localStorage.getItem('userId') ],
+							(error, rows, fields) => {
+								if (error) throw error;
+								return res.send({ status: 10 });
+							}
+						);
+					});
+				}
+			});
+		}
+	);
 });
 
 app.get('/tickets', function(req, res) {
