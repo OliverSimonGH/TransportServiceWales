@@ -17,6 +17,7 @@ import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';
 import { addTicket } from '../../redux/actions/ticketAction';
 import colors from '../../constants/Colors';
+import { postRequestAuthorized } from '../../API';
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -55,7 +56,7 @@ class SummaryScreen extends React.Component {
 			returnTicket,
 			city,
 			endCity
-		} = this.props.navigation.state.params;
+		} = this.props.navigation.state.params.jData;
 		//Send data to the server
 		const data = {
 			data: {
@@ -70,31 +71,18 @@ class SummaryScreen extends React.Component {
 			email: this.props.user.email
 		};
 
-		fetch(`http://${ip}:3000/booking/sendEmail`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		}).catch((error) => console.log(error));
+		postRequestAuthorized(`http://${ip}:3000/booking/sendEmail`, data);
 	};
 
 	bookJourney = () => {
-		const bookingData = this.props.navigation.state.params;
-		fetch(`http://${ip}:3000/booking/book`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(bookingData)
-		}).catch((error) => console.log(error));
+		const data = this.props.navigation.state.params;
+		postRequestAuthorized(`http://${ip}:3000/booking/book`, data);
 	};
 
 	componentDidMount() {
 		this._getLocationPermissionAsync();
-		const { numPassenger, returnTicket } = this.props.navigation.state.params;
+		const { numPassenger, returnTicket } = this.props.navigation.state.params.jData;
+
 		if (returnTicket === 1) {
 			this.setState({
 				total: parseInt(numPassenger * (3 * 2))
@@ -135,22 +123,14 @@ class SummaryScreen extends React.Component {
 			city,
 			endCity,
 			time
-		} = this.props.navigation.state.params;
+		} = this.props.navigation.state.params.jData;
 		const data = {
 			current_funds: parseFloat(parseInt(this.props.user.funds) - parseInt(this.state.total)).toFixed(2),
 			spent_funds: this.state.total,
 			fk_transaction_type_id: 1
 		};
 
-		fetch(`http://${ip}:3000/user/addTransaction`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then((reponse) => reponse.json())
+		postRequestAuthorized(`http://${ip}:3000/user/addTransaction`, data)
 			.then((response) => {
 				if (response.status !== 10) return;
 
@@ -218,37 +198,29 @@ class SummaryScreen extends React.Component {
 			returnTicket,
 			city,
 			endCity
-		} = this.props.navigation.state.params;
+		} = this.props.navigation.state.params.jData;
+
 		const data = {
 			current_funds: this.props.user.funds,
 			spent_funds: 0.0,
 			fk_transaction_type_id: 3
 		};
 
-		fetch(`http://${ip}:3000/user/addTransaction`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then((reponse) => reponse.json())
-			.then((response) => {
-				if (response.status !== 10) return;
+		postRequestAuthorized(`http://${ip}:3000/user/addTransaction`, data).then((response) => {
+			if (response.status !== 10) return;
 
-				this.props.userPayForTicket(0.0);
+			this.props.userPayForTicket(0.0);
 
-				this.props.onAddTransaction({
-					current_funds: parseFloat(this.props.user.funds).toFixed(2),
-					date: new Date(),
-					fk_transaction_type_id: 3,
-					fk_user_id: this.props.user.id,
-					spent_funds: 0.0,
-					transaction_id: uuid(),
-					type: 'Concessionary Ticket'
-				});
+			this.props.onAddTransaction({
+				current_funds: parseFloat(this.props.user.funds).toFixed(2),
+				date: new Date(),
+				fk_transaction_type_id: 3,
+				fk_user_id: this.props.user.id,
+				spent_funds: 0.0,
+				transaction_id: uuid(),
+				type: 'Concessionary Ticket'
 			});
+		});
 
 		this.props.addTicket({
 			accessibilityRequired: numWheelchair > 0 ? 1 : 0,
@@ -314,7 +286,7 @@ class SummaryScreen extends React.Component {
 	};
 
 	sendPushNotification = () => {
-		const { date, street } = this.props.navigation.state.params;
+		const { date, street } = this.props.navigation.state.params.jData;
 
 		let response = fetch('https://exp.host/--/api/v2/push/send', {
 			method: 'POST',
@@ -338,11 +310,11 @@ class SummaryScreen extends React.Component {
 	};
 
 	navigateTo = () => {
-		this.props.navigation.navigate('Home');
+		this.props.navigation.navigate('Results');
 	};
 
 	render() {
-		const data = this.props.navigation.state.params;
+		const data = this.props.navigation.state.params.jData;
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>

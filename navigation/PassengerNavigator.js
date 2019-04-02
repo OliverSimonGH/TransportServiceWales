@@ -14,11 +14,13 @@ import TrackDriver from '../screens/passenger/TrackDriver';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 import RecentFavScreen from '../screens/passenger/RecentFavScreen';
 import AmendTicket from './../screens/AmendTicket';
+import ResultScreen from '../screens/passenger/ResultScreen';
 
 const JourneyStack = createStackNavigator(
 	{
 		Home: JourneyScreen,
 		Summary: SummaryScreen,
+		Results: ResultScreen,
 		RecentFav: RecentFavScreen,
 		Confirmation: ConfirmationScreen
 	},

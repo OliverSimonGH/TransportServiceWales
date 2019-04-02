@@ -53,8 +53,8 @@ class JourneyScreen extends Component {
 			to: null,
 			date: null,
 			time: null,
-			numPassenger: null,
-			numWheelchair: null,
+			numPassenger: 1,
+			numWheelchair: 0,
 			returnTicket: false,
 
 			//StartLocation
@@ -64,9 +64,9 @@ class JourneyScreen extends Component {
 			street: 'South Park Road',
 			city: 'Cardiff',
 			country: 'UK',
-			lat: '51.4816575,',
-			lng: '-3.1458798,',
-			startType: 1,
+			lat: 51.4816575,
+			lng: -3.1458798,
+			startType: 3,
 
 			//EndLocation
 			endLocationPredictions: [],
@@ -75,8 +75,8 @@ class JourneyScreen extends Component {
 			endStreet: 'South Clive Street',
 			endCity: 'Cardiff',
 			endCountry: 'UK',
-			endLat: '51.4599197,',
-			endLng: '-3.1844829,',
+			endLat: 51.4599197,
+			endLng: -3.1844829,
 			endType: 2
 		};
 		this.startPositionDebounced = _.debounce(this.startPosition, 500);
@@ -94,8 +94,6 @@ class JourneyScreen extends Component {
 			});
 		}
 	}
-
-	// Sets the state when each input is changed
 
 	handleNumPassengersChange = (value) => {
 		this.setState({ numPassenger: value });
@@ -289,7 +287,7 @@ class JourneyScreen extends Component {
 			returnTicket: this.state.returnTicket === true ? 1 : 0
 		};
 
-		this.props.navigation.navigate('Summary', data);
+		this.props.navigation.navigate('Results', data);
 	}
 
 	checkPassengerState = () => {

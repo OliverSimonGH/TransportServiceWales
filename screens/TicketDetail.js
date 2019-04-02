@@ -16,7 +16,8 @@ import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { addTransaction } from '../redux/actions/transactionAction';
 import { userPayForTicket } from '../redux/actions/userAction';
-import { cancelTicket } from '../redux/actions/ticketAction';
+import { cancelTicket, fetchTickets } from '../redux/actions/ticketAction';
+import { postRequestAuthorized, getRequestAuthorized } from '../API';
 
 class TicketDetail extends React.Component {
 	static navigationOptions = {
@@ -41,6 +42,65 @@ class TicketDetail extends React.Component {
 		this.setState({
 			cancelTicketPopup: false
 		});
+	};
+
+	cancelTicketPopupYes = (ticketDate) => {
+		// Cancellation fee applied
+		this.cancellationFeeApplied(ticketDate).then((cancellationFeeApplied) => {
+			if (cancellationFeeApplied) {
+				this.ticketCancelledPost(1, 1);
+
+				this.props.userPayForTicket(1);
+				this.props.addTransaction({
+					current_funds: parseFloat(this.props.user.funds).toFixed(2),
+					date: new Date(),
+					fk_transaction_type_id: 4,
+					fk_user_id: this.props.user.id,
+					spent_funds: 1,
+					transaction_id: uuid(),
+					type: 'Ticket Cancelled',
+					cancellation_fee: 1
+				});
+			} else {
+				// Cancellation fee not applied
+				this.ticketCancelledPost(0, 0);
+				this.props.addTransaction({
+					current_funds: parseFloat(this.props.user.funds).toFixed(2),
+					date: new Date(),
+					fk_transaction_type_id: 4,
+					fk_user_id: this.props.user.id,
+					spent_funds: 0.0,
+					transaction_id: uuid(),
+					type: 'Ticket Cancelled',
+					cancellation_fee: 0
+				});
+			}
+
+			this.props.ticketCancelRedux(this.props.navigation.state.params.ticket.id);
+			this.cancelTicketPopupNo();
+			this.navigateTo();
+		});
+	};
+
+	cancellationFeeApplied = (ticketDate) => {
+		return getRequestAuthorized(
+			`http://${ip}:3000/user/cancelTicket/journey?ticketId=${this.props.navigation.state.params.ticket.id}`
+		).then((endTime) => {
+			const timeDiff = moment(endTime).unix() - moment(ticketDate).unix();
+
+			if (timeDiff <= 7200 && timeDiff >= 0) return Promise.resolve(true);
+			return Promise.resolve(false);
+		});
+	};
+
+	ticketCancelledPost = (amount, cancellationFeeApplied) => {
+		const data = {
+			ticketId: this.props.navigation.state.params.ticket.id,
+			amount: amount,
+			cancellationFeeApplied: cancellationFeeApplied
+		};
+
+		return postRequestAuthorized(`http://${ip}:3000/user/cancelTicket`, data);
 	};
 
 	cancelTicketPopupYes = (ticketDate) => {
@@ -98,19 +158,13 @@ class TicketDetail extends React.Component {
 			cancellationFeeApplied: cancellationFeeApplied
 		};
 
-		return fetch(`http://${ip}:3000/user/cancelTicket`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		}).catch((err) => {});
+		return postRequestAuthorized(`http://${ip}:3000/user/cancelTicket`, data);
 	};
 
 	_getPickupLocation = () => {
-		return fetch(`http://${ip}:3000/ticket/pickup?id=${this.props.navigation.state.params.ticket.id}`)
-			.then((response) => response.json())
+		return getRequestAuthorized(
+			`http://${ip}:3000/ticket/pickup?id=${this.props.navigation.state.params.ticket.id}`
+		)
 			.then((response) => {
 				return Promise.resolve(response);
 			})
