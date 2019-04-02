@@ -619,7 +619,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user,
-	ticketslength: state.ticketReducer.ticketsLength
+	ticketslength: state.ticketReducer.ticketsLength,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SummaryScreen);

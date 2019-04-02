@@ -199,11 +199,16 @@ CREATE TABLE IF NOT EXISTS `transport`.`transaction` (
   INDEX `fk_transaction_user1_idx` (`fk_user_id` ASC) ,
   CONSTRAINT `fk_transaction_transaction_type1`
     FOREIGN KEY (`fk_transaction_type_id`)
-    REFERENCES `transport`.`transaction_type` (`transaction_type_id`),
+    REFERENCES `transport`.`transaction_type` (`transaction_type_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
   CONSTRAINT `fk_transaction_user1`
     FOREIGN KEY (`fk_user_id`)
-    REFERENCES `transport`.`user` (`user_id`))
+    REFERENCES `transport`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
+AUTO_INCREMENT = 14
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -228,7 +233,9 @@ CREATE TABLE IF NOT EXISTS `transport`.`user_journey` (
     REFERENCES `transport`.`ticket` (`ticket_id`),
   CONSTRAINT `fk_user_journey_user1`
     FOREIGN KEY (`fk_user_id`)
-    REFERENCES `transport`.`user` (`user_id`))
+    REFERENCES `transport`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -248,13 +255,12 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `transport`.`vehicle`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `transport`.`vehicle` (
-  `vehicle_id` INT(11) NOT NULL,
+  `vehicle_id` INT(11) NOT NULL AUTO_INCREMENT,
   `registration` VARCHAR(45) NOT NULL,
   `make` VARCHAR(45) NOT NULL,
   `model` VARCHAR(45) NOT NULL,
-  `year` INT(11) NOT NULL,
-  `passanger_seats` INT(11) NOT NULL,
-  `wheelchair_access` TINYINT(4) NOT NULL DEFAULT '0',
+  `passenger_seats` INT(11) NOT NULL,
+  `wheelchair_spaces` INT(11) NOT NULL,
   `currently_driven` TINYINT(4) NOT NULL DEFAULT '0',
   `fk_vehicle_type_id` INT(11) NOT NULL,
   PRIMARY KEY (`vehicle_id`, `fk_vehicle_type_id`),

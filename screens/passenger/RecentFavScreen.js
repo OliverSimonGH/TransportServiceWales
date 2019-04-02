@@ -83,7 +83,12 @@ class RecentFavScreen extends Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
+				<GlobalHeader
+					type={3}
+					navigateTo={this.navigateTo}
+					header="Recent and Favourites"
+					isBackButtonActive={1}
+				/>
 				<Content>
 					<View style={styles.container}>
 						<Text style={styles.header}>FAVOURITE JOURNEYS</Text>
@@ -98,13 +103,13 @@ class RecentFavScreen extends Component {
 											<View style={styles.coordinateRow}>
 												<Text style={styles.coordinateHeader}>FROM:</Text>
 												<Text style={styles.coordinate}>
-													{ticket.toStreet}, {ticket.toCity}
+													{ticket.fromStreet}, {ticket.fromCity}
 												</Text>
 											</View>
 											<View style={styles.coordinateRow}>
 												<Text style={styles.coordinateHeader}>TO:</Text>
 												<Text style={styles.coordinate}>
-													{ticket.fromStreet}, {ticket.fromCity}
+													{ticket.toStreet}, {ticket.toCity}
 												</Text>
 											</View>
 										</View>
@@ -134,13 +139,13 @@ class RecentFavScreen extends Component {
 											<View style={styles.coordinateRow}>
 												<Text style={styles.coordinateHeader}>FROM:</Text>
 												<Text style={styles.coordinate}>
-													{ticket.toStreet}, {ticket.toCity}
+													{ticket.fromStreet}, {ticket.fromCity}
 												</Text>
 											</View>
 											<View style={styles.coordinateRow}>
 												<Text style={styles.coordinateHeader}>TO:</Text>
 												<Text style={styles.coordinate}>
-													{ticket.fromStreet}, {ticket.fromCity}
+													{ticket.toStreet}, {ticket.toCity}
 												</Text>
 											</View>
 										</View>

@@ -8,7 +8,10 @@ import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
 import { getRequestAuthorized } from '../../API';
 
-export default class DriverSchedule extends React.Component {
+import { connect } from 'react-redux';
+import { fetchVehicles } from '../../redux/actions/vehicleAction';
+
+class DriverSchedule extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -18,6 +21,7 @@ export default class DriverSchedule extends React.Component {
 	};
 
 	componentDidMount() {
+		this.props.fetchVehicles();
 		getRequestAuthorized(`http://${ip}:3000/driver/journeys`).then((response) => {
 			let journey = {};
 			for (let i = 0; i < response.length; i++) {
@@ -142,3 +146,5 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(49, 46, 50, 0.1)'
 	}
 });
+
+export default connect(null, { fetchVehicles })(DriverSchedule);

@@ -1,19 +1,22 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import colors from '../constants/Colors';
 
 import TabBarIcon from '../components/TabBarIcon';
 import MySchedule from '../screens/driver/MySchedule';
 import RouteScreen from '../screens/driver/RouteScreen';
 import DriverSchedule from '../screens/driver/DriverSchedule';
-import LoginScreen from '../screens/LoginScreen';
+import VehiclesScreen from './../screens/driver/VehiclesScreen';
+import AccountsScreen from './../screens/driver/AccountsScreen';
+import AddVehicle from './../screens/driver/AddVehicle';
+import MakeModelSelect from '../screens/driver/MakeModelSelect';
 
 const MyScheduleStack = createStackNavigator(
 	{
 		DailySchedule: DriverSchedule,
 		SelectedJourney: MySchedule,
 		Route: RouteScreen,
-		Login: LoginScreen
 	},
 	{
 		initialRouteName: 'DailySchedule'
@@ -21,20 +24,49 @@ const MyScheduleStack = createStackNavigator(
 );
 
 MyScheduleStack.navigationOptions = {
-	tabBarLabel: 'Schedule',
-	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-bus' : 'md-bus'} />
+	tabBarLabel: 'My Schedule',
+	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'} />
+};
+
+const VehiclesStack = createStackNavigator(
+	{
+		MyVehicles: VehiclesScreen,
+		AddVehicle: AddVehicle,
+		MakeModelSelect: MakeModelSelect,
+	},
+	{
+		initialRouteName: 'MyVehicles'
+	}
+);
+
+VehiclesStack.navigationOptions = {
+	tabBarLabel: 'My Vehicles',
+	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'} />
+};
+
+const AccountStack = createStackNavigator({
+	Account: AccountsScreen
+});
+
+AccountStack.navigationOptions = {
+	tabBarLabel: 'Settings',
+	tabBarIcon: ({ focused }) => (
+		<TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'} />
+	)
 };
 
 export default createBottomTabNavigator(
 	{
-		MyScheduleStack
+		MyScheduleStack,
+		VehiclesStack,
+		AccountStack
 	},
 	{
 		tabBarOptions: {
-			activeTintColor: 'white',
-			inactiveTintColor: '#cccccc',
+			activeTintColor: colors.tabIconSelected,
+			inactiveTintColor: colors.tabIconDefault,
 			style: {
-				backgroundColor: '#ff0000'
+				backgroundColor: colors.brandColor
 			}
 		}
 	}

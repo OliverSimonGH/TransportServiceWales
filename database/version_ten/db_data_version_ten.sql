@@ -23,6 +23,7 @@ INSERT INTO user_type VALUES (2, "Driver");
 INSERT INTO vehicle_type VALUES (1, "Bus");
 INSERT INTO vehicle_type VALUES (2, "Mini Bus");
 INSERT INTO vehicle_type VALUES (3, "Taxi");
+INSERT INTO vehicle_type VALUES (4, "Car");
 
 INSERT INTO address VALUES (1, "Rimouski","2845 Vitae, Rd.",98,"O6P 4VZ");
 INSERT INTO address VALUES (2, "Conselice","570-3273 Leo. Road",113,"154565");

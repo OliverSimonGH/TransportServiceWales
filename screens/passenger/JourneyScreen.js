@@ -293,11 +293,10 @@ class JourneyScreen extends Component {
 	checkPassengerState = () => {
 		if (this.state.isCollapsed) {
 			this.setState({ numPassenger: 1, numWheelchair: 0 });
-		} else if (
-			!this.state.isCollapsed &&
-			(this.state.numWheelchair === null || this.state.numPassenger === (null || 0))
-		) {
+		} else if (!this.state.isCollapsed && this.state.numPassenger === null) {
 			this.setState({ numWheelchair: 0, numPassenger: 1 });
+		} else if (!this.state.isCollapsed && this.state.numWheelchair === (null || 0)) {
+			this.setState({ numWheelchair: 0 });
 		}
 	};
 
@@ -505,7 +504,13 @@ class JourneyScreen extends Component {
 								/>
 
 								{/* Return journey option */}
-								<ListItem style={{ marginLeft: 0 }}>
+								<ListItem
+									style={{
+										marginLeft: 0,
+										borderBottomWidth: 0.75,
+										borderBottomColor: colors.lightBorder
+									}}
+								>
 									<CheckBox
 										checked={this.state.returnTicket}
 										onPress={() => this.setState({ returnTicket: !this.state.returnTicket })}

@@ -281,18 +281,121 @@ app.get('/user/cancelTicket/journey', function(req, res) {
 	);
 });
 
-app.get('/journey', function(req, res) {
+app.get('/driver/vehicles/getVehicles', function(req, res) {
+	const userId = localStorage.getItem('userId');
+
 	connection.query(
-		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
-		FROM ticket t
-		JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id 
-		JOIN journey j ON uj.fk_journey_id = j.journey_id 
-		JOIN coordinate c ON j.journey_id = c.fk_journey_id
-		ORDER BY j.journey_id DESC LIMIT 2`,
+		`SELECT v.vehicle_id, v.registration, v.make, v.model, v.passenger_seats, v.wheelchair_spaces, v.currently_driven,
+			v.fk_vehicle_type_id
+		FROM vehicle v
+		JOIN user_vehicle uv
+		ON uv.fk_vehicle_id = v.vehicle_id
+		WHERE uv.fk_user_id = ?`,
+		[ userId ],
 		function(error, rows, fields) {
-			if (error) console.log(error);
+			if (error) throw error;
+
+			res.send(rows);
+		}
+	);
+});
+
+app.post('/driver/vehicles/addVehicle', (req, res) => {
+	//Check for errors in user input
+	req.checkBody('make', 'Make cannot be empty').trim().notEmpty();
+	req.checkBody('model', 'Model cannot be empty').trim().notEmpty();
+	req.checkBody('registration', 'Registration cannot be empty').trim().notEmpty();
+	req
+		.checkBody('registration', 'Must be a valid UK vehicle registration')
+		.matches(
+			/^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/
+		)
+		.trim();
+	req.checkBody('numPassengers', 'Number of seats cannot be empty').trim().notEmpty();
+	req.checkBody('numPassengers', 'Number of seats must be a numerical value').isNumeric();
+	req.checkBody('numWheelchairs', 'Number of wheelchairs must be a numerical value').isNumeric();
+	req.checkBody('vehicleType', 'Please select a vehicle type').not(1 || 2 || 3 || 4);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+	const make = req.body.make;
+	const model = req.body.model;
+	const registration = req.body.registration;
+	const numPassengers = req.body.numPassengers;
+	const numWheelchairs = req.body.numWheelchairs;
+	const vehicleType = req.body.vehicleType;
+
+	const userId = localStorage.getItem('userId');
+
+	connection.query(
+		`INSERT INTO vehicle (make, model, registration, passenger_seats, wheelchair_spaces, currently_driven,
+			fk_vehicle_type_id)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		[ make, model, registration, numPassengers, numWheelchairs, 0, vehicleType ],
+		(error, row, fields) => {
+			if (error) throw error;
+
+			connection.query(
+				`INSERT INTO user_vehicle (fk_user_id, fk_vehicle_id)
+				VALUES (?, ?)`,
+				[ userId, row.insertId ],
+				(error, row, fields) => {
+					if (error) throw error;
+					else {
+						res.send({ status: 10 });
+					}
+				}
+			);
+		}
+	);
+});
+
+app.post('/driver/vehicles/removeVehicle', (req, res) => {
+	const vehicleId = req.body.id;
+
+	connection.query(
+		`DELETE user_vehicle, vehicle
+		FROM user_vehicle
+		INNER JOIN vehicle
+		ON user_vehicle.fk_vehicle_id = vehicle.vehicle_id
+		WHERE vehicle.vehicle_id = ?`,
+		[ vehicleId ],
+		(error, row, fields) => {
+			if (error) throw error;
 			else {
-				res.send(rows);
+				res.send({ status: 10 });
+			}
+		}
+	);
+});
+
+app.post('/driver/vehicles/selectVehicle', (req, res) => {
+	const vehicleToBeSelectedId = req.body.vehicleToBeSelectedId;
+	const selectedVehicle = req.body.selectedVehicle;
+
+	if (selectedVehicle) {
+		const id = selectedVehicle.id;
+		connection.query(
+			`UPDATE vehicle SET currently_driven = ?
+			WHERE vehicle_id = ?`,
+			[ 0, id ],
+			(error, row, fields) => {
+				if (error) throw error;
+			}
+		);
+	}
+	connection.query(
+		`UPDATE vehicle SET currently_driven = ?
+		WHERE vehicle_id = ?`,
+		[ 1, vehicleToBeSelectedId ],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
 			}
 		}
 	);
@@ -310,7 +413,8 @@ app.post('/booking/book', (req, res) => {
 		date,
 		time,
 		numPassenger,
-		numWheelchair
+		numWheelchair,
+		returnTicket
 	} = req.body.jData;
 	const { jId } = req.body;
 
@@ -360,8 +464,8 @@ app.post('/booking/book', (req, res) => {
 				})
 					.then((id) => {
 						connection.query(
-							'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created, fk_coordinate_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-							[ numPassenger, numWheelchair, 0, 0, date, time, new Date(), id ],
+							'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, returnTicket, used, expired, date_of_journey, time_of_journey, date_created, fk_coordinate_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+							[ numPassenger, numWheelchair, returnTicket, 0, 0, date, time, new Date(), id ],
 							(error, row2, fields) => {
 								if (error) {
 									return connection.rollback(function() {
@@ -646,17 +750,6 @@ app.get('/ticketsExpired', function(req, res) {
 
 		res.send({ ticket: rows });
 	});
-});
-
-app.get('/user/tickets', function(req, res) {
-	connection.query(
-		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.cancelled, uj.completed, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id',
-		function(error, rows, fields) {
-			if (error) throw error;
-
-			res.send({ ticket: rows });
-		}
-	);
 });
 
 app.get('/user/tickets', function(req, res) {
