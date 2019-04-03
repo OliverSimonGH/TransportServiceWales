@@ -7,21 +7,16 @@ import {
 	Keyboard,
 	StyleSheet,
 	TouchableHighlight,
-	TouchableOpacity,
 	View,
-	TextInput,
 	Platform,
 	KeyboardAvoidingView
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import API_KEY from '../../google_api_key';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import colors from '../../constants/Colors';
-import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { fetchTickets } from '../../redux/actions/ticketAction';
 import CustomInput from '../../components/CustomInput';
