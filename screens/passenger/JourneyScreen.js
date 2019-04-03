@@ -296,13 +296,12 @@ class JourneyScreen extends Component {
 		});
 	}
 
-	//Checks the state of the collapsed container and the group options and makes assumptions based on lack of input
+	//Checks the state of the group options and makes assumptions based on lack of input
 	checkPassengerState = () => {
-		if (this.state.isCollapsed) {
-			this.setState({ numPassenger: 1, numWheelchair: 0 });
-		} else if (!this.state.isCollapsed && this.state.numPassenger === null) {
-			this.setState({ numWheelchair: 0, numPassenger: 1 });
-		} else if (!this.state.isCollapsed && this.state.numWheelchair === (null || 0)) {
+		if (this.state.numPassenger === null) {
+			this.setState({ numPassenger: 1 });
+		}
+		if (this.state.numWheelchair === null) {
 			this.setState({ numWheelchair: 0 });
 		}
 	};
