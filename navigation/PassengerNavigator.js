@@ -6,7 +6,7 @@ import colors from '../constants/Colors';
 import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/passenger/JourneyScreen';
 import SummaryScreen from '../screens/passenger/SummaryScreen';
-import TicketDetail from '../screens/TicketDetail';
+import TicketDetail from '../components/TicketDetail';
 import TicketsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
@@ -16,10 +16,10 @@ import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 import RecentFavScreen from '../screens/passenger/RecentFavScreen';
 import AmendTicket from './../screens/AmendTicket';
 import ResultScreen from '../screens/passenger/ResultScreen';
-import ChangePassword from '../screens/passenger/ChangePassword';
-import ContactScreen from '../screens/passenger/ContactScreen';
-import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
-import AddressScreen from '../screens/passenger/AddressScreen';
+import ChangePassword from '../components/ChangePassword';
+import ContactScreen from '../components/ContactScreen';
+import ChangeDetailsScreen from '../components/ChangeDetailsScreen';
+import AddressScreen from '../components/AddressScreen';
 
 const JourneyStack = createStackNavigator(
 	{
