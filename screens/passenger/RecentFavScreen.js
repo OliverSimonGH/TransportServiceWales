@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { favouriteTicket, removeFavouriteTicket } from '../../redux/actions/ticketAction';
 import { postRequestAuthorized } from '../../API';
 import colors from '../../constants/Colors';
+import JourneyRow from '../../components/JourneyRow';
 
 const { width } = Dimensions.get('window');
 class RecentFavScreen extends Component {
@@ -46,7 +47,7 @@ class RecentFavScreen extends Component {
 					//User Exists
 					case 1:
 						this.setState({
-							errors: [ { title: 'Errors', content: 'There was an error when favouriting this ticket' } ]
+							errors: [{ title: 'Errors', content: 'There was an error when favouriting this ticket' }]
 						});
 						break;
 				}
@@ -98,33 +99,16 @@ class RecentFavScreen extends Component {
 						{this.props.tickets.map((ticket) => {
 							if (ticket.favourited === 1) {
 								return (
-									<View style={styles.journeyContainer} key={uuid()}>
-										<View style={styles.coordinateContainer}>
-											<View style={styles.coordinateRow}>
-												<Text style={styles.coordinateHeader}>FROM:</Text>
-												<Text style={styles.coordinate}>
-													{ticket.fromStreet}, {ticket.fromCity}
-												</Text>
-											</View>
-											<View style={styles.coordinateRow}>
-												<Text style={styles.coordinateHeader}>TO:</Text>
-												<Text style={styles.coordinate}>
-													{ticket.toStreet}, {ticket.toCity}
-												</Text>
-											</View>
-										</View>
-										<TouchableOpacity
-											onPress={() => {
-												this.setState({ favourited: 0, ticketId: ticket.id }, () => {
-													this.toggleFavouriteJourney();
-												});
-											}}
-										>
-											<View style={{ justifyContent: 'center' }}>
-												<Icon name="star" size={35} color={colors.brandColor} />
-											</View>
-										</TouchableOpacity>
-									</View>
+									<JourneyRow
+										onPress={() => {
+											this.setState({ favourited: 0, ticketId: ticket.id }, () => {
+												this.toggleFavouriteJourney();
+											});
+										}}
+										iconName="star"
+										ticket={ticket}
+										key={uuid()}
+									/>
 								);
 							}
 						})}
@@ -134,33 +118,16 @@ class RecentFavScreen extends Component {
 						{this.props.tickets.map((ticket) => {
 							if (ticket.completed === 1) {
 								return (
-									<View style={styles.journeyContainer} key={uuid()}>
-										<View style={styles.coordinateContainer}>
-											<View style={styles.coordinateRow}>
-												<Text style={styles.coordinateHeader}>FROM:</Text>
-												<Text style={styles.coordinate}>
-													{ticket.fromStreet}, {ticket.fromCity}
-												</Text>
-											</View>
-											<View style={styles.coordinateRow}>
-												<Text style={styles.coordinateHeader}>TO:</Text>
-												<Text style={styles.coordinate}>
-													{ticket.toStreet}, {ticket.toCity}
-												</Text>
-											</View>
-										</View>
-										<TouchableOpacity
-											onPress={() => {
-												this.setState({ favourited: 1, ticketId: ticket.id }, () => {
-													this.toggleFavouriteJourney();
-												});
-											}}
-										>
-											<View style={{ justifyContent: 'center' }}>
-												<Icon name="staro" size={35} color={colors.brandColor} />
-											</View>
-										</TouchableOpacity>
-									</View>
+									<JourneyRow
+										onPress={() => {
+											this.setState({ favourited: 1, ticketId: ticket.id }, () => {
+												this.toggleFavouriteJourney();
+											});
+										}}
+										iconName="staro"
+										ticket={ticket}
+										key={uuid()}
+									/>
 								);
 							}
 						})}
@@ -186,33 +153,6 @@ const styles = StyleSheet.create({
 	body: {
 		color: colors.bodyTextColor
 	},
-	journeyContainer: {
-		flexDirection: 'row',
-		borderColor: colors.lightBorder,
-		borderWidth: 0.75,
-		padding: 10,
-		justifyContent: 'space-between',
-		marginBottom: 5,
-		borderRadius: 5
-	},
-	coordinateContainer: {
-		flexDirection: 'column',
-		flex: 5
-	},
-	coordinateRow: {
-		flexDirection: 'row'
-	},
-	coordinateHeader: {
-		color: colors.brandColor,
-		flex: 1
-	},
-	coordinate: {
-		flex: 4,
-		color: colors.bodyTextColor
-	},
-	iconContainer: {
-		justifyContent: 'center'
-	}
 });
 
 const mapStateToProps = (state) => ({

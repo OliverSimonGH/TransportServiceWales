@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Content, Container, Button, Text, StyleProvider, Item, Row } from 'native-base';
+import { Content, Container, Button, Text, StyleProvider } from 'native-base';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
@@ -29,13 +29,13 @@ class ConfirmationScreen extends React.Component {
         return (
             <StyleProvider style={getTheme(platform)}>
                 <Container>
+                    <GlobalHeader
+                        type={3}
+                        header="Booking Confirmation"
+                        navigateTo={this.navigateTo}
+                        isBackButtonActive={1}
+                    />
                     <Content>
-                        <GlobalHeader
-                            type={3}
-                            header="Booking Confirmation"
-                            navigateTo={this.navigateTo}
-                            isBackButtonActive={1}
-                        />
                         <View>
                             {/* Page header and introductory text */}
                             <View style={styles.introduction}>
