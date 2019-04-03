@@ -301,6 +301,7 @@ class JourneyScreen extends Component {
 		});
 	}
 
+	//Checks the state of the collapsed container and the group options and makes assumptions based on lack of input
 	checkPassengerState = () => {
 		if (this.state.isCollapsed) {
 			this.setState({ numPassenger: 1, numWheelchair: 0 });
@@ -334,7 +335,7 @@ class JourneyScreen extends Component {
 				<Text style={styles.locationSuggestion}>{prediction.description}</Text>
 			</TouchableHighlight>
 		));
-		// End Location Predictions - Suggestion Lis
+		// End Location Predictions - Suggestion List
 		const endLocationPredictions = this.state.endLocationPredictions.map((prediction) => (
 			<TouchableHighlight
 				onPress={() => {
