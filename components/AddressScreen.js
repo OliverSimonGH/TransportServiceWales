@@ -111,20 +111,14 @@ const window = Dimensions.get('window');
 const styles = StyleSheet.create({
 	input: {
 		flex: 1,
-		padding: 10
+		padding: 10,
+		color: colors.emphasisTextColor
 	},
 	inputIcons: {
 		width: 50,
 		padding: 10,
-		textAlign: 'center'
-	},
-	button: {
-		width: '100%',
-		justifyContent: 'center',
-		backgroundColor: '#ff0000'
-	},
-	buttonText: {
-		color: 'white'
+		textAlign: 'center',
+		color: colors.emphasisTextColor
 	},
 	inputContainer: {
 		flexDirection: 'row',
@@ -165,6 +159,11 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.brandColor
 	},
 	buttontext: {
-		color: '#000000'
+		color: '#000000',
+		fontSize: 20
+	},
+	updateIcon: {
+		padding: 6,
+		color: colors.emphasisTextColor,
 	}
 });
