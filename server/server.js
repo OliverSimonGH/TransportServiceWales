@@ -639,8 +639,8 @@ app.get('/driver/journeys', (req, res) => {
 
 app.get('/driver/stops', function(req, res) {
 	const journeyId = req.query.id;
-	connection.query(
-		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND c.removed = 0 ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
+	// SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND c.removed = 0 ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC
+	connection.query(`SELECT SUM(t.no_of_passengers) AS no_of_passengers, SUM(t.no_of_wheelchairs) AS no_of_wheelchairs, c.street, c.city, j.start_time, j.end_time FROM ticket t JOIn coordinate c ON t.fk_coordinate_id_from = c.coordinate_id JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? GROUP BY c.street`,
 		[ journeyId ],
 		(error, rows, fields) => {
 			if (error) throw error;
