@@ -82,9 +82,9 @@ export default class ContactScreen extends Component {
 						dataArray={dataArray}
 						icon="add"
 						expandedIcon="remove"
-						iconStyle={{ color: 'white' }}
-						expandedIconStyle={{ color: 'red' }}
-						headerStyle={{ backgroundColor: 'red' }}
+						iconStyle={{ color: 'red' }}
+						expandedIconStyle={{ color: colors.emphasisTextColor }}
+						headerStyle={{ backgroundColor: 'white', borderColor: 'red' }}
 						contentStyle={{ backgroundColor: colors.emphasisTextColor }}
 					/>
 				</Content>
