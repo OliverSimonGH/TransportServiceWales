@@ -101,7 +101,7 @@ export default class ChangePassword extends Component {
 
 					<View style={styles.buttonContainer}>
 						<Button danger style={styles.button} onPress={this.onChangePassword}>
-							<Text>CHANGE PASSWORD</Text>
+							<Text>UPDATE</Text>
 						</Button>
 					</View>
 				</Content>
@@ -117,17 +117,19 @@ const window = Dimensions.get('window');
 const styles = StyleSheet.create({
 	input: {
 		flex: 1,
-		padding: 10
+		padding: 10,
+		color: colors.emphasisTextColor
 	},
 	inputIcons: {
 		width: 50,
 		padding: 10,
-		textAlign: 'center'
+		textAlign: 'center',
+		color: colors.emphasisTextColor
 	},
 	inputContainer: {
 		flexDirection: 'row',
 		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
+		borderBottomColor: colors.lightBorder,
 		alignItems: 'center',
 		width,
 		alignSelf: 'center',
@@ -163,6 +165,11 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.brandColor
 	},
 	buttontext: {
-		color: '#000000'
+		color: '#000000',
+		fontSize: 20
+	},
+	updateIcon: {
+		padding: 6,
+		color: colors.emphasisTextColor,
 	}
 });
