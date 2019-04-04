@@ -49,10 +49,6 @@ export default class AccountsScreen extends Component {
 		this.props.navigation.navigate('ChangeDetails');
 	};
 
-	theme = () => {
-		this.props.navigation.navigate('SetTheme');
-	};
-
 	render() {
 		return (
 			<Container>
