@@ -80,7 +80,6 @@ const AccountStack = createStackNavigator(
 		ChangeDetails: ChangeDetailsScreen,
 		ChangePassword: ChangePassword,
 		AddAddress: AddressScreen,
-		Login: LoginScreen
 	},
 	{ initialRouteName: 'Account' }
 );
