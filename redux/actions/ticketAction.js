@@ -47,6 +47,7 @@ export function addTicket(ticket) {
 export function fetchTickets() {
 	return function(dispatch) {
 		getRequestAuthorized(`http://${ip}:3000/user/tickets`).then((response) => {
+			console.log(response)
 			dispatch({
 				type: FETCH_TICKETS,
 				payload: response

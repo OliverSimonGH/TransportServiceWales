@@ -84,6 +84,7 @@ class TicketDetail extends React.Component {
 	};
 
 	cancellationFeeApplied = (ticketDate) => {
+		console.log(this.props.navigation.state.params.ticket)
 		return getRequestAuthorized(
 			`http://${ip}:3000/user/cancelTicket/journey?ticketId=${this.props.navigation.state.params.ticket.id}`
 		).then((endTime) => {

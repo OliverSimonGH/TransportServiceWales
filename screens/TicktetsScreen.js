@@ -20,6 +20,7 @@ class TicketsScreen extends React.Component {
 	};
 
 	openTicket = (ticketData) => {
+		console.log(ticketData)
 		this.props.navigation.navigate('Details', { ticket: ticketData });
 	};
 
