@@ -41,7 +41,7 @@ export default class ChangeDriverDetails extends Component {
 	};
 
 	onChangePassword = () => {
-		this.props.navigation.navigate('DriverPassword');
+		this.props.navigation.navigate('ChangePassword');
 	};
 
 	onChangeForename = () => {
@@ -127,7 +127,11 @@ export default class ChangeDriverDetails extends Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateTo} />
+				<GlobalHeader 
+					type={1} 
+					navigateTo={this.navigateTo} 
+					isBackButtonActive={1}
+				/>
 				<Content style={styles.contentContainer} padder>
 					<View style={styles.secondaryButtonContainer}>
 						<Button bordered danger style={styles.secondaryButton} onPress={this.settings}>

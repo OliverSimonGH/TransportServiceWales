@@ -55,12 +55,16 @@ export default class ChangePassword extends Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
+				<GlobalHeader
+					type={1}
+					navigateTo={this.navigateTo}
+					isBackButtonActive={1}
+				/>
 				<Content>
 					<View style={styles.contentContainer}>
-							<View style={styles.titleContainer}>
-								<Text style={styles.title}>Password</Text>
-							</View>
+						<View style={styles.titleContainer}>
+							<Text style={styles.title}>Password</Text>
+						</View>
 					</View>
 					<View style={styles.inputContainer}>
 						<Icon name="lock" size={32} style={styles.inputIcons} />
