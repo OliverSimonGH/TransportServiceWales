@@ -9,8 +9,8 @@ import {
 	Left,
 	Right,
 } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import GlobalHeader from './GlobalHeader';
+import ip from '../ipstore';
 import { Ionicons } from '@expo/vector-icons';
 
 export default class ChangePassword extends Component {

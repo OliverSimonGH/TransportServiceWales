@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions, TextInput } from 'react-native';
-import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import { Button, Container, Text, Content } from 'native-base';
+import GlobalHeader from './GlobalHeader';
+import ip from '../ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { getRequestAuthorized, postRequestAuthorized } from '../../API';
+import { getRequestAuthorized, postRequestAuthorized } from '../API';
 
 export default class AccountsScreen extends Component {
 	static navigationOptions = {
@@ -150,7 +150,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.forename}
 								/>
 								<TouchableOpacity onPress={this.onChangeForename}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -162,7 +162,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.surname}
 								/>
 								<TouchableOpacity onPress={this.onChangeSurname}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -174,11 +174,11 @@ export default class AccountsScreen extends Component {
 									value={this.state.email}
 								/>
 								<TouchableOpacity onPress={this.onChangeEmail}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
-								<Icon name="person" size={32} style={styles.inputIcons} />
+								<Icon name="phone-android" size={32} style={styles.inputIcons} />
 								<TextInput
 									onChangeText={(text) => this.setState({ phoneNumber: text })}
 									placeholder="Phone Number"
@@ -186,7 +186,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.phoneNumber}
 								/>
 								<TouchableOpacity onPress={this.onChangeNumber}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 						</React.Fragment>
