@@ -11,7 +11,7 @@ import VehiclesScreen from './../screens/driver/VehiclesScreen';
 import AccountsScreen from './../screens/driver/AccountsScreen';
 import AddVehicle from './../screens/driver/AddVehicle';
 import MakeModelSelect from '../screens/driver/MakeModelSelect';
-import EmergencyContact from '../components/EmergencyContact';
+import ContactScreen from '../components/ContactScreen';
 import ChangeDriverDetails from '../components/ChangeDriverDetails';
 import DriverPassword from '../components/DriverPassword';
 
@@ -29,7 +29,7 @@ const MyScheduleStack = createStackNavigator(
 const AccountStack = createStackNavigator(
 	{
 		Account: AccountsScreen,
-		EmergencyContact: EmergencyContact,
+		ContactScreen: ContactScreen,
 		ChangeDetails: ChangeDriverDetails,
 		DriverPassword: DriverPassword
 	},

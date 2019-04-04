@@ -34,7 +34,7 @@ export default class AccountsScreen extends Component {
 	}
 
 	contact = () => {
-		this.props.navigation.navigate('Contact');
+		this.props.navigation.navigate('ContactScreen');
 	};
 
 	logout = () => {
