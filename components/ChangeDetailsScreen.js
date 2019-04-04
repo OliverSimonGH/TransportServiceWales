@@ -3,6 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Dimensions, TextInput } from 'react
 import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from './GlobalHeader';
 import ip from '../ipstore';
+import colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getRequestAuthorized, postRequestAuthorized } from '../API';
 
@@ -128,9 +129,9 @@ export default class AccountsScreen extends Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader 
-					type={1} 
-					navigateTo={this.navigateTo} 
+				<GlobalHeader
+					type={1}
+					navigateTo={this.navigateTo}
 					isBackButtonActive={1}
 				/>
 				<Content style={styles.contentContainer} padder>
@@ -196,14 +197,14 @@ export default class AccountsScreen extends Component {
 						</React.Fragment>
 					)}
 
-					<View style={styles.secondaryButtonContainer}>
-						<Button bordered danger style={styles.button} onPress={this.addAddress}>
-							<Text style={styles.buttonText}>Add Address</Text>
+					<View style={styles.buttonContainer}>
+						<Button danger style={styles.button} onPress={this.onChangePassword}>
+							<Text style={styles.buttonText}>CHANGE PASSWORD</Text>
 						</Button>
 					</View>
-					<View style={styles.secondaryButtonContainer}>
-						<Button bordered danger style={styles.button} onPress={this.onChangePassword}>
-							<Text style={styles.buttonText}>Update Password</Text>
+					<View style={styles.buttonContainer}>
+						<Button danger style={styles.button} onPress={this.addAddress}>
+							<Text style={styles.buttonText}>ADD ADDRESS</Text>
 						</Button>
 					</View>
 				</Content>
@@ -213,14 +214,47 @@ export default class AccountsScreen extends Component {
 }
 
 const width = '80%';
+const buttonWidth = '60%';
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+	input: {
+		flex: 1,
+		padding: 10,
+		color: colors.emphasisTextColor
+	},
+	inputIcons: {
+		width: 50,
+		padding: 10,
+		textAlign: 'center',
+		color: colors.emphasisTextColor
+	},
+	inputContainer: {
+		flexDirection: 'row',
+		borderBottomWidth: 2,
+		borderBottomColor: colors.lightBorder,
+		alignItems: 'center',
+		width,
+		alignSelf: 'center',
+		justifyContent: 'center'
+	},
 	contentContainer: {
-		width: '80%',
+		width,
 		flex: 1,
 		flexDirection: 'column',
 		alignSelf: 'center'
+	},
+	titleContainer: {
+		paddingTop: 30,
+		paddingBottom: 5,
+		width
+	},
+	title: {
+		textAlign: 'left',
+		fontSize: 30,
+		fontWeight: 'bold',
+		color: colors.emphasisTextColor,
+		marginBottom: 20
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -229,47 +263,22 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	button: {
-		width: '100%',
+		width: buttonWidth,
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor
 	},
-	buttonText: {
-		color: 'white'
+	buttontext: {
+		color: '#000000',
+		fontSize: 20
 	},
-	input: {
-		flex: 1,
-		padding: 10
-	},
-	inputIcons: {
-		width: 50,
-		padding: 10,
-		textAlign: 'center'
-	},
-	inputContainer: {
-		flexDirection: 'row',
-		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
-		alignItems: 'center',
-		width,
-		alignSelf: 'center',
-		justifyContent: 'center'
-	},
-	logoutButton: {
-		backgroundColor: '#ff0000',
-		justifyContent: 'center',
-		marginTop: 25,
-		alignSelf: 'center'
+	updateIcon: {
+		padding: 6,
+		color: colors.emphasisTextColor,
 	},
 	secondaryButtonContainer: {
 		flexDirection: 'row',
 		marginTop: 25,
 		marginBottom: 25
-	},
-	title: {
-		textAlign: 'left',
-		fontSize: 30,
-		fontWeight: 'bold',
-		color: 'gray'
 	},
 	secondaryButton: {
 		width: '100%',
@@ -279,19 +288,4 @@ const styles = StyleSheet.create({
 	secondaryButtontext: {
 		color: '#ff0000'
 	},
-	forenameContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		width: window.width * 0.75,
-		margin: 10
-	},
-	detailView: {
-		flex: 1,
-		paddingLeft: 10,
-		fontSize: 16
-	},
-	updateIcon: {
-		padding: 6,
-		color: 'gray'
-	}
 });

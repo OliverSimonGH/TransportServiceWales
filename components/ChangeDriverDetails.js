@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions, TextInput } from 'react-native';
-import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
+import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from './GlobalHeader';
 import ip from '../ipstore';
+import colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getRequestAuthorized, postRequestAuthorized } from '../API';
 
-export default class ChangeDriverDetails extends Component {
+export default class AccountsScreen extends Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -37,7 +38,7 @@ export default class ChangeDriverDetails extends Component {
 	};
 
 	settings = () => {
-		this.props.navigation.navigate('Account');
+		this.props.navigation.navigate('Settings');
 	};
 
 	onChangePassword = () => {
@@ -49,13 +50,11 @@ export default class ChangeDriverDetails extends Component {
 		postRequestAuthorized(`http://${ip}:3000/userChangeForename`, { forename })
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
-					//Success
 					case 10:
-						alert('Updated forename');
+						alert('Successfully Updated First Name');
 						break;
-					//If email exist
 					case 1:
-						alert('Could not update');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -71,11 +70,10 @@ export default class ChangeDriverDetails extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated Surname');
+						alert('Successfully Updated Last Name');
 						break;
-					//If email exist
 					case 1:
-						alert('Could not update');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -91,7 +89,7 @@ export default class ChangeDriverDetails extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated');
+						alert('Successfully Updated Email');
 						break;
 					//If email exist
 					case 1:
@@ -111,11 +109,11 @@ export default class ChangeDriverDetails extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated');
+						alert('Successfully Updated Phone Number');
 						break;
 					//If email exist
 					case 1:
-						alert('Could not update as email already exist');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -127,9 +125,9 @@ export default class ChangeDriverDetails extends Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader 
-					type={1} 
-					navigateTo={this.navigateTo} 
+				<GlobalHeader
+					type={1}
+					navigateTo={this.navigateTo}
 					isBackButtonActive={1}
 				/>
 				<Content style={styles.contentContainer} padder>
@@ -181,7 +179,7 @@ export default class ChangeDriverDetails extends Component {
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
-								<Icon name="person" size={32} style={styles.inputIcons} />
+								<Icon name="phone-android" size={32} style={styles.inputIcons} />
 								<TextInput
 									onChangeText={(text) => this.setState({ phoneNumber: text })}
 									placeholder="Phone Number"
@@ -195,11 +193,12 @@ export default class ChangeDriverDetails extends Component {
 						</React.Fragment>
 					)}
 
-					<View style={styles.secondaryButtonContainer}>
-						<Button bordered danger style={styles.button} onPress={this.onChangePassword}>
-							<Text style={styles.buttonText}>Update Password</Text>
+					<View style={styles.buttonContainer}>
+						<Button danger style={styles.button} onPress={this.onChangePassword}>
+							<Text style={styles.buttonText}>CHANGE PASSWORD</Text>
 						</Button>
 					</View>
+				
 				</Content>
 			</Container>
 		);
@@ -207,14 +206,47 @@ export default class ChangeDriverDetails extends Component {
 }
 
 const width = '80%';
+const buttonWidth = '60%';
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+	input: {
+		flex: 1,
+		padding: 10,
+		color: colors.emphasisTextColor
+	},
+	inputIcons: {
+		width: 50,
+		padding: 10,
+		textAlign: 'center',
+		color: colors.emphasisTextColor
+	},
+	inputContainer: {
+		flexDirection: 'row',
+		borderBottomWidth: 2,
+		borderBottomColor: colors.lightBorder,
+		alignItems: 'center',
+		width,
+		alignSelf: 'center',
+		justifyContent: 'center'
+	},
 	contentContainer: {
-		width: '80%',
+		width,
 		flex: 1,
 		flexDirection: 'column',
 		alignSelf: 'center'
+	},
+	titleContainer: {
+		paddingTop: 30,
+		paddingBottom: 5,
+		width
+	},
+	title: {
+		textAlign: 'left',
+		fontSize: 30,
+		fontWeight: 'bold',
+		color: colors.emphasisTextColor,
+		marginBottom: 20
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -223,47 +255,22 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	button: {
-		width: '100%',
+		width: buttonWidth,
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor
 	},
-	buttonText: {
-		color: 'white'
+	buttontext: {
+		color: '#000000',
+		fontSize: 20
 	},
-	input: {
-		flex: 1,
-		padding: 10
-	},
-	inputIcons: {
-		width: 50,
-		padding: 10,
-		textAlign: 'center'
-	},
-	inputContainer: {
-		flexDirection: 'row',
-		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
-		alignItems: 'center',
-		width,
-		alignSelf: 'center',
-		justifyContent: 'center'
-	},
-	logoutButton: {
-		backgroundColor: '#ff0000',
-		justifyContent: 'center',
-		marginTop: 25,
-		alignSelf: 'center'
+	updateIcon: {
+		padding: 6,
+		color: colors.emphasisTextColor,
 	},
 	secondaryButtonContainer: {
 		flexDirection: 'row',
 		marginTop: 25,
 		marginBottom: 25
-	},
-	title: {
-		textAlign: 'left',
-		fontSize: 30,
-		fontWeight: 'bold',
-		color: 'gray'
 	},
 	secondaryButton: {
 		width: '100%',
@@ -273,19 +280,4 @@ const styles = StyleSheet.create({
 	secondaryButtontext: {
 		color: '#ff0000'
 	},
-	forenameContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		width: window.width * 0.75,
-		margin: 10
-	},
-	detailView: {
-		flex: 1,
-		paddingLeft: 10,
-		fontSize: 16
-	},
-	updateIcon: {
-		padding: 6,
-		color: 'gray'
-	}
 });
