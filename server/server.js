@@ -45,6 +45,7 @@ const io = require('socket.io').listen(server);
 let driverSocket = null;
 let passengerSocket = null;
 
+// Driver & Passenger sockets
 io.on('connection', (socket) => {
 	console.log('a user connected');
 	socket.on('trackVehicle', (x) => {

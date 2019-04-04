@@ -99,7 +99,7 @@ class SummaryScreen extends React.Component {
 			Expo.Notifications.createChannelAndroidAsync('reminders', {
 				name: 'Reminders',
 				priority: 'max',
-				vibrate: [0, 250, 250, 250]
+				vibrate: [ 0, 250, 250, 250 ]
 			});
 		}
 	}
@@ -286,6 +286,9 @@ class SummaryScreen extends React.Component {
 		console.log(token);
 	};
 
+	// Sends the notification to the server hosted by EXPO specifically for push notifications
+	// The server sends the noification back with the specfied values (fetched from the indicated state)
+	// Sends it to the provided GCM / Device Token
 	sendPushNotification = () => {
 		const { date, street } = this.props.navigation.state.params.jData;
 
@@ -346,14 +349,37 @@ class SummaryScreen extends React.Component {
 								</View>
 								<View style={styles.details}>
 									<View>
-										<SummaryRow iconName="date-range" value={moment(data.date).format('MMMM Do YYYY')} />
+										<SummaryRow
+											iconName="date-range"
+											value={moment(data.date).format('MMMM Do YYYY')}
+										/>
 										<SummaryRow iconName="access-time" value={moment(data.time).format('LT')} />
-										<SummaryRow iconName="my-location" value={[data.street] + ", " + [data.city]} />
-										<SummaryRow iconName="location-on" value={[data.endStreet] + ", " + [data.endCity]} />
-										<SummaryRow iconName="people" value={[data.numPassenger] + " " + [data.numPassenger > 1 ? 'Passengers' : 'Passenger']} />
-										{data.numWheelchair > 0 &&
-											<SummaryRow iconName="accessible" value={[data.numWheelchair] + " " + [data.numWheelchair > 1 ? 'Wheelchairs' : 'Wheelchair']} />
-										}
+										<SummaryRow
+											iconName="my-location"
+											value={[ data.street ] + ', ' + [ data.city ]}
+										/>
+										<SummaryRow
+											iconName="location-on"
+											value={[ data.endStreet ] + ', ' + [ data.endCity ]}
+										/>
+										<SummaryRow
+											iconName="people"
+											value={
+												[ data.numPassenger ] +
+												' ' +
+												[ data.numPassenger > 1 ? 'Passengers' : 'Passenger' ]
+											}
+										/>
+										{data.numWheelchair > 0 && (
+											<SummaryRow
+												iconName="accessible"
+												value={
+													[ data.numWheelchair ] +
+													' ' +
+													[ data.numWheelchair > 1 ? 'Wheelchairs' : 'Wheelchair' ]
+												}
+											/>
+										)}
 									</View>
 								</View>
 							</View>
@@ -381,7 +407,7 @@ class SummaryScreen extends React.Component {
 										<View style={styles.buttonContainer}>
 											<Button
 												danger
-												style={[styles.button, { backgroundColor: colors.brandColor }]}
+												style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 												onPress={this.payForTicket}
 											>
 												<Text>Pay</Text>
@@ -404,7 +430,7 @@ class SummaryScreen extends React.Component {
 											<View style={styles.buttonContainer}>
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: colors.brandColor }]}
+													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 													onPress={this.payForTicket}
 												>
 													<Text style={styles.buttonText}>Pay</Text>
@@ -412,7 +438,7 @@ class SummaryScreen extends React.Component {
 
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: colors.brandColor }]}
+													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 													onPress={() => {
 														this.props.navigation.navigate('AddFunds');
 													}}
@@ -421,7 +447,7 @@ class SummaryScreen extends React.Component {
 												</Button>
 											</View>
 											<View
-												style={[styles.buttonContainer, { marginTop: -5, marginBottom: 25 }]}
+												style={[ styles.buttonContainer, { marginTop: -5, marginBottom: 25 } ]}
 											>
 												<Button
 													bordered
@@ -558,7 +584,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user,
-	ticketslength: state.ticketReducer.ticketsLength,
+	ticketslength: state.ticketReducer.ticketsLength
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SummaryScreen);
