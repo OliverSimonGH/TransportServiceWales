@@ -14,10 +14,10 @@ export default class ChangePassword extends Component {
 	};
 
 	state = {
-		city: 'Cardiff',
-		street: 'Queens',
-		house_number: '12',
-		postcode: 'CF34 H6J'
+		city: '',
+		street: '',
+		house_number: '',
+		postcode: ''
 	};
 
 	navigateTo = () => {
@@ -75,7 +75,7 @@ export default class ChangePassword extends Component {
 						/>
 					</View>
 					<View style={styles.inputContainer}>
-						<Icon name="location-city" size={32} style={styles.updateIcon} />
+						<Icon name="location-city" color={colors.emphasisTextColor} size={32} style={styles.updateIcon} />
 						<TextInput
 							onChangeText={(text) => this.setState({ house_number: text })}
 							placeholder="House Number"
