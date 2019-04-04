@@ -20,6 +20,7 @@ import ChangePassword from '../screens/passenger/ChangePassword';
 import ContactScreen from '../screens/passenger/ContactScreen';
 import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
 import AddressScreen from '../screens/passenger/AddressScreen';
+import PaymentConfirmationScreen from '../screens/passenger/PaymentConfirmationScreen'
 
 const JourneyStack = createStackNavigator(
 	{
@@ -61,7 +62,8 @@ TicketsStack.navigationOptions = {
 const WalletStack = createStackNavigator(
 	{
 		Wallet: WalletScreen,
-		AddFunds: AddFundsScreen
+		AddFunds: AddFundsScreen,
+		PaymentConfirmation: PaymentConfirmationScreen 
 	},
 	{ initialRouteName: 'Wallet' }
 );

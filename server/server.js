@@ -238,6 +238,51 @@ app.post('/booking/sendEmail', (req, res) => {
 	main().catch(console.error);
 });
 
+app.post('/booking/payment', (req, res) => {
+	//Get form fields
+	const { email, amount } = req.body;
+	console.log(email, amount)
+
+	const output = `
+		<h1> Your payment details</h1>
+		<p> You have added £${parseFloat(amount).toFixed(2)} to your account <b>${email}</b></p>
+		<p> If this was not you, please contact us HERE</p>`;
+
+	('use strict');
+
+	// Referenced from https://medium.com/@nickroach_50526/sending-emails-with-node-js-using-smtp-gmail-and-oauth2-316fe9c790a1
+	async function main() {
+		let transporter = nodemailer.createTransport({
+			service: 'Gmail',
+			port: 465,
+			secure: true, // true for 465, false for other ports
+			auth: {
+				type: 'OAuth2',
+				user: 'tfwirt.test@gmail.com',
+				clientId: nodemailerOauth2Key.clientId,
+				clientSecret: nodemailerOauth2Key.clientSecret,
+				refreshToken: nodemailerOauth2Key.refreshToken
+			}
+		});
+
+		// setup email data
+		let mailOptions = {
+			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
+			to: email, // receiver address
+			subject: 'Your payment details', // Subject line
+			text: 'Hello world?', // plain text body
+			html: output // html body
+		};
+
+		// send mail with defined transport object
+		let info = await transporter.sendMail(mailOptions);
+
+		console.log('Message sent: %s', info.messageId);
+	}
+
+	main().catch(console.error);
+});
+
 app.get('/driver/schedule', function(req, res) {
 	const journeyId = req.query.id;
 	connection.query(

@@ -50,11 +50,8 @@ class AddFundsScreen extends React.Component {
 			});
 
 			this.props.onUpdateUserFunds(amount);
-			this.setState({
-				showModal: false,
-				status: 'Complete',
-				funds: parseFloat(parseInt(funds) + parseInt(amount)).toFixed(2)
-			});
+			this.setState({ showModal: false, status: 'Complete' });
+			this.props.navigation.navigate('PaymentConfirmation', { amount })
 		}
 		if (data.title === 'cancel') {
 			this.setState({
