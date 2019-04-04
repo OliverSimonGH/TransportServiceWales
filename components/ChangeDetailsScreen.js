@@ -150,7 +150,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.forename}
 								/>
 								<TouchableOpacity onPress={this.onChangeForename}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -162,7 +162,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.surname}
 								/>
 								<TouchableOpacity onPress={this.onChangeSurname}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -174,7 +174,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.email}
 								/>
 								<TouchableOpacity onPress={this.onChangeEmail}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -186,7 +186,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.phoneNumber}
 								/>
 								<TouchableOpacity onPress={this.onChangeNumber}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 						</React.Fragment>
