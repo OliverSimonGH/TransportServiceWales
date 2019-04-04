@@ -5,8 +5,8 @@ import { Location, Permissions } from 'expo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import API_KEY from '../../google_api_key';
-import ip from '../../ipstore';
+import API_KEY from '../../server/keys/google_api_key';
+import ip from '../../server/keys/ipstore';
 import socketIO from 'socket.io-client';
 
 import uuid from 'uuid/v4';

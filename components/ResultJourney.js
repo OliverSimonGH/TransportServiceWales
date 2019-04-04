@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/Ionicons';
-import colors from '../../constants/Colors';
+import colors from '../constants/Colors';
 
 export default class ResultJourney extends Component {
 

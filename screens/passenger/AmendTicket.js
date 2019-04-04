@@ -4,18 +4,18 @@ import { Accordion, Button, Container, Content, Input, Item, StyleProvider, Text
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
-import getTheme from '../native-base-theme/components';
-import platform from '../native-base-theme/variables/platform';
-import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ipstore';
-import colors from '../constants/Colors';
+import getTheme from '../../native-base-theme/components';
+import platform from '../../native-base-theme/variables/platform';
+import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../server/keys/ipstore';
+import colors from '../../constants/Colors';
 
 import { connect } from 'react-redux';
-import { amendTicket } from '../redux/actions/ticketAction';
-import { postRequestAuthorized } from '../API';
-import SummaryRow from './../components/SummaryRow';
-import CustomDateTimePicker from './../components/CustomDateTimePicker';
-import CustomInput from './../components/CustomInput';
+import { amendTicket } from '../../redux/actions/ticketAction';
+import { postRequestAuthorized } from '../../API';
+import SummaryRow from '../../components/SummaryRow';
+import CustomDateTimePicker from '../../components/CustomDateTimePicker';
+import CustomInput from '../../components/CustomInput';
 
 class AmendTicket extends React.Component {
 	static navigationOptions = {

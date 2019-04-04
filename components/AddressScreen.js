@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
 import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
 import GlobalHeader from './GlobalHeader';
-import ip from '../ipstore';
+import ip from '../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import colors from '../constants/Colors';
 import { postRequestAuthorized } from '../API';

@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import { Container, Content } from 'native-base';
 import Icon from 'react-native-vector-icons/Entypo';
-import ip from '../../ipstore'
-import key from '../../google_api_key'
+import ip from '../../server/keys/ipstore'
+import key from '../../server/keys/google_api_key'
 import moment from 'moment';
 import { getRequestAuthorized } from '../../API'
 
 import GlobalHeader from '../../components/GlobalHeader';
-import ResultJourney from './ResultJourney'
+import ResultJourney from '../../components/ResultJourney'
 import colors from '../../constants/Colors';
 
 class ResultScreen extends Component {

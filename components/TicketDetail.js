@@ -15,7 +15,7 @@ import _ from 'lodash';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from './GlobalHeader';
-import ip from '../ipstore';
+import ip from '../server/keys/ipstore';
 import uuid from 'uuid/v4';
 import colors from '../constants/Colors';
 import QRCode from 'react-native-qrcode';

@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView, Picker } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 var vehicleData = require('../../vehicleData.json');
 
 import { connect } from 'react-redux';

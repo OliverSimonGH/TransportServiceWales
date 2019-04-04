@@ -2,10 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { Accordion, Button, Container, Content, Text } from 'native-base';
 import React, { Component } from 'react';
 import { Dimensions, Picker, StyleSheet, TextInput, View, KeyboardAvoidingView } from 'react-native';
-import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ipstore';
-import colors from '../constants/Colors';
-import { postRequestNotAuthorized } from '../API';
+import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../server/keys/ipstore';
+import colors from '../../constants/Colors';
+import { postRequestNotAuthorized } from '../../API';
 
 class RegistrationScreen extends Component {
 	state = {

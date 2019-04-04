@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { Keyboard, StyleSheet, TouchableHighlight, View, Platform, KeyboardAvoidingView } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import GlobalHeader from '../../components/GlobalHeader';
-import API_KEY from '../../google_api_key';
+import API_KEY from '../../server/keys/google_api_key';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import colors from '../../constants/Colors';

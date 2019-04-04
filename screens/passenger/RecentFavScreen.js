@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { Container, Content } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/AntDesign';
 import uuid from 'uuid/v4';
 
@@ -69,16 +69,8 @@ class RecentFavScreen extends Component {
 	};
 
 	recentJourneys = () => {
-		var recentJourneys = false;
-		if (this.props.tickets.length > 0) {
-			this.props.tickets.forEach((ticket) => {
-				if (ticket.completed === 1) {
-					recentJourneys = true;
-					return false;
-				}
-			});
-		}
-		return recentJourneys;
+		if (this.props.tickets.length > 0) return true;
+		return false;
 	};
 
 	render() {
@@ -116,7 +108,6 @@ class RecentFavScreen extends Component {
 						<Text style={styles.header}>RECENT JOURNEYS</Text>
 						{!this.recentJourneys() && <Text style={styles.body}>You do not have any recent journeys</Text>}
 						{this.props.tickets.map((ticket) => {
-							if (ticket.completed === 1) {
 								return (
 									<JourneyRow
 										onPress={() => {
@@ -130,7 +121,7 @@ class RecentFavScreen extends Component {
 									/>
 								);
 							}
-						})}
+						)}
 					</View>
 				</Content>
 			</Container>

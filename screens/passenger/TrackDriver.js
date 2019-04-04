@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Platform, View, StyleSheet, Button, Image, Dimensions, Text } from 'react-native';
 import { Location, Permissions, Notifications } from 'expo';
 import MapView, { Marker } from 'react-native-maps';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
 import { YellowBox } from 'react-native';

@@ -8,7 +8,7 @@ import uuid from 'uuid/v4';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { connect } from 'react-redux';
-import VehicleRow from './VehicleRow';
+import VehicleRow from '../../components/VehicleRow';
 import { fetchVehicles } from '../../redux/actions/vehicleAction';
 
 class VehiclesScreen extends React.Component {

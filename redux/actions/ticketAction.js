@@ -6,7 +6,7 @@ import {
 	FAVOURITE_TICKET,
 	REMOVE_FAVOURITE_TICKET
 } from './types';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import { getRequestAuthorized } from '../../API';
 
 export function cancelTicket(ticketId) {

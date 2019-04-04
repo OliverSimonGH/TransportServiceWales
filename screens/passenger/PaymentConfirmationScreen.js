@@ -6,7 +6,7 @@ import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ip from '../../ipstore'
+import ip from '../../server/keys/ipstore'
 
 import { connect } from 'react-redux';
 import { postRequestAuthorized } from '../../API'

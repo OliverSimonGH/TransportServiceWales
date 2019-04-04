@@ -3,11 +3,11 @@ import React from 'react';
 import { Dimensions, Image, Modal, StyleSheet, TextInput, View, WebView } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import uuid from 'uuid/v4';
 import colors from '../../constants/Colors'
 
-import WalletBalance from './WalletBalance';
+import WalletBalance from '../../components/WalletBalance';
 
 import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';

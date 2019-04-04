@@ -14,7 +14,7 @@ import WalletScreen from '../screens/passenger/WalletScreen';
 import TrackDriver from '../screens/passenger/TrackDriver';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 import RecentFavScreen from '../screens/passenger/RecentFavScreen';
-import AmendTicket from './../screens/AmendTicket';
+import AmendTicket from '../screens/passenger/AmendTicket';
 import ResultScreen from '../screens/passenger/ResultScreen';
 import ChangePassword from '../components/ChangePassword';
 import ContactScreen from '../components/ContactScreen';

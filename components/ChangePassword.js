@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Dimensions, TouchableOpacity } from 'react-native';
 import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from './GlobalHeader';
-import ip from '../ipstore';
+import ip from '../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { postRequestAuthorized } from '../API';
 import colors from '../constants/Colors';
@@ -39,7 +39,7 @@ export default class ChangePassword extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Successfully Updated Phone Number');
+						alert('Successfully Updated Password');
 						break;
 					//If email exist
 					case (1, 0):

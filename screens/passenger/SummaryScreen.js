@@ -8,8 +8,8 @@ import moment from 'moment';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
-import ip from '../../ipstore';
-import WalletBalance from './WalletBalance';
+import ip from '../../server/keys/ipstore';
+import WalletBalance from '../../components/WalletBalance';
 import uuid from 'uuid/v4';
 import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
