@@ -5,6 +5,8 @@ import GlobalHeader from './GlobalHeader';
 import ip from '../ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { postRequestAuthorized } from '../API';
+import colors from '../constants/Colors';
+
 
 export default class ChangePassword extends Component {
 	static navigationOptions = {
@@ -55,8 +57,10 @@ export default class ChangePassword extends Component {
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content>
-					<View>
-						<Text style={styles.title}>Change Password:</Text>
+					<View style={styles.contentContainer}>
+							<View style={styles.titleContainer}>
+								<Text style={styles.title}>Password</Text>
+							</View>
 					</View>
 					<View style={styles.inputContainer}>
 						<Icon name="lock" size={32} style={styles.inputIcons} />
@@ -106,7 +110,8 @@ export default class ChangePassword extends Component {
 	}
 }
 
-const width = '80%';
+const width = '70%';
+const buttonWidth = '40%';
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -128,11 +133,23 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		justifyContent: 'center'
 	},
+	contentContainer: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'flex-end'
+	},
+	titleContainer: {
+		paddingTop: 30,
+		paddingBottom: 5,
+		width
+	},
 	title: {
 		textAlign: 'left',
 		fontSize: 30,
 		fontWeight: 'bold',
-		color: 'gray'
+		color: colors.emphasisTextColor,
+		marginBottom: 20
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -141,9 +158,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	button: {
-		width: '100%',
+		width: buttonWidth,
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor
 	},
 	buttontext: {
 		color: '#000000'
