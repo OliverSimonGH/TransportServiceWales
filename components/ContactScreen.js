@@ -84,7 +84,7 @@ export default class ContactScreen extends Component {
 						expandedIcon="remove"
 						iconStyle={{ color: 'white' }}
 						expandedIconStyle={{ color: 'red' }}
-						headerStyle={{ backgroundColor: colors.tintColor }}
+						headerStyle={{ backgroundColor: 'red' }}
 						contentStyle={{ backgroundColor: colors.emphasisTextColor }}
 					/>
 				</Content>
