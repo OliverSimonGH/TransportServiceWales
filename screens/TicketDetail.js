@@ -3,7 +3,7 @@ import { StyleSheet, View, Image } from 'react-native';
 import moment from 'moment';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import { Button, Content, Container, Text, StyleProvider } from 'native-base';
+import { Button, Content, Container, Text, StyleProvider, Accordion } from 'native-base';
 import Dialog, { DialogFooter, DialogButton, DialogContent, DialogTitle } from 'react-native-popup-dialog';
 import _ from 'lodash';
 import getTheme from '../native-base-theme/components';
@@ -26,7 +26,8 @@ class TicketDetail extends React.Component {
 	};
 
 	state = {
-		cancelTicketPopup: false
+		cancelTicketPopup: false,
+		errors: null
 	};
 
 	amendTicket = (ticketData) => {
@@ -45,10 +46,18 @@ class TicketDetail extends React.Component {
 		});
 	};
 
+
 	cancelTicketPopupYes = (ticketDate) => {
 		// Cancellation fee applied
+		const cancellationFee = 1;
+
+		if(this.props.user.concessionary === 0 && !this.userCanCancel(cancellationFee)) {
+			return this.cancelTicketPopupNo();
+		}
+	
+		console.log("hey")
 		this.cancellationFeeApplied(ticketDate).then((cancellationFeeApplied) => {
-			if (cancellationFeeApplied) {
+			if (cancellationFeeApplied && this.props.user.concessionary === 0) {
 				this.ticketCancelledPost(1, 1);
 
 				this.props.userPayForTicket(1);
@@ -57,7 +66,7 @@ class TicketDetail extends React.Component {
 					date: new Date(),
 					fk_transaction_type_id: 4,
 					fk_user_id: this.props.user.id,
-					spent_funds: 1,
+					spent_funds: cancellationFee,
 					transaction_id: uuid(),
 					type: 'Ticket Cancelled',
 					cancellation_fee: 1
@@ -83,17 +92,6 @@ class TicketDetail extends React.Component {
 		});
 	};
 
-	cancellationFeeApplied = (ticketDate) => {
-		console.log(this.props.navigation.state.params.ticket)
-		return getRequestAuthorized(
-			`http://${ip}:3000/user/cancelTicket/journey?ticketId=${this.props.navigation.state.params.ticket.id}`
-		).then((endTime) => {
-			const timeDiff = moment(endTime).unix() - moment(ticketDate).unix();
-
-			if (timeDiff <= 7200 && timeDiff >= 0) return Promise.resolve(true);
-			return Promise.resolve(false);
-		});
-	};
 
 	ticketCancelledPost = (amount, cancellationFeeApplied) => {
 		const data = {
@@ -105,42 +103,14 @@ class TicketDetail extends React.Component {
 		return postRequestAuthorized(`http://${ip}:3000/user/cancelTicket`, data);
 	};
 
-	cancelTicketPopupYes = (ticketDate) => {
-		// Cancellation fee applied
-		this.cancellationFeeApplied(ticketDate).then((cancellationFeeApplied) => {
-			if (cancellationFeeApplied) {
-				this.ticketCancelledPost(1, 1);
-				this.props.userPayForTicket(1);
-				this.props.addTransaction({
-					current_funds: parseFloat(this.props.user.funds).toFixed(2),
-					date: new Date(),
-					fk_transaction_type_id: 4,
-					fk_user_id: this.props.user.id,
-					spent_funds: 1,
-					transaction_id: uuid(),
-					type: 'Ticket Cancelled',
-					cancellation_fee: 1
-				});
-			} else {
-				// Cancellation fee not applied
-				this.ticketCancelledPost(0, 0);
-				this.props.addTransaction({
-					current_funds: parseFloat(this.props.user.funds).toFixed(2),
-					date: new Date(),
-					fk_transaction_type_id: 4,
-					fk_user_id: this.props.user.id,
-					spent_funds: 0.0,
-					transaction_id: uuid(),
-					type: 'Ticket Cancelled',
-					cancellation_fee: 0
-				});
-			}
-
-			this.props.ticketCancelRedux(this.props.navigation.state.params.ticket.id);
-			this.cancelTicketPopupNo();
-			this.navigateTo();
-		});
-	};
+	userCanCancel = (amount) => {
+		if (this.props.user.funds - amount < 0) {
+			//Throw error, not enough money to pay
+			this.setState({ errors: [{ title: 'Errors', content: 'Add funds (£1) to your account to cancel the ticket' }]});
+			return false;
+		}
+		return true;
+	}
 
 	cancellationFeeApplied = (ticketDate) => {
 		return getRequestAuthorized(
@@ -151,16 +121,6 @@ class TicketDetail extends React.Component {
 			if (timeDiff <= 7200 && timeDiff >= 0) return Promise.resolve(true);
 			return Promise.resolve(false);
 		});
-	};
-
-	ticketCancelledPost = (amount, cancellationFeeApplied) => {
-		const data = {
-			ticketId: this.props.navigation.state.params.ticket.id,
-			amount: amount,
-			cancellationFeeApplied: cancellationFeeApplied
-		};
-
-		return postRequestAuthorized(`http://${ip}:3000/user/cancelTicket`, data);
 	};
 
 	_getPickupLocation = () => {
@@ -196,6 +156,15 @@ class TicketDetail extends React.Component {
 						isBackButtonActive={1}
 					/>
 					<Content>
+					{this.state.errors && (
+							<Accordion
+								dataArray={this.state.errors}
+								icon="add"
+								expandedIcon="remove"
+								contentStyle={styles.errorStyle}
+								expanded={0}
+							/>
+						)}
 						<View style={styles.card}>
 							<View style={styles.ticketTypeContainer}>
 								{ticket.expired ? (
@@ -499,7 +468,11 @@ const styles = StyleSheet.create({
 	button: {
 		width: '45%',
 		justifyContent: 'center'
-	}
+	},
+	errorStyle: {
+		fontWeight: 'bold',
+		backgroundColor: colors.backgroundColor
+	},
 });
 
 const mapStateToProps = (state) => ({

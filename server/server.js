@@ -300,7 +300,7 @@ app.get('/driver/schedule', function(req, res) {
 app.get('/ticket/pickup', function(req, res) {
 	const { id } = req.query;
 	connection.query(
-		'SELECT c.latitude, c.longitude, c.street, t.no_of_passengers FROM coordinate c JOIN ticket t ON t.fk_coordinate_id = c.coordinate_id WHERE t.ticket_id = ?',
+		'SELECT c.latitude, c.longitude, c.street, t.no_of_passengers FROM coordinate c JOIN ticket t ON t.fk_coordinate_id_from = c.coordinate_id WHERE t.ticket_id = ?',
 		[ id ],
 		(error, rows, fields) => {
 			if (error) console.log(error);
