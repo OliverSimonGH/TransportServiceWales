@@ -49,7 +49,11 @@ export default class ChangePassword extends Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
+				<GlobalHeader 
+					type={1} 
+					navigateTo={this.navigateTo} 
+					isBackButtonActive={1}
+				/>
 				<Content>
 				<View style={styles.contentContainer}>
 							<View style={styles.titleContainer}>
