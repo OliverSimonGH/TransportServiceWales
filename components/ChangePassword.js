@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
-import { Button, Container, Text, Content} from 'native-base';
+import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from './GlobalHeader';
 import ip from '../ipstore';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,6 +66,9 @@ export default class ChangePassword extends Component {
 							style={styles.input}
 							secureTextEntry={this.state.secureTextEntry}
 						/>
+						<TouchableOpacity onPress={this.onShowPassword}>
+							<Icon name="remove-red-eye" style={styles.updateIcon} />
+						</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
 						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
@@ -75,6 +78,9 @@ export default class ChangePassword extends Component {
 							style={styles.input}
 							secureTextEntry={this.state.secureTextEntry}
 						/>
+						<TouchableOpacity onPress={this.onShowPassword}>
+							<Icon name="remove-red-eye" style={styles.updateIcon} />
+						</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
 						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
@@ -84,16 +90,14 @@ export default class ChangePassword extends Component {
 							style={styles.input}
 							secureTextEntry={this.state.secureTextEntry}
 						/>
+						<TouchableOpacity onPress={this.onShowPassword}>
+							<Icon name="remove-red-eye" style={styles.updateIcon} />
+						</TouchableOpacity>
 					</View>
 
 					<View style={styles.buttonContainer}>
 						<Button danger style={styles.button} onPress={this.onChangePassword}>
 							<Text>CHANGE PASSWORD</Text>
-						</Button>
-					</View>
-					<View style={styles.buttonContainer}>
-						<Button danger style={styles.button} onPress={this.onShowPassword}>
-							<Text>SHOW PASSWORD</Text>
 						</Button>
 					</View>
 				</Content>
