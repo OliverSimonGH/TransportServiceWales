@@ -3,14 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Button, Container, Content, StyleProvider, Text, ListItem, CheckBox, Body } from 'native-base';
 import React, { Component } from 'react';
-import {
-	Keyboard,
-	StyleSheet,
-	TouchableHighlight,
-	View,
-	Platform,
-	KeyboardAvoidingView
-} from 'react-native';
+import { Keyboard, StyleSheet, TouchableHighlight, View, Platform, KeyboardAvoidingView } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import GlobalHeader from '../../components/GlobalHeader';
 import API_KEY from '../../google_api_key';
@@ -27,7 +20,6 @@ class JourneyScreen extends Component {
 		header: null
 	};
 
-	// Temporary states --> These should be in app.js
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -37,10 +29,6 @@ class JourneyScreen extends Component {
 			groupFocused: false,
 			wheelchairFocused: false,
 
-			switchValue: false,
-			error: '',
-			latitude: 0,
-			longitude: 0,
 			locationPredictions: [],
 
 			//Toggable states
@@ -59,29 +47,28 @@ class JourneyScreen extends Component {
 
 			//StartLocation
 			locationPredictions: [],
-			placeID:
-				'EhxTb3V0aCBQYXJrIFJvYWQsIENhcmRpZmYsIFVLIi4qLAoUChIJpatKxdccbkgRQ2yDFI_iUzESFAoSCamRx0IRO1oCEXoliDJDoPjE',
-			street: 'South Park Road',
-			city: 'Cardiff',
-			country: 'UK',
-			lat: 51.4816575,
-			lng: -3.1458798,
+			placeID: '',
+			street: '',
+			city: '',
+			country: '',
+			lat: 0,
+			lng: 0,
 			startType: 3,
 
 			//EndLocation
 			endLocationPredictions: [],
-			endPlaceID:
-				'Eh9Tb3V0aCBDbGl2ZSBTdHJlZXQsIENhcmRpZmYsIFVLIi4qLAoUChIJpSXnPloDbkgRaZvKffcCrskSFAoSCfVT7DTUAm5IEQ5nhmXbBjQU',
-			endStreet: 'South Clive Street',
-			endCity: 'Cardiff',
-			endCountry: 'UK',
-			endLat: 51.4599197,
-			endLng: -3.1844829,
+			endPlaceID: '',
+			endStreet: '',
+			endCity: '',
+			endCountry: '',
+			endLat: 0,
+			endLng: 0,
 			endType: 2,
 
 			destination: '',
 			endDestination: ''
 		};
+		// Limiting the amount requests made whilst a user enters data into the input
 		this.startPositionDebounced = _.debounce(this.startPosition, 500);
 		this.endLocationDebounced = _.debounce(this.endLocation, 500);
 	}
@@ -93,7 +80,7 @@ class JourneyScreen extends Component {
 			Expo.Notifications.createChannelAndroidAsync('reminders', {
 				name: 'Reminders',
 				priority: 'max',
-				vibrate: [0, 250, 250, 250]
+				vibrate: [ 0, 250, 250, 250 ]
 			});
 		}
 	}
@@ -123,9 +110,9 @@ class JourneyScreen extends Component {
 		});
 	};
 
-	// Restricited search to cardiff - Check Coords
-	// Radius of search is 3000 meters from location coords
-	// Strictbounds ensures that no suggestions appear that are not within these paramaters
+	// Takes in the place Id's returned from the input (start & end)  to get the coordinates of each location
+	// Requires both input's before running the function
+	// Once the coordinates have been returned, the data is stored in specified variable states
 	getRouteDirections = async () => {
 		const { placeID, endPlaceID, date, time } = this.state;
 
@@ -137,7 +124,7 @@ class JourneyScreen extends Component {
 			const response = await fetch(
 				`https://maps.googleapis.com/maps/api/directions/json?origin=place_id:${placeID}&destination=place_id:${endPlaceID}&key=${API_KEY}`
 			);
-			// const startLoc = "EhlRdWVlbiBTdHJlZXQsIENhcmRpZmYsIFVLIi4qLAoUChIJd_pfUbccbkgR8GM8fGAnzNYSFAoSCamRx0IRO1oCEXoliDJDoPjE";
+
 			const json = await response.json();
 			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
 			iStartLat = json.routes[0].legs[0].start_location.lat;
@@ -153,15 +140,17 @@ class JourneyScreen extends Component {
 				endLat: iEndLat,
 				endLng: iEndLng,
 				predictions: [],
-				// destination: destinationName,
 				routeResponse: json
 			});
 			Keyboard.dismiss();
-			//  this.map.fitToCoordinates(pointCoords);
 		} catch (error) {
 			console.error(error);
 		}
 	};
+
+	// Restricited search to cardiff - Check Coords
+	// Radius of search is 3000 meters from location coords
+	// Strictbounds ensures that no suggestions appear that are not within these paramaters
 
 	// Get Start Location
 	async startPosition(destination) {
@@ -173,6 +162,10 @@ class JourneyScreen extends Component {
 			locationPredictions: jsonResult.predictions
 		});
 	}
+
+	// Restricited search to cardiff - Check Coords
+	// Radius of search is 3000 meters from location coords
+	// Strictbounds ensures that no suggestions appear that are not within these paramaters
 
 	// Get End Location
 	async endLocation(endDestination) {
@@ -187,6 +180,7 @@ class JourneyScreen extends Component {
 
 	// Populate the input field with selected prediction
 	// Start Location Prediction
+	// Once input has been selected, run the getRoute function
 	pressedPrediction(
 		prediction,
 		selectedPredictionID,
@@ -213,6 +207,7 @@ class JourneyScreen extends Component {
 
 	// Populate the input field with selected prediction
 	// End Location Prediction
+	// Once input has been selected, run the getRoute function
 	pressedEndPrediction(
 		prediction,
 		selectedEndPredictionID,
@@ -240,6 +235,9 @@ class JourneyScreen extends Component {
 		this.props.navigation.navigate('');
 	};
 
+	// Sends the stored states to the next screen onSubmit (when the search button has been pressed)
+	// Checks that the values are not 0 before sending
+	// Clears the states & text input after search has been pressed
 	async onSubmit() {
 		await this.checkPassengerState();
 		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair } = this.state;
@@ -292,7 +290,7 @@ class JourneyScreen extends Component {
 			returnTicket: false,
 			destination: '',
 			endDestination: '',
-			isCollapsed: true,
+			isCollapsed: true
 		});
 	}
 
@@ -312,6 +310,7 @@ class JourneyScreen extends Component {
 
 	render() {
 		// Start Location Predictions - Suggestion List
+		// Specifying the values I want to return from the predictions array by indicating the index
 		const locationPredictions = this.state.locationPredictions.map((prediction) => (
 			<TouchableHighlight
 				onPress={() => {
@@ -330,6 +329,7 @@ class JourneyScreen extends Component {
 			</TouchableHighlight>
 		));
 		// End Location Predictions - Suggestion List
+		// Specifying the values I want to return from the predictions array by indicating the index
 		const endLocationPredictions = this.state.endLocationPredictions.map((prediction) => (
 			<TouchableHighlight
 				onPress={() => {
@@ -365,7 +365,7 @@ class JourneyScreen extends Component {
 								<CustomInput
 									focused={this.state.fromFocused}
 									iconName="my-location"
-									placeholder={"From"}
+									placeholder={'From'}
 									value={this.state.destination}
 									onFocus={() => this.setState({ fromFocused: true })}
 									onBlur={() => this.setState({ fromFocused: false })}
@@ -381,7 +381,7 @@ class JourneyScreen extends Component {
 								<CustomInput
 									focused={this.state.toFocused}
 									iconName="location-on"
-									placeholder={"To"}
+									placeholder={'To'}
 									value={this.state.endDestination}
 									onFocus={() => this.setState({ toFocused: true })}
 									onBlur={() => this.setState({ toFocused: false })}
@@ -402,7 +402,7 @@ class JourneyScreen extends Component {
 									onConfirm={(value) => this._handleDatePicked(value)}
 									onCancel={this._hideDatePicker}
 									iconName="date-range"
-									format='Do MMM YY'
+									format="Do MMM YY"
 									value={this.state.date}
 								/>
 
@@ -415,7 +415,7 @@ class JourneyScreen extends Component {
 									onConfirm={(value) => this._handleTimePicked(value)}
 									onCancel={this._hideTimePicker}
 									iconName="access-time"
-									format='LT'
+									format="LT"
 									value={this.state.time}
 								/>
 
@@ -426,7 +426,9 @@ class JourneyScreen extends Component {
 										onPress={() => this.setState({ returnTicket: !this.state.returnTicket })}
 										color={colors.bodyTextColor}
 									/>
-									<Body><Text style={styles.body}>Return journey</Text></Body>
+									<Body>
+										<Text style={styles.body}>Return journey</Text>
+									</Body>
 								</ListItem>
 
 								{/* Advanced search fields, expands and collapses on button click. */}
@@ -435,7 +437,7 @@ class JourneyScreen extends Component {
 										<CustomInput
 											focused={this.state.groupFocused}
 											iconName="people"
-											placeholder={"Group size"}
+											placeholder={'Group size'}
 											value={this.state.numPassenger ? this.state.numPassenger.toString() : null}
 											onFocus={() => this.setState({ groupFocused: true })}
 											onBlur={() => this.setState({ groupFocused: false })}
@@ -446,8 +448,10 @@ class JourneyScreen extends Component {
 										<CustomInput
 											focused={this.state.wheelchairFocused}
 											iconName="accessible"
-											placeholder={"No. of wheelchairs"}
-											value={this.state.numWheelchair ? this.state.numWheelchair.toString() : null}
+											placeholder={'No. of wheelchairs'}
+											value={
+												this.state.numWheelchair ? this.state.numWheelchair.toString() : null
+											}
 											onFocus={() => this.setState({ wheelchairFocused: true })}
 											onBlur={() => this.setState({ wheelchairFocused: false })}
 											onChangeText={(value) => this.setState({ numWheelchair: value })}
@@ -540,7 +544,7 @@ const styles = StyleSheet.create({
 		marginLeft: 0,
 		borderBottomWidth: 0.75,
 		borderBottomColor: colors.lightBorder
-	},
+	}
 });
 
 export default connect(null, { fetchTickets })(JourneyScreen);
