@@ -178,7 +178,7 @@ export default class AccountsScreen extends Component {
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
-								<Icon name="person" size={32} style={styles.inputIcons} />
+								<Icon name="phone-android" size={32} style={styles.inputIcons} />
 								<TextInput
 									onChangeText={(text) => this.setState({ phoneNumber: text })}
 									placeholder="Phone Number"

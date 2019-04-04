@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
+import { StyleSheet, View, TextInput, Dimensions, TouchableOpacity } from 'react-native';
 import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from './GlobalHeader';
 import ip from '../ipstore';
-import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { postRequestAuthorized } from '../API';
 
 export default class ChangePassword extends Component {
@@ -59,7 +59,7 @@ export default class ChangePassword extends Component {
 						<Text style={styles.title}>Change Password:</Text>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<Icon name="lock" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({ currentPassword: text })}
 							placeholder="Current Password"
@@ -67,11 +67,11 @@ export default class ChangePassword extends Component {
 							secureTextEntry={this.state.secureTextEntry}
 						/>
 						<TouchableOpacity onPress={this.onShowPassword}>
-							<Icon name="remove-red-eye" style={styles.updateIcon} />
+							<Icon name="remove-red-eye" size={30} style={styles.updateIcon} />
 						</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<Icon name="lock" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({ newPassword: text })}
 							placeholder="New Password"
@@ -79,11 +79,11 @@ export default class ChangePassword extends Component {
 							secureTextEntry={this.state.secureTextEntry}
 						/>
 						<TouchableOpacity onPress={this.onShowPassword}>
-							<Icon name="remove-red-eye" style={styles.updateIcon} />
+							<Icon name="remove-red-eye" size={30} style={styles.updateIcon} />
 						</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<Icon name="lock" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({ confirmPassword: text })}
 							placeholder="Confirm Password"
@@ -91,7 +91,7 @@ export default class ChangePassword extends Component {
 							secureTextEntry={this.state.secureTextEntry}
 						/>
 						<TouchableOpacity onPress={this.onShowPassword}>
-							<Icon name="remove-red-eye" style={styles.updateIcon} />
+							<Icon name="remove-red-eye" size={30} style={styles.updateIcon} />
 						</TouchableOpacity>
 					</View>
 
