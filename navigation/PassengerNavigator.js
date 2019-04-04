@@ -20,6 +20,7 @@ import ChangePassword from '../components/ChangePassword';
 import ContactScreen from '../components/ContactScreen';
 import ChangeDetailsScreen from '../components/ChangeDetailsScreen';
 import AddressScreen from '../components/AddressScreen';
+import LoginScreen from '../screens/LoginScreen';
 
 const JourneyStack = createStackNavigator(
 	{
@@ -78,7 +79,8 @@ const AccountStack = createStackNavigator(
 		Settings: AccountsScreen,
 		ChangeDetails: ChangeDetailsScreen,
 		ChangePassword: ChangePassword,
-		AddAddress: AddressScreen
+		AddAddress: AddressScreen,
+		Login: LoginScreen
 	},
 	{ initialRouteName: 'Account' }
 );

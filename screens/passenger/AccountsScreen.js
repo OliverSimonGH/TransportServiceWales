@@ -107,7 +107,7 @@ export default class AccountsScreen extends Component {
 						</Button>
 					</View>
 					<View style={styles.buttonContainer}>
-						<Button danger style={styles.button} onPress={this.addAddress}>
+						<Button danger style={styles.button} onPress={this.logout}>
 							<Text style={styles.buttonText}>LOG OUT</Text>
 						</Button>
 					</View>
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
 	},
 	updateIcon: {
 		padding: 6,
-		color: colors.emphasisTextColor,
+		color: colors.emphasisTextColor
 	},
 	detailView: {
 		flex: 1,
