@@ -111,6 +111,9 @@ class RegistrationScreen extends Component {
 						)}
 
 						<View style={styles.contentContainer}>
+						<View style={styles.titleContainer}>
+								<Text style={styles.title}>REGISTRATION</Text>
+							</View>
 							<View
 								style={[
 									styles.inputContainer,
@@ -421,7 +424,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end'
 	},
 	titleContainer: {
-		paddingTop: 30,
 		paddingBottom: 5,
 		width
 	},
