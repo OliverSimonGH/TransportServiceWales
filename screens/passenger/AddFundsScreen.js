@@ -50,11 +50,8 @@ class AddFundsScreen extends React.Component {
 			});
 
 			this.props.onUpdateUserFunds(amount);
-			this.setState({
-				showModal: false,
-				status: 'Complete',
-				funds: parseFloat(parseInt(funds) + parseInt(amount)).toFixed(2)
-			});
+			this.setState({ showModal: false, status: 'Complete' });
+			this.props.navigation.navigate('PaymentConfirmation', { amount })
 		}
 		if (data.title === 'cancel') {
 			this.setState({
@@ -66,18 +63,18 @@ class AddFundsScreen extends React.Component {
 	};
 
 	onDebitCreditSubmit = () => {
-		const { amount } = this.state;
-		this.props.onAddTransaction({
-			current_funds: parseFloat(parseInt(this.props.user.funds) + parseInt(amount)).toFixed(2),
-			date: new Date(),
-			fk_transaction_type_id: 2,
-			fk_user_id: null,
-			spent_funds: amount,
-			transaction_id: uuid(),
-			type: 'Funds added'
-		});
+		// const { amount } = this.state;
+		// this.props.onAddTransaction({
+		// 	current_funds: parseFloat(parseInt(this.props.user.funds) + parseInt(amount)).toFixed(2),
+		// 	date: new Date(),
+		// 	fk_transaction_type_id: 2,
+		// 	fk_user_id: null,
+		// 	spent_funds: amount,
+		// 	transaction_id: uuid(),
+		// 	type: 'Funds added'
+		// });
 
-		this.props.onUpdateUserFunds(amount);
+		// this.props.onUpdateUserFunds(amount);
 	};
 
 	onAmountFocus = () => {

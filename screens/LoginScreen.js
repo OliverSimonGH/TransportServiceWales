@@ -12,7 +12,7 @@ import { addUser } from '../redux/actions/userAction';
 
 class loginScreen extends Component {
 	state = {
-		email: 'vuilleumierl@cardiff.ac.uk',
+		email: 'SimonOM@cardiff.ac.uk',
 		password: 'Qwerty123',
 		errors: [],
 
@@ -73,6 +73,16 @@ class loginScreen extends Component {
 								expanded={0}
 							/>
 						)}
+
+						{typeof (this.props.navigation.state.params) !== 'undefined' && this.props.navigation.state.params.success === 10 &&
+							<Accordion
+								dataArray={[{ title: 'Success', content: 'Your account has been created' }]}
+								icon="add"
+								expandedIcon="remove"
+								contentStyle={styles.errorStyle}
+								expanded={0}
+							/>
+						}
 
 						<View style={styles.contentContainer}>
 							<View style={styles.titleContainer}>

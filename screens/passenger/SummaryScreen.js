@@ -108,7 +108,7 @@ class SummaryScreen extends React.Component {
 	}
 
 	payForTicket = () => {
-		if (this.props.user.funds - this.state.total <= 0) {
+		if (this.props.user.funds - this.state.total < 0) {
 			//Throw error, not enough money to pay
 			return;
 		}

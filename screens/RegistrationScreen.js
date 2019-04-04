@@ -12,7 +12,7 @@ class RegistrationScreen extends Component {
 		firstName: 'Martin',
 		lastName: 'Jones',
 		phoneNumber: '07914287655',
-		email: 'vuilleumierl@cardiff.ac.uk',
+		email: 'SimonOM@cardiff.ac.uk',
 		password: 'Qwerty123',
 		passwordConfirm: 'Qwerty123',
 		type: 1,
@@ -111,6 +111,9 @@ class RegistrationScreen extends Component {
 						)}
 
 						<View style={styles.contentContainer}>
+						<View style={styles.titleContainer}>
+								<Text style={styles.title}>REGISTRATION</Text>
+							</View>
 							<View
 								style={[
 									styles.inputContainer,
@@ -421,7 +424,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end'
 	},
 	titleContainer: {
-		paddingTop: 30,
 		paddingBottom: 5,
 		width
 	},
