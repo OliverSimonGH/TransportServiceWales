@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions, TextInput } from 'react-native';
-import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
+import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from './GlobalHeader';
 import ip from '../ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
