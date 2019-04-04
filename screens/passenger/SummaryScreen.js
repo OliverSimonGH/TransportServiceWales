@@ -18,6 +18,7 @@ import { userPayForTicket } from '../../redux/actions/userAction';
 import { addTicket } from '../../redux/actions/ticketAction';
 import colors from '../../constants/Colors';
 import { postRequestAuthorized } from '../../API';
+import SummaryRow from '../../components/SummaryRow';
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -345,51 +346,14 @@ class SummaryScreen extends React.Component {
 								</View>
 								<View style={styles.details}>
 									<View>
-										<View style={styles.icon}>
-											<MaterialIcon name="date-range" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{moment(data.date).format('MMMM Do YYYY')}
-											</Text>
-										</View>
-										<View style={styles.icon}>
-											<MaterialIcon name="access-time" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>{moment(data.time).format('LT')}</Text>
-										</View>
-										<View style={styles.icon}>
-											<MaterialIcon name="my-location" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{data.street}, {data.city}
-											</Text>
-										</View>
-									</View>
-
-									<View>
-										<View style={styles.icon}>
-											<MaterialIcon name="location-on" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{data.endStreet}, {data.endCity}
-											</Text>
-										</View>
-										<View style={styles.icon}>
-											<MaterialIcon name="people" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{data.numPassenger}
-												{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
-											</Text>
-										</View>
-										{data.numWheelchair > 0 ? (
-											<View style={styles.icon}>
-												<MaterialIcon
-													name="accessible"
-													size={20}
-													color={colors.bodyTextColor}
-												/>
-												<Text style={styles.cardBody}>
-													{data.numWheelchair}
-													{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
-												</Text>
-											</View>
-										) : null}
+										<SummaryRow iconName="date-range" value={moment(data.date).format('MMMM Do YYYY')} />
+										<SummaryRow iconName="access-time" value={moment(data.time).format('LT')} />
+										<SummaryRow iconName="my-location" value={[data.street] + ", " + [data.city]} />
+										<SummaryRow iconName="location-on" value={[data.endStreet] + ", " + [data.endCity]} />
+										<SummaryRow iconName="people" value={[data.numPassenger] + " " + [data.numPassenger > 1 ? 'Passengers' : 'Passenger']} />
+										{data.numWheelchair > 0 &&
+											<SummaryRow iconName="accessible" value={[data.numWheelchair] + " " + [data.numWheelchair > 1 ? 'Wheelchairs' : 'Wheelchair']} />
+										}
 									</View>
 								</View>
 							</View>
@@ -511,26 +475,6 @@ const styles = StyleSheet.create({
 	details: {
 		width: '90%'
 	},
-	journeyInfo: {
-		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		width: '30%'
-	},
-	cardBody: {
-		color: colors.bodyTextColor,
-		marginLeft: 6
-	},
-	cardVehicle: {
-		fontSize: 13,
-		color: 'gray',
-		marginLeft: 6
-	},
-	icon: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 15
-	},
 	paymentInfo: {
 		width: '80%',
 		alignSelf: 'center'
@@ -559,11 +503,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignItems: 'center',
 		marginTop: 20
-	},
-	balance: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		marginBottom: 8
 	},
 	buttonContainer: {
 		flex: 1,

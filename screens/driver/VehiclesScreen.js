@@ -15,9 +15,6 @@ class VehiclesScreen extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
-	state = {
-
-	};
 
 	navigateToAddVehicle = () => {
 		this.props.navigation.navigate('AddVehicle', { onFetchNewVehicleId: this.fetchNewVehicleId });
@@ -64,7 +61,7 @@ class VehiclesScreen extends React.Component {
 						<Text style={styles.body}>No vehicle currently selected</Text>
 					}
 					<View style={[styles.headerContainer, {
-						borderBottomColor: (this.props.vehicles.length > 0) ? colors.lightBorder : '#fff',
+						borderBottomColor: (this.props.vehicles.length > 0) ? colors.lightBorder : colors.backgroundColor,
 						borderBottomWidth: (this.props.vehicles.length > 0) ? 0.75 : 0
 					}]}>
 						<Text style={styles.header}>YOUR VEHICLES</Text>
