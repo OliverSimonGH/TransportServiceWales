@@ -130,6 +130,7 @@ export default class AccountsScreen extends Component {
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<Content style={styles.contentContainer} padder>
+
 					<View style={styles.secondaryButtonContainer}>
 						<Button bordered danger style={styles.secondaryButton} onPress={this.settings}>
 							<Text style={styles.secondaryButtontext}>Settings</Text>
@@ -139,11 +140,13 @@ export default class AccountsScreen extends Component {
 					<View>
 						<Text style={styles.title}>Update Details</Text>
 					</View>
+					
 					{this.state.userDetails !== null && (
 						<React.Fragment>
 							<View style={styles.inputContainer}>
 								<Icon name="person" size={32} style={styles.inputIcons} />
 								<TextInput
+									id = {'forename'}
 									onChangeText={(text) => this.setState({ forename: text })}
 									placeholder="First Name"
 									style={styles.input}
@@ -156,6 +159,7 @@ export default class AccountsScreen extends Component {
 							<View style={styles.inputContainer}>
 								<Icon name="person" size={32} style={styles.inputIcons} />
 								<TextInput
+									id = {'surname'}
 									onChangeText={(text) => this.setState({ surname: text })}
 									placeholder="Last Name"
 									style={styles.input}
@@ -168,6 +172,7 @@ export default class AccountsScreen extends Component {
 							<View style={styles.inputContainer}>
 								<Icon name="mail" size={32} style={styles.inputIcons} />
 								<TextInput
+									id = {'email'}
 									onChangeText={(text) => this.setState({ email: text })}
 									placeholder="Email"
 									style={styles.input}
@@ -180,6 +185,7 @@ export default class AccountsScreen extends Component {
 							<View style={styles.inputContainer}>
 								<Icon name="person" size={32} style={styles.inputIcons} />
 								<TextInput
+									id = {'phoneNumber'}
 									onChangeText={(text) => this.setState({ phoneNumber: text })}
 									placeholder="Phone Number"
 									style={styles.input}
