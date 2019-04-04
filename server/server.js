@@ -748,6 +748,8 @@ app.get('/userDetails', function(req, res) {
 });
 
 app.post('/userChangeForename', function(req, res) {
+	req.checkBody('forename', 'First Name cannot be empty').notEmpty().trim();
+
 	const forename = req.body.forename;
 
 	connection.query(
@@ -762,6 +764,8 @@ app.post('/userChangeForename', function(req, res) {
 });
 
 app.post('/userChangeSurname', function(req, res) {
+	req.checkBody('surname', 'Surname cannot be empty').notEmpty().trim();
+
 	const surname = req.body.surname;
 
 	connection.query(
@@ -776,6 +780,8 @@ app.post('/userChangeSurname', function(req, res) {
 });
 
 app.post('/userChangePhoneNumber', function(req, res) {
+	req.checkBody('phoneNumber', null).notEmpty().trim();
+
 	const phoneNumber = req.body.phoneNumber;
 
 	connection.query(
@@ -790,6 +796,8 @@ app.post('/userChangePhoneNumber', function(req, res) {
 });
 
 app.post('/userChangeEmail', function(req, res) {
+	req.checkBody('email', 'Emaill cannot be empty').notEmpty().trim();
+
 	const email = req.body.email;
 
 	connection.query('SELECT * FROM user WHERE email=?', [ email ], function(error, rows, fields) {
@@ -809,6 +817,11 @@ app.post('/userChangeEmail', function(req, res) {
 });
 
 app.post('/addAddress', function(req, res) {
+	req.checkBody('city', 'City cannot be empty').notEmpty().trim();
+	req.checkBody('street', 'Street cannot be empty').notEmpty().trim();
+	req.checkBody('house_number', 'Cannot be empty').notEmpty().trim();
+	req.checkBody('postcode', 'Postcode cannot be empty').notEmpty().trim();
+
 	const city = req.body.city;
 	const street = req.body.street;
 	const house_number = req.body.house_number;
@@ -862,6 +875,7 @@ app.post('/userUpdatePassword', function(req, res) {
 		.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
 		.trim();
 	req.checkBody('confirmPassword', 'Passwords must match').equals(newPassword);
+	req.checkBody('password', null).notEmpty().trim();
 
 	//Send errors back to client
 	const errors = req.validationErrors();
