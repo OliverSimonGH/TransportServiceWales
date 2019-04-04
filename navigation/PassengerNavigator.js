@@ -7,7 +7,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/passenger/JourneyScreen';
 import SummaryScreen from '../screens/passenger/SummaryScreen';
 import TicketDetail from '../components/TicketDetail';
-import TicketsScreen from '../screens/TicktetsScreen';
+import TicketsScreen from '../screens/passenger/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';

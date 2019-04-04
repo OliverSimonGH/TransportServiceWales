@@ -8,7 +8,7 @@ import Dialog, { DialogFooter, DialogButton, DialogContent, DialogTitle } from '
 import _ from 'lodash';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
-import GlobalHeader from '../components/GlobalHeader';
+import GlobalHeader from './GlobalHeader';
 import ip from '../ipstore';
 import uuid from 'uuid/v4';
 import colors from '../constants/Colors';

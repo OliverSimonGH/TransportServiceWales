@@ -10,7 +10,7 @@ import tickets from './data';
 import ip from '../ipstore';
 import { getRequestAuthorized } from '../../API';
 
-import TicketLayout from './TicketLayout';
+import TicketLayout from '../components/TicketLayout';
 import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
 
 export default class TicketsScreen extends React.Component {

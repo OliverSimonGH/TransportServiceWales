@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
 import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import GlobalHeader from './GlobalHeader';
+import ip from '../ipstore';
 import { Ionicons } from '@expo/vector-icons';
-import { postRequestAuthorized } from '../../API';
+import { postRequestAuthorized } from '../API';
 
 export default class ChangePassword extends Component {
 	static navigationOptions = {
