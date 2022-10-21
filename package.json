@@ -20,7 +20,7 @@
 		"bcryptjs": "^2.4.3",
 		"consolidate": "^0.15.1",
 		"ejs": "^2.6.1",
-		"expo": "^32.0.0",
+		"expo": "^46.0.16",
 		"express": "^4.16.4",
 		"express-session": "^1.15.6",
 		"express-validator": "^5.3.1",
